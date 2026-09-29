@@ -283,11 +283,15 @@ The site handles information about children, so South Africa's Protection of Per
 
 Each phase should end with something the owner can try out.
 
+**Decisions made**
+
+- **Admin account:** leesavontuur194@gmail.com (sign up on the site with this address, then make it admin as described in the README).
+- **Audience:** mainly families. Schools and teachers are not planned for now. An account can already hold several children, so a teacher account could be added later without rebuilding.
+
 **Open questions for the owner**
 
 - Final **name, mascot and look** of the site.
 - **Pricing:** free, subscription per family, or a free trial? This decides whether online payments are needed at launch.
-- Will **schools or teachers** use it too (one teacher with many learners), or families only for now?
 - **Pictures** for the Level 1–2 word cards: illustrated, photos, or generated? Who supplies them?
 - Would **audio** help (for example hearing a word card read aloud), now or later?
 - Who will check the privacy policy and POPIA compliance?

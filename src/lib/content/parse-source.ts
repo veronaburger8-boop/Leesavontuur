@@ -723,9 +723,15 @@ export function parseSource(markdown: string): ParseResult {
     }
   }
 
-  // Flagged items are imported for review instead of going live.
-  const flagged = new Set(issues.filter((i) => i.kind === "flag").map((i) => i.itemId));
-  for (const item of items) if (flagged.has(item.id)) item.status = "in_review";
+  // Flagged items are imported for review instead of going live, with the
+  // reasons as a review note.
+  for (const item of items) {
+    const flags = issues.filter((i) => i.kind === "flag" && i.itemId === item.id).map((i) => i.message);
+    if (flags.length) {
+      item.status = "in_review";
+      item.reviewNote = flags.join("\n");
+    }
+  }
 
   return { items, issues, expansions, statedWordCounts };
 }

@@ -75,6 +75,8 @@ interface ContentBase {
   passage: string[];
   comprehension: MultipleChoice[];
   spelling: string[];
+  /** Why the item needs checking (set by the import for items in review). */
+  reviewNote?: string;
 }
 
 export interface Lesson extends ContentBase {

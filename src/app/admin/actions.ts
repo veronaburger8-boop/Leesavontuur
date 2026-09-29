@@ -33,23 +33,24 @@ export interface ImportState {
   warnings: { id: string; messages: string[] }[];
 }
 
-const emptyState: ImportState = { done: false, added: [], replaced: [], skipped: [], errors: [], warnings: [] };
+/** A fresh result for each import (never share the arrays between requests). */
+const newState = (message?: string): ImportState => ({ done: true, message, added: [], replaced: [], skipped: [], errors: [], warnings: [] });
 
 /** Saves the items in an uploaded file (section 9 format) to the content library. */
 export async function importContent(_prev: ImportState, formData: FormData): Promise<ImportState> {
   const { supabase } = await requireStaff();
   const file = formData.get("file");
-  if (!(file instanceof File) || file.size === 0) return { ...emptyState, done: true, message: "Choose a file first." };
+  if (!(file instanceof File) || file.size === 0) return newState("Choose a file first.");
 
   let json: unknown;
   try {
     json = JSON.parse(await file.text());
   } catch {
-    return { ...emptyState, done: true, message: "The file is not valid JSON." };
+    return newState("The file is not valid JSON.");
   }
 
   const { valid, errors } = validateContentFile(json);
-  const state: ImportState = { ...emptyState, done: true, errors };
+  const state: ImportState = { ...newState(), errors };
 
   const { data: topics } = await supabase.from("topics").select("key");
   const topicKeys = new Set((topics ?? []).map((t) => t.key as string));

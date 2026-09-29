@@ -2,8 +2,6 @@ import type { NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
 
 export async function proxy(request: NextRequest) {
-  // Lets the language switch return to the page it was pressed on.
-  request.headers.set("x-pathname", request.nextUrl.pathname + request.nextUrl.search);
   return updateSession(request);
 }
 

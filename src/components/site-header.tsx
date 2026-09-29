@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { headers } from "next/headers";
-import { logOut, setLocale } from "@/app/actions";
+import { Suspense } from "react";
+import { logOut } from "@/app/actions";
+import { LanguageSwitch } from "@/components/language-switch";
 import { getSession, isStaff } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
 
 export async function SiteHeader() {
   const [session, locale] = await Promise.all([getSession(), getLocale()]);
   const t = translator(locale);
-  const path = (await headers()).get("x-pathname") ?? "/";
   return (
     <header className="site-header">
       <Link href="/" className="brand">
@@ -35,13 +35,9 @@ export async function SiteHeader() {
             {t("logIn")}
           </Link>
         )}
-        <form action={setLocale}>
-          <input type="hidden" name="locale" value={locale === "af" ? "en" : "af"} />
-          <input type="hidden" name="back" value={path} />
-          <button className="small" type="submit" aria-label={t("switchLanguageLabel")} lang={locale === "af" ? "en" : "af"}>
-            {t("switchLanguage")}
-          </button>
-        </form>
+        <Suspense>
+          <LanguageSwitch locale={locale} label={t("switchLanguageLabel")} text={t("switchLanguage")} />
+        </Suspense>
       </nav>
     </header>
   );

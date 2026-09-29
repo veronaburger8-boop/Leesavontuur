@@ -69,3 +69,7 @@ Import all converted items with status `"published"`, except items flagged in th
 ## Adding passages later
 
 New passages follow the writing guide in the brief's appendix. The admin area's "Draft passages" button must send that guide to the Claude API and save the results as drafts only.
+
+## Developer notes
+
+@AGENTS.md

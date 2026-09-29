@@ -13,6 +13,8 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
       ? t("mustAcceptPrivacy")
       : error === "password"
         ? t("passwordTooShort")
+        : error === "wait"
+          ? t("tooManyRequests")
         : error === "signup"
           ? `${t("signupFailed")} ${typeof detail === "string" ? detail : ""}`
           : null;

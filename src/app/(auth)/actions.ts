@@ -36,7 +36,11 @@ export async function signUp(formData: FormData) {
       },
     },
   });
-  if (error) redirect(`/signup?error=signup&detail=${encodeURIComponent(error.message)}`);
+  if (error) {
+    // Supabase limits how often emails can be sent; show a friendly "wait a moment" instead of its English text.
+    if (error.status === 429 || /rate limit|security purposes/i.test(error.message)) redirect("/signup?error=wait");
+    redirect(`/signup?error=signup&detail=${encodeURIComponent(error.message)}`);
+  }
   // When email confirmation is switched off the parent is signed in straight away.
   if (data.session) redirect("/parent");
   redirect("/signup?sent=1");

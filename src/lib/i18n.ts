@@ -49,6 +49,10 @@ const text = {
   signupFailed: { af: "Kon nie die rekening skep nie:", en: "Could not create the account:" },
   mustAcceptPrivacy: { af: "Aanvaar asseblief die privaatheidsbeleid.", en: "Please accept the privacy policy." },
   passwordTooShort: { af: "Die wagwoord moet minstens 8 karakters hê.", en: "The password must have at least 8 characters." },
+  tooManyRequests: {
+    af: "Ons het so pas vir jou 'n e-pos gestuur. Kyk in jou inkassie (en die gemorspos). As niks opdaag nie, wag 'n minuut en probeer weer.",
+    en: "We've just sent you an email. Check your inbox (and spam folder). If nothing arrives, wait a minute and try again.",
+  },
   checkEmail: {
     af: "Kyk in jou e-pos vir 'n skakel om jou rekening te bevestig.",
     en: "Check your email for a link to confirm your account.",

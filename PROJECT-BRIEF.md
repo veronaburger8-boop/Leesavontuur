@@ -285,7 +285,7 @@ Each phase should end with something the owner can try out.
 
 **Decisions made**
 
-- **Admin account:** leesavontuur194@gmail.com (sign up on the site with this address, then make it admin as described in the README).
+- **Admin account and contact address:** leesavontuur194@gmail.com (also the contact address in the privacy policy; sign up on the site with this address, then make it admin as described in the README).
 - **Audience:** mainly families. Schools and teachers are not planned for now. An account can already hold several children, so a teacher account could be added later without rebuilding.
 
 **Open questions for the owner**

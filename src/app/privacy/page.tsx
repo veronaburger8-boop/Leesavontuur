@@ -4,14 +4,14 @@ import { PRIVACY_VERSION } from "@/lib/site";
 export const metadata = { title: "Privacy policy" };
 
 // DRAFT – must be checked by someone qualified in POPIA before launch
-// (brief, section 10). Contact details are still to be filled in.
+// (brief, section 10).
 
 const af = (
   <>
     <h1>Privaatheidsbeleid</h1>
     <p className="message info">Konsep – hierdie beleid moet nog deur iemand met kennis van POPIA nagegaan word.</p>
     <h2>Wie ons is</h2>
-    <p>Leesavontuur is &apos;n leesprogram vir kinders. Kontak: [e-posadres volg].</p>
+    <p>Leesavontuur is &apos;n leesprogram vir kinders. Kontak: <a href="mailto:leesavontuur194@gmail.com">leesavontuur194@gmail.com</a>.</p>
     <h2>Wat ons oor jou kind bewaar</h2>
     <p>Net wat ons nodig het om die program te laat werk: &apos;n voornaam of bynaam, opsioneel &apos;n graad, die vlakke in elke taal, leesspoed en punte, en gunsteling-onderwerpe. Ons vra nie vir vanne, foto&apos;s, skole of ID-nommers nie.</p>
     <h2>Wat ons oor jou bewaar</h2>
@@ -32,7 +32,7 @@ const en = (
     <h1>Privacy policy</h1>
     <p className="message info">Draft – this policy still has to be checked by someone qualified in POPIA.</p>
     <h2>Who we are</h2>
-    <p>Leesavontuur is a reading program for children. Contact: [email address to follow].</p>
+    <p>Leesavontuur is a reading program for children. Contact: <a href="mailto:leesavontuur194@gmail.com">leesavontuur194@gmail.com</a>.</p>
     <h2>What we keep about your child</h2>
     <p>Only what the program needs to work: a first name or nickname, optionally a grade, their level in each language, reading speed and scores, and favourite topics. We don&apos;t ask for surnames, photos, schools or ID numbers.</p>
     <h2>What we keep about you</h2>

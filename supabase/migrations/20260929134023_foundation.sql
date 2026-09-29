@@ -116,6 +116,24 @@ create table public.learner_languages (
   primary key (learner_id, language)
 );
 
+-- Adds a learner with a starting level in each language, in one step. Runs
+-- with the caller's own access, so the learner policies below still apply.
+create function public.create_learner(p_name text, p_grade smallint, p_level_af smallint, p_level_en smallint)
+returns uuid
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  v_id uuid;
+begin
+  insert into public.learners (name, grade) values (trim(p_name), p_grade) returning id into v_id;
+  insert into public.learner_languages (learner_id, language, level)
+  values (v_id, 'af', p_level_af), (v_id, 'en', p_level_en);
+  return v_id;
+end;
+$$;
+
 -- ------------------------------------------------------------------ topics
 
 -- Topics are data, so the admin can add more later.
@@ -252,6 +270,7 @@ alter table public.content_items enable row level security;
 alter table public.content_status_log enable row level security;
 
 -- Visitors who are not signed in get nothing.
+revoke execute on function public.create_learner(text, smallint, smallint, smallint) from public, anon;
 revoke all on public.profiles, public.learners, public.learner_languages, public.topics,
   public.content_items, public.content_status_log from anon;
 

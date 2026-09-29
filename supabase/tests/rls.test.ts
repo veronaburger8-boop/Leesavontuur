@@ -127,6 +127,18 @@ describe.skipIf(!url)("database access rules", () => {
     expect(staff).toHaveLength(0);
   });
 
+  it("lets a parent add a child with levels in one step, but not a visitor", async () => {
+    const levels = await as(ids.parentB, async (q) => {
+      const { rows } = await q("select public.create_learner('Sipho', 2::smallint, 1::smallint, 2::smallint) as id");
+      return (await q("select language, level from public.learner_languages where learner_id = $1 order by language", [rows[0].id])).rows;
+    });
+    expect(levels).toEqual([
+      { language: "af", level: 1 },
+      { language: "en", level: 2 },
+    ]);
+    await expect(as(null, (q) => q("select public.create_learner('X', null, 1::smallint, 1::smallint)"))).rejects.toThrow(/permission denied/);
+  });
+
   it("stops a parent from adding a child to another account or moving one", async () => {
     await expect(
       as(ids.parentB, (q) => q("insert into public.learners (parent_id, name) values ($1, 'X')", [ids.parentA])),

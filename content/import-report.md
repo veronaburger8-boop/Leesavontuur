@@ -34,130 +34,58 @@ Every item was checked for:
 
 ### Afrikaans L3 – Karel se groentetuin
 
-- 5 question(s) had shortened options, which were expanded into full sentences. Please check that each expanded option reads correctly:
+- 5 question(s) have options written in shortened form. As you asked, they were **kept exactly as written** and not expanded. Please rewrite them as full options before publishing this lesson:
 
   **Saam met wie woon Karel?**
-  - In the document: Karel woon saam met sy ma. / sy oupa. / **sy ouma. ✓** / sy tannie. / sy broer.
-  - Expanded to:
-    - Karel woon saam met sy ma.
-    - Karel woon saam met sy oupa.
-    - Karel woon saam met sy ouma.
-    - Karel woon saam met sy tannie.
-    - Karel woon saam met sy broer.
+  - Karel woon saam met sy ma. / sy oupa. / **sy ouma. ✓** / sy tannie. / sy broer.
 
   **Waarom moet Karel 'n sonnige plek kies?**
-  - In the document: Want groente het baie **lig ✓** / skaduwee / wind / reën / sand nodig.
-  - Expanded to:
-    - Want groente het baie lig nodig.
-    - Want groente het baie skaduwee nodig.
-    - Want groente het baie wind nodig.
-    - Want groente het baie reën nodig.
-    - Want groente het baie sand nodig.
+  - Want groente het baie **lig ✓** / skaduwee / wind / reën / sand nodig.
 
   **Wat sê Ouma is kompos vir die plante?**
-  - In the document: Kompos is soos water / medisyne / 'n kombers / **kos ✓** / speelgoed vir die plante.
-  - Expanded to:
-    - Kompos is soos water vir die plante.
-    - Kompos is soos medisyne vir die plante.
-    - Kompos is soos 'n kombers vir die plante.
-    - Kompos is soos kos vir die plante.
-    - Kompos is soos speelgoed vir die plante.
+  - Kompos is soos water / medisyne / 'n kombers / **kos ✓** / speelgoed vir die plante.
 
   **Wat plant Karel langs die heining?**
-  - In the document: Hy plant 'n paar mielies / **pampoene ✓** / blomme / bome / aartappels langs die heining.
-  - Expanded to:
-    - Hy plant 'n paar mielies langs die heining.
-    - Hy plant 'n paar pampoene langs die heining.
-    - Hy plant 'n paar blomme langs die heining.
-    - Hy plant 'n paar bome langs die heining.
-    - Hy plant 'n paar aartappels langs die heining.
+  - Hy plant 'n paar mielies / **pampoene ✓** / blomme / bome / aartappels langs die heining.
 
   **Hoe lank duur dit voor Karel die eerste blaartjies sien?**
-  - In the document: Dit duur twee dae / een week / **twee weke ✓** / drie weke / twee maande.
-  - Expanded to:
-    - Dit duur twee dae.
-    - Dit duur een week.
-    - Dit duur twee weke.
-    - Dit duur drie weke.
-    - Dit duur twee maande.
+  - Dit duur twee dae / een week / **twee weke ✓** / drie weke / twee maande.
 
 
 ### English L3 – Mia's Lemonade Stand
 
-- 5 question(s) had shortened options, which were expanded into full sentences. Please check that each expanded option reads correctly:
+- 5 question(s) have options written in shortened form. As you asked, they were **kept exactly as written** and not expanded. Please rewrite them as full options before publishing this lesson:
 
   **Why did Mia open a lemonade stand?**
-  - In the document: She wanted to make new friends / help her dad / **earn some pocket money ✓** / use up the sugar / stay out of the sun.
-  - Expanded to:
-    - She wanted to make new friends.
-    - She wanted to help her dad.
-    - She wanted to earn some pocket money.
-    - She wanted to use up the sugar.
-    - She wanted to stay out of the sun.
+  - She wanted to make new friends / help her dad / **earn some pocket money ✓** / use up the sugar / stay out of the sun.
 
   **How many lemons did Mia pick?**
-  - In the document: She picked two / five / twelve / **ten ✓** / twenty lemons.
-  - Expanded to:
-    - She picked two lemons.
-    - She picked five lemons.
-    - She picked twelve lemons.
-    - She picked ten lemons.
-    - She picked twenty lemons.
+  - She picked two / five / twelve / **ten ✓** / twenty lemons.
 
   **Why did Mia add more sugar?**
-  - In the document: The lemonade was a little too warm / **sour ✓** / sweet / watery / salty.
-  - Expanded to:
-    - The lemonade was a little too warm.
-    - The lemonade was a little too sour.
-    - The lemonade was a little too sweet.
-    - The lemonade was a little too watery.
-    - The lemonade was a little too salty.
+  - The lemonade was a little too warm / **sour ✓** / sweet / watery / salty.
 
   **What colour was Mia's sign?**
-  - In the document: The sign was bright red / blue / **yellow ✓** / green / pink.
-  - Expanded to:
-    - The sign was bright red.
-    - The sign was bright blue.
-    - The sign was bright yellow.
-    - The sign was bright green.
-    - The sign was bright pink.
+  - The sign was bright red / blue / **yellow ✓** / green / pink.
 
   **Where were the thirsty children coming from?**
-  - In the document: They were coming home from school / swimming lessons / the park / **soccer practice ✓** / church.
-  - Expanded to:
-    - They were coming home from school.
-    - They were coming home from swimming lessons.
-    - They were coming home from the park.
-    - They were coming home from soccer practice.
-    - They were coming home from church.
+  - They were coming home from school / swimming lessons / the park / **soccer practice ✓** / church.
 
 
 ### Afrikaans L5 – Elke druppel tel
 
-- 1 question(s) had shortened options, which were expanded into full sentences. Please check that each expanded option reads correctly:
+- 1 question(s) have options written in shortened form. As you asked, they were **kept exactly as written** and not expanded. Please rewrite them as full options before publishing this lesson:
 
   **Hoeveel water kan 'n oop kraan elke minuut laat afloop?**
-  - In the document: Tot twee / vier / **ses ✓** / tien / twintig liter.
-  - Expanded to:
-    - Tot twee liter.
-    - Tot vier liter.
-    - Tot ses liter.
-    - Tot tien liter.
-    - Tot twintig liter.
+  - Tot twee / vier / **ses ✓** / tien / twintig liter.
 
 
 ### English L5 – Why Sleep Matters
 
-- 1 question(s) had shortened options, which were expanded into full sentences. Please check that each expanded option reads correctly:
+- 1 question(s) have options written in shortened form. As you asked, they were **kept exactly as written** and not expanded. Please rewrite them as full options before publishing this lesson:
 
   **How much sleep should children aged six to twelve get?**
-  - In the document: Four to six / six to eight / **nine to twelve ✓** / twelve to fourteen / ten to fifteen hours.
-  - Expanded to:
-    - Four to six hours.
-    - Six to eight hours.
-    - Nine to twelve hours.
-    - Twelve to fourteen hours.
-    - Ten to fifteen hours.
+  - Four to six / six to eight / **nine to twelve ✓** / twelve to fourteen / ten to fifteen hours.
 
 
 ## Extra support words without word cards

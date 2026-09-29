@@ -10,7 +10,7 @@ import { BENCHMARKS, type ContentItem, type Lesson, sentenceCount, wordCount } f
 
 const root = join(__dirname, "..");
 const source = readFileSync(join(root, "content/lessons-source.md"), "utf8");
-const { items, issues, expansions, statedWordCounts } = parseSource(source);
+const { items, issues, shortened, statedWordCounts } = parseSource(source);
 
 writeFileSync(join(root, "content/lessons.json"), JSON.stringify(items, null, 2) + "\n", "utf8");
 
@@ -80,19 +80,17 @@ if (!flagged.length) p("Nothing needs checking.");
 for (const item of flagged) {
   p(`### ${label(item)}`);
   p();
-  for (const issue of issues.filter((i) => i.itemId === item.id && i.kind === "flag" && !/Shortened options/.test(i.message)))
+  for (const issue of issues.filter((i) => i.itemId === item.id && i.kind === "flag" && !/shortened form/.test(i.message)))
     p(`- ${issue.message}`);
-  const ex = expansions.filter((e) => e.itemId === item.id);
-  if (ex.length) {
+  const sh = shortened.filter((e) => e.itemId === item.id);
+  if (sh.length) {
     p(
-      `- ${ex.length} question(s) had shortened options, which were expanded into full sentences. Please check that each expanded option reads correctly:`,
+      `- ${sh.length} question(s) have options written in shortened form. As you asked, they were **kept exactly as written** and not expanded. Please rewrite them as full options before publishing this lesson:`,
     );
     p();
-    for (const e of ex) {
+    for (const e of sh) {
       p(`  **${e.question}**`);
-      p(`  - In the document: ${e.original.trim()}`);
-      p(`  - Expanded to:`);
-      for (const o of e.options) p(`    - ${o}`);
+      p(`  - ${e.original}`);
       p();
     }
   }

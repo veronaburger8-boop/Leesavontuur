@@ -9931,10 +9931,10 @@
         "question": "Saam met wie woon Karel?",
         "options": [
           "Karel woon saam met sy ma.",
-          "Karel woon saam met sy oupa.",
-          "Karel woon saam met sy ouma.",
-          "Karel woon saam met sy tannie.",
-          "Karel woon saam met sy broer."
+          "sy oupa.",
+          "sy ouma.",
+          "sy tannie.",
+          "sy broer."
         ],
         "answer": 2,
         "thinking": false
@@ -9942,11 +9942,11 @@
       {
         "question": "Waarom moet Karel 'n sonnige plek kies?",
         "options": [
-          "Want groente het baie lig nodig.",
-          "Want groente het baie skaduwee nodig.",
-          "Want groente het baie wind nodig.",
-          "Want groente het baie reën nodig.",
-          "Want groente het baie sand nodig."
+          "Want groente het baie lig",
+          "skaduwee",
+          "wind",
+          "reën",
+          "sand nodig."
         ],
         "answer": 0,
         "thinking": false
@@ -9954,11 +9954,11 @@
       {
         "question": "Wat sê Ouma is kompos vir die plante?",
         "options": [
-          "Kompos is soos water vir die plante.",
-          "Kompos is soos medisyne vir die plante.",
-          "Kompos is soos 'n kombers vir die plante.",
-          "Kompos is soos kos vir die plante.",
-          "Kompos is soos speelgoed vir die plante."
+          "Kompos is soos water",
+          "medisyne",
+          "'n kombers",
+          "kos",
+          "speelgoed vir die plante."
         ],
         "answer": 3,
         "thinking": false
@@ -9966,11 +9966,11 @@
       {
         "question": "Wat plant Karel langs die heining?",
         "options": [
-          "Hy plant 'n paar mielies langs die heining.",
-          "Hy plant 'n paar pampoene langs die heining.",
-          "Hy plant 'n paar blomme langs die heining.",
-          "Hy plant 'n paar bome langs die heining.",
-          "Hy plant 'n paar aartappels langs die heining."
+          "Hy plant 'n paar mielies",
+          "pampoene",
+          "blomme",
+          "bome",
+          "aartappels langs die heining."
         ],
         "answer": 1,
         "thinking": false
@@ -9978,11 +9978,11 @@
       {
         "question": "Hoe lank duur dit voor Karel die eerste blaartjies sien?",
         "options": [
-          "Dit duur twee dae.",
-          "Dit duur een week.",
-          "Dit duur twee weke.",
-          "Dit duur drie weke.",
-          "Dit duur twee maande."
+          "Dit duur twee dae",
+          "een week",
+          "twee weke",
+          "drie weke",
+          "twee maande."
         ],
         "answer": 2,
         "thinking": false
@@ -10088,7 +10088,7 @@
         "answer": 1
       }
     ],
-    "reviewNote": "Shortened options were expanded into full sentences for \"Saam met wie woon Karel?\"; please check them.\nShortened options were expanded into full sentences for \"Waarom moet Karel 'n sonnige plek kies?\"; please check them.\nShortened options were expanded into full sentences for \"Wat sê Ouma is kompos vir die plante?\"; please check them.\nShortened options were expanded into full sentences for \"Wat plant Karel langs die heining?\"; please check them.\nShortened options were expanded into full sentences for \"Hoe lank duur dit voor Karel die eerste blaartjies sien?\"; please check them."
+    "reviewNote": "The options for \"Saam met wie woon Karel?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing.\nThe options for \"Waarom moet Karel 'n sonnige plek kies?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing.\nThe options for \"Wat sê Ouma is kompos vir die plante?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing.\nThe options for \"Wat plant Karel langs die heining?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing.\nThe options for \"Hoe lank duur dit voor Karel die eerste blaartjies sien?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing."
   },
   {
     "id": "af-l3-die-dolfyne-in-die-baai",
@@ -12666,11 +12666,11 @@
       {
         "question": "Why did Mia open a lemonade stand?",
         "options": [
-          "She wanted to make new friends.",
-          "She wanted to help her dad.",
-          "She wanted to earn some pocket money.",
-          "She wanted to use up the sugar.",
-          "She wanted to stay out of the sun."
+          "She wanted to make new friends",
+          "help her dad",
+          "earn some pocket money",
+          "use up the sugar",
+          "stay out of the sun."
         ],
         "answer": 2,
         "thinking": false
@@ -12678,11 +12678,11 @@
       {
         "question": "How many lemons did Mia pick?",
         "options": [
-          "She picked two lemons.",
-          "She picked five lemons.",
-          "She picked twelve lemons.",
-          "She picked ten lemons.",
-          "She picked twenty lemons."
+          "She picked two",
+          "five",
+          "twelve",
+          "ten",
+          "twenty lemons."
         ],
         "answer": 3,
         "thinking": false
@@ -12690,11 +12690,11 @@
       {
         "question": "Why did Mia add more sugar?",
         "options": [
-          "The lemonade was a little too warm.",
-          "The lemonade was a little too sour.",
-          "The lemonade was a little too sweet.",
-          "The lemonade was a little too watery.",
-          "The lemonade was a little too salty."
+          "The lemonade was a little too warm",
+          "sour",
+          "sweet",
+          "watery",
+          "salty."
         ],
         "answer": 1,
         "thinking": false
@@ -12702,11 +12702,11 @@
       {
         "question": "What colour was Mia's sign?",
         "options": [
-          "The sign was bright red.",
-          "The sign was bright blue.",
-          "The sign was bright yellow.",
-          "The sign was bright green.",
-          "The sign was bright pink."
+          "The sign was bright red",
+          "blue",
+          "yellow",
+          "green",
+          "pink."
         ],
         "answer": 2,
         "thinking": false
@@ -12714,11 +12714,11 @@
       {
         "question": "Where were the thirsty children coming from?",
         "options": [
-          "They were coming home from school.",
-          "They were coming home from swimming lessons.",
-          "They were coming home from the park.",
-          "They were coming home from soccer practice.",
-          "They were coming home from church."
+          "They were coming home from school",
+          "swimming lessons",
+          "the park",
+          "soccer practice",
+          "church."
         ],
         "answer": 3,
         "thinking": false
@@ -12824,7 +12824,7 @@
         "answer": 0
       }
     ],
-    "reviewNote": "Shortened options were expanded into full sentences for \"Why did Mia open a lemonade stand?\"; please check them.\nShortened options were expanded into full sentences for \"How many lemons did Mia pick?\"; please check them.\nShortened options were expanded into full sentences for \"Why did Mia add more sugar?\"; please check them.\nShortened options were expanded into full sentences for \"What colour was Mia's sign?\"; please check them.\nShortened options were expanded into full sentences for \"Where were the thirsty children coming from?\"; please check them."
+    "reviewNote": "The options for \"Why did Mia open a lemonade stand?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing.\nThe options for \"How many lemons did Mia pick?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing.\nThe options for \"Why did Mia add more sugar?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing.\nThe options for \"What colour was Mia's sign?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing.\nThe options for \"Where were the thirsty children coming from?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing."
   },
   {
     "id": "en-l3-up-table-mountain",
@@ -20586,11 +20586,11 @@
       {
         "question": "Hoeveel water kan 'n oop kraan elke minuut laat afloop?",
         "options": [
-          "Tot twee liter.",
-          "Tot vier liter.",
-          "Tot ses liter.",
-          "Tot tien liter.",
-          "Tot twintig liter."
+          "Tot twee",
+          "vier",
+          "ses",
+          "tien",
+          "twintig liter."
         ],
         "answer": 2,
         "thinking": false
@@ -20757,7 +20757,7 @@
         "answer": 0
       }
     ],
-    "reviewNote": "Shortened options were expanded into full sentences for \"Hoeveel water kan 'n oop kraan elke minuut laat afloop?\"; please check them."
+    "reviewNote": "The options for \"Hoeveel water kan 'n oop kraan elke minuut laat afloop?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing."
   },
   {
     "id": "af-l5-klein-diertjies-groot-werk",
@@ -23241,11 +23241,11 @@
       {
         "question": "How much sleep should children aged six to twelve get?",
         "options": [
-          "Four to six hours.",
-          "Six to eight hours.",
-          "Nine to twelve hours.",
-          "Twelve to fourteen hours.",
-          "Ten to fifteen hours."
+          "Four to six",
+          "six to eight",
+          "nine to twelve",
+          "twelve to fourteen",
+          "ten to fifteen hours."
         ],
         "answer": 2,
         "thinking": false
@@ -23388,7 +23388,7 @@
         "answer": 2
       }
     ],
-    "reviewNote": "Shortened options were expanded into full sentences for \"How much sleep should children aged six to twelve get?\"; please check them."
+    "reviewNote": "The options for \"How much sleep should children aged six to twelve get?\" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing."
   },
   {
     "id": "en-l5-how-does-the-internet-reach-you",

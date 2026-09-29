@@ -1,68 +1,18 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { expandShorthand, parseSource, splitSentences, unescapeMd } from "./parse-source";
+import { isShortened, parseSource, splitSentences, unescapeMd } from "./parse-source";
 import { wordCount } from "./types";
 
-describe("expandShorthand", () => {
+describe("isShortened", () => {
   it("leaves full options alone", () => {
-    expect(expandShorthand(["Tokkie is swart.", "Tokkie is wit.", "Tokkie is bruin."])).toBeNull();
-    expect(expandShorthand(["'n Groen grasperk", "Aalwyne en vetplante", "Waterlelies"])).toBeNull();
+    expect(isShortened(["Tokkie is swart.", "Tokkie is wit.", "Tokkie is bruin."])).toBe(false);
+    expect(isShortened(["'n Groen grasperk", "Aalwyne en vetplante", "Waterlelies"])).toBe(false);
   });
 
-  it("expands options that replace the end of the first sentence", () => {
-    expect(expandShorthand(["Karel woon saam met sy ma.", "sy oupa.", "sy ouma."])).toEqual([
-      "Karel woon saam met sy ma.",
-      "Karel woon saam met sy oupa.",
-      "Karel woon saam met sy ouma.",
-    ]);
-  });
-
-  it("expands options with a shared start and end", () => {
-    expect(expandShorthand(["Want groente het baie lig", "skaduwee", "wind", "reën", "sand nodig."])).toEqual([
-      "Want groente het baie lig nodig.",
-      "Want groente het baie skaduwee nodig.",
-      "Want groente het baie wind nodig.",
-      "Want groente het baie reën nodig.",
-      "Want groente het baie sand nodig.",
-    ]);
-  });
-
-  it("keeps multi-word options whole", () => {
-    expect(expandShorthand(["Dit duur twee dae", "een week", "twee weke", "drie weke", "twee maande."])).toEqual([
-      "Dit duur twee dae.",
-      "Dit duur een week.",
-      "Dit duur twee weke.",
-      "Dit duur drie weke.",
-      "Dit duur twee maande.",
-    ]);
-    expect(
-      expandShorthand(["She wanted to make new friends", "help her dad", "earn some pocket money", "use up the sugar", "stay out of the sun."]),
-    ).toEqual([
-      "She wanted to make new friends.",
-      "She wanted to help her dad.",
-      "She wanted to earn some pocket money.",
-      "She wanted to use up the sugar.",
-      "She wanted to stay out of the sun.",
-    ]);
-  });
-
-  it("keeps prepositions in the shared start", () => {
-    expect(expandShorthand(["They were coming home from school", "swimming lessons", "the park", "church."])).toEqual([
-      "They were coming home from school.",
-      "They were coming home from swimming lessons.",
-      "They were coming home from the park.",
-      "They were coming home from church.",
-    ]);
-  });
-
-  it("handles options with no shared start", () => {
-    expect(expandShorthand(["Four to six", "six to eight", "nine to twelve", "ten to fifteen hours."])).toEqual([
-      "Four to six hours.",
-      "Six to eight hours.",
-      "Nine to twelve hours.",
-      "Ten to fifteen hours.",
-    ]);
+  it("recognises both shortened forms", () => {
+    expect(isShortened(["Karel woon saam met sy ma.", "sy oupa.", "sy ouma."])).toBe(true);
+    expect(isShortened(["Want groente het baie lig", "skaduwee", "wind", "reën", "sand nodig."])).toBe(true);
   });
 });
 
@@ -117,13 +67,16 @@ describe("parseSource on the real lessons file", () => {
     expect(karel.wordCards[3].forms).toBe("Teenoorgestelde: onversigtig");
     expect(karel.extraWords).toEqual(["sonnig", "opgewonde"]);
     expect(karel.comprehension.map((q) => q.answer)).toEqual([2, 0, 3, 1, 2]);
+    // Shortened options are kept exactly as written (owner's decision).
+    expect(karel.comprehension[0].options).toEqual(["Karel woon saam met sy ma.", "sy oupa.", "sy ouma.", "sy tannie.", "sy broer."]);
+    expect(karel.comprehension[1].options).toEqual(["Want groente het baie lig", "skaduwee", "wind", "reën", "sand nodig."]);
     expect(karel.grammar.items[0]).toEqual({ prompt: "blaar", accepted: ["blaartjie"] });
     expect(karel.vocabulary[1]).toEqual({
       sentence: "Die hond kan nie uitkom nie, want daar is 'n hoë ______ om die erf.",
       options: ["heuning", "heining", "heinings", "horing"],
       answer: 1,
     });
-    expect(karel.status).toBe("in_review"); // expanded questions must be checked
+    expect(karel.status).toBe("in_review"); // shortened options must be rewritten by the owner
   });
 
   it("uses paragraphs from Level 4", () => {

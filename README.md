@@ -44,7 +44,7 @@ Supabase's built-in email is fine for testing but only sends a few emails an hou
 3. Edit the child and change a level. Press **English** at the top: the parent area switches language.
 4. Under **My rekening**, download your family's data and have a look at the file.
 5. Open **Admin** (after step 6 of the set-up). You should see 126 items **Published** and 4 **In review**.
-6. Open an item that is in review (click the **In review** count). Read the review note and check the expanded questions. Then press **Publish**.
+6. Open an item that is in review (click the **In review** count). Read the review note: it lists the questions whose options are still in shortened form. (Editing them in the site comes later; for now, leave these 4 lessons in review.)
 7. Open any lesson and press **Retire**. Its status says children can no longer see it, and the **History** shows who retired it and when. (Children's lesson screens arrive in Phase 2. The database rule that hides everything except Published items is already in place and tested.)
 8. Filter the library by language, level, topic and status, and search for a title.
 

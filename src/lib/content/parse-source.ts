@@ -2,9 +2,9 @@
 // lessons document) into the content data format. The rules are in CLAUDE.md
 // under "Converting the content".
 //
-// The parser never rewrites content. It only removes Markdown formatting and
-// expands the shortened comprehension options described in CLAUDE.md. Anything
-// it cannot read with confidence is recorded as an issue for the owner.
+// The parser never rewrites content. It only removes Markdown formatting.
+// Shortened comprehension options are kept exactly as written and flagged for
+// the owner. Anything it cannot read with confidence is recorded as an issue.
 
 import {
   type Calibration,
@@ -29,18 +29,18 @@ export interface Issue {
   message: string;
 }
 
-export interface Expansion {
+/** A question whose options are written in shortened form. */
+export interface Shortened {
   itemId: string;
   title: string;
   question: string;
   original: string;
-  options: string[];
 }
 
 export interface ParseResult {
   items: ContentItem[];
   issues: Issue[];
-  expansions: Expansion[];
+  shortened: Shortened[];
   /** Word counts stated in the source ("About 162 words"), by item id. */
   statedWordCounts: Record<string, number>;
 }
@@ -135,7 +135,7 @@ function paragraphs(lines: string[]): string[][] {
 
 class Collector {
   issues: Issue[] = [];
-  expansions: Expansion[] = [];
+  shortened: Shortened[] = [];
   constructor(
     public itemId: string,
     public title: string,
@@ -248,97 +248,22 @@ function splitOptions(s: string): RawOption[] {
 
 const endsSentence = (s: string) => /[.!?]["”’]?$/.test(s);
 const startsLower = (s: string) => /^\p{Ll}/u.test(s);
-const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const words = (s: string) => s.split(/\s+/).filter(Boolean);
-
-function mode(nums: number[]): number {
-  const counts = new Map<number, number>();
-  for (const n of nums) counts.set(n, (counts.get(n) ?? 0) + 1);
-  let best = nums[0] ?? 1;
-  let bestCount = 0;
-  for (const [n, k] of counts)
-    if (k > bestCount || (k === bestCount && n < best)) {
-      best = n;
-      bestCount = k;
-    }
-  return best;
-}
-
-/** Articles and prepositions: an option rarely starts or ends with one of these. */
-const FUNCTION_WORDS = new Set(
-  (
-    "a an the to from at in on of for with by into onto like as about " +
-    "'n die van na op met vir uit om te soos aan oor tot deur"
-  ).split(" "),
-);
 
 /**
- * Chooses how many words at the end ("end") or start ("start") of a segment
- * form the option. Prefers the length closest to the other options' usual
- * length, and rejects options that start or end with an article or
- * preposition (unless the middle options start with the same word).
+ * True when the options are written in shortened form (CLAUDE.md, "Watch
+ * out"), for example "Karel woon saam met sy ma. / sy oupa. / sy ouma." or
+ * "Want groente het baie lig / skaduwee / wind / reën / sand nodig.".
+ * The owner decided these are kept exactly as written and not expanded.
  */
-function bestOptionLength(segment: string[], usual: number, middleStarts: Set<string>, side: "start" | "end"): number | null {
-  const maxK = segment.length;
-  let best: number | null = null;
-  for (let k = 1; k <= maxK; k++) {
-    const opt = side === "end" ? segment.slice(segment.length - k) : segment.slice(0, k);
-    const firstWord = opt[0].toLowerCase();
-    const lastWord = opt[opt.length - 1].toLowerCase();
-    if (FUNCTION_WORDS.has(firstWord) && !middleStarts.has(firstWord)) continue;
-    if (FUNCTION_WORDS.has(lastWord)) continue;
-    if (best === null || Math.abs(k - usual) < Math.abs(best - usual)) best = k;
-  }
-  return best;
-}
-
-/**
- * Expands shortened options (CLAUDE.md, "Watch out"). Returns null when the
- * options are already full.
- *
- * Shape A: "Karel woon saam met sy ma. / sy oupa. / sy ouma." – the later
- * options replace the end of the first one.
- * Shape B: "Want groente het baie lig / skaduwee / wind / reën / sand nodig." –
- * a shared start on the first option and a shared end on the last one.
- */
-export function expandShorthand(opts: string[]): string[] | null {
-  if (opts.length < 2) return null;
+export function isShortened(opts: string[]): boolean {
+  if (opts.length < 2) return false;
   const first = opts[0];
   const last = opts[opts.length - 1];
   const middle = opts.slice(1, -1);
-
-  // Shape B: only the last option ends the sentence.
-  if (!endsSentence(first) && endsSentence(last) && middle.every((o) => !endsSentence(o))) {
-    const n = middle.length ? mode(middle.map((o) => words(o).length)) : 1;
-    const middleStarts = new Set(middle.map((o) => words(o)[0]?.toLowerCase()));
-    const fw = words(first);
-    const punct = last.match(/[.!?]["”’]?$/)![0];
-    const lw = words(last.slice(0, -punct.length));
-    // How many words of the first segment form the first option (the rest is
-    // the shared start), and how many of the last segment form the last option
-    // (the rest is the shared end).
-    const k1 = bestOptionLength(fw, n, middleStarts, "end");
-    const k2 = bestOptionLength(lw, n, middleStarts, "start");
-    if (k1 === null || k2 === null) return null;
-    const prefix = fw.slice(0, fw.length - k1).join(" ");
-    const firstOpt = fw.slice(fw.length - k1).join(" ");
-    const lastOpt = lw.slice(0, k2).join(" ");
-    const suffix = lw.slice(k2).join(" ");
-    const build = (o: string) => capitalise(`${prefix ? prefix + " " : ""}${o}${suffix ? " " + suffix : ""}${punct}`);
-    return [firstOpt, ...middle, lastOpt].map(build);
-  }
-
-  // Shape A: a full first sentence, followed by fragments starting in lower case.
-  const rest = opts.slice(1);
-  if (endsSentence(first) && !startsLower(first) && rest.some(startsLower)) {
-    const fragments = rest.filter(startsLower);
-    const n = mode(fragments.map((o) => words(o).length));
-    const fw = words(first);
-    if (fw.length <= n) return null;
-    const prefix = fw.slice(0, fw.length - n).join(" ");
-    return [first, ...rest.map((o) => (startsLower(o) ? `${prefix} ${o}` : o))];
-  }
-  return null;
+  // Shared start and end: only the last option ends the sentence.
+  if (!endsSentence(first) && endsSentence(last) && middle.every((o) => !endsSentence(o))) return true;
+  // A full first sentence, followed by fragments starting in lower case.
+  return endsSentence(first) && !startsLower(first) && opts.slice(1).some(startsLower);
 }
 
 const QUESTION_RE = /^\d+\.\s+\*\*(.+?)\*\*\s+(.*)$/;
@@ -357,12 +282,10 @@ function parseMultipleChoiceQuestion(line: string, c: Collector): MultipleChoice
     question = question.slice(th[0].length);
   }
   const raw = splitOptions(m[2]);
-  let options = raw.map((o) => o.text);
-  const expanded = expandShorthand(options);
-  if (expanded) {
-    c.expansions.push({ itemId: c.itemId, title: c.title, question, original: m[2], options: expanded });
-    c.flag(`Shortened options were expanded into full sentences for "${question}"; please check them.`);
-    options = expanded;
+  const options = raw.map((o) => o.text);
+  if (isShortened(options)) {
+    c.shortened.push({ itemId: c.itemId, title: c.title, question, original: m[2].trim() });
+    c.flag(`The options for "${question}" are written in shortened form and were kept exactly as written. Please rewrite them as full options before publishing.`);
   }
   const correct = raw.map((o, i) => (o.correct ? i : -1)).filter((i) => i >= 0);
   if (correct.length !== 1) c.flag(`Question "${question}" has ${correct.length} options marked ✓ (expected exactly 1).`);
@@ -699,7 +622,7 @@ export function parseSource(markdown: string): ParseResult {
   const idsSeen = new Set<string>();
   const items: ContentItem[] = [];
   const issues: Issue[] = [];
-  const expansions: Expansion[] = [];
+  const shortened: Shortened[] = [];
   const statedWordCounts: Record<string, number> = {};
 
   for (const block of blocks) {
@@ -710,13 +633,13 @@ export function parseSource(markdown: string): ParseResult {
       if (r.stated) statedWordCounts[r.lesson.id] = r.stated;
       for (const p of checkItem(r.lesson)) r.c.flag(p);
       issues.push(...r.c.issues);
-      expansions.push(...r.c.expansions);
+      shortened.push(...r.c.shortened);
     } else if (CAL_HEADING.test(block.heading)) {
       for (const r of parseCalibrationLevel(block, idsSeen)) {
         items.push(r.item);
         for (const p of checkItem(r.item)) r.c.flag(p);
         issues.push(...r.c.issues);
-        expansions.push(...r.c.expansions);
+        shortened.push(...r.c.shortened);
       }
     } else {
       issues.push({ kind: "note", itemId: "-", title: block.heading, message: "Section was not recognised and was skipped." });
@@ -733,5 +656,5 @@ export function parseSource(markdown: string): ParseResult {
     }
   }
 
-  return { items, issues, expansions, statedWordCounts };
+  return { items, issues, shortened, statedWordCounts };
 }

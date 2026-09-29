@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="af">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Leesavontuur – prototipe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#D6ECF8; --paper:#FFFFFF; --ink:#1D2B36; --muted:#56687A;
+  --leaf:#2E6B3F; --leaf-soft:#E2F0E3; --sun:#F4BE3A; --sun-soft:#FFF3CF;
+  --soil:#7B4F2C; --stone:#C8D4DC; --error:#C8412F; --error-soft:#FBE3DF;
+  --ui-font:"Atkinson Hyperlegible", Verdana, Arial, sans-serif;
+  --read-font:"Atkinson Hyperlegible", Verdana, Arial, sans-serif;
+  --read-weight:400;
+  --display:"Baloo 2", "Trebuchet MS", Verdana, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --sky:#10202B; --paper:#182A36; --ink:#EAF2F7; --muted:#A3B6C3;
+    --leaf:#76C68B; --leaf-soft:#1E3A2A; --sun:#F4BE3A; --sun-soft:#3A3217;
+    --soil:#D2A677; --stone:#3A5565; --error:#FF8373; --error-soft:#43221E;
+  }
+}
+:root[data-theme="dark"]{
+  --sky:#10202B; --paper:#182A36; --ink:#EAF2F7; --muted:#A3B6C3;
+  --leaf:#76C68B; --leaf-soft:#1E3A2A; --sun:#F4BE3A; --sun-soft:#3A3217;
+  --soil:#D2A677; --stone:#3A5565; --error:#FF8373; --error-soft:#43221E;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--sky);color:var(--ink);font-family:var(--ui-font);font-size:18px;line-height:1.5}
+body.g1{--read-font:"Andika","Comic Sans MS",Verdana,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;max-width:980px;margin:0 auto;position:relative;z-index:1}
+.brand{font-family:var(--display);font-weight:800;font-size:30px;color:var(--leaf);margin:0;line-height:1}
+.brand small{display:block;font-family:var(--ui-font);font-weight:400;font-size:14px;color:var(--muted);margin-top:4px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border-radius:14px;border:2px solid var(--leaf);background:var(--paper);color:var(--leaf);padding:10px 18px;font-weight:700}
+button.primary{background:var(--leaf);color:var(--paper);border-color:var(--leaf)}
+button.small{padding:6px 12px;font-size:15px}
+button[disabled]{opacity:.4;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.path{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;max-width:980px;margin:0 auto 12px;padding:0 16px;position:relative;z-index:1}
+.stone{width:42px;height:32px;border-radius:50%;background:var(--stone);display:grid;place-items:center;font-family:var(--display);font-weight:800;color:var(--ink);font-size:16px;transition:transform .2s}
+.stone.done{background:var(--leaf);color:var(--paper)}
+.stone.now{background:var(--sun);color:#1D2B36;transform:scale(1.18)}
+.path-label{width:100%;text-align:center;font-size:15px;color:var(--muted)}
+main{max-width:860px;margin:0 auto;padding:0 16px 130px;position:relative;z-index:1}
+.panel{background:var(--paper);border-radius:22px;padding:28px}
+h2{font-family:var(--display);font-weight:800;font-size:32px;margin:0 0 4px;color:var(--leaf);line-height:1.15}
+.sub{color:var(--muted);margin:0 0 18px}
+.reading{font-family:var(--read-font);font-size:25px;line-height:1.6;font-weight:var(--read-weight)}
+.reading p{margin:0 0 4px}
+.passage{border:3px solid var(--sun);border-radius:18px;padding:20px 24px}
+.wordcard{border:3px solid var(--sun);border-radius:18px;padding:22px}
+.card-word{font-family:var(--read-font);font-size:42px;font-weight:700;color:var(--soil);margin-bottom:10px}
+.reading-sm{font-family:var(--read-font);font-size:22px;font-weight:var(--read-weight);margin:0 0 10px}
+.en{color:var(--muted);font-weight:700;margin:14px 0 0}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px;flex-wrap:wrap}
+.count{color:var(--muted);font-size:16px}
+.q{font-family:var(--read-font);font-size:24px;font-weight:var(--read-weight);margin:0 0 16px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;border-color:var(--stone);color:var(--ink);font-family:var(--read-font);font-size:21px;font-weight:var(--read-weight);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.opt[disabled]{opacity:1}
+.opt.right{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf)}
+.opt.wrong{border-color:var(--error);background:var(--error-soft);color:var(--error)}
+.mark{font-size:24px}
+.feedback{min-height:28px;font-weight:700;margin:12px 0 0}
+.good{color:var(--leaf)} .bad{color:var(--error)}
+.eye-stage{min-height:240px;display:grid;place-items:center;text-align:center;border:3px solid var(--sun);border-radius:18px;padding:20px}
+.eye-text{font-size:30px;margin:0}
+.pacer{text-align:left;width:100%}
+.pace-line{position:relative;display:block;opacity:.45;margin-bottom:6px}
+.pace-line.on{opacity:1}
+.pace-line .bar{position:absolute;left:0;bottom:-3px;height:5px;width:0;background:var(--sun);border-radius:3px}
+.pace-line.on .bar{animation:sweep var(--dur) linear forwards}
+@keyframes sweep{to{width:100%}}
+.slots{display:grid;gap:8px;margin-bottom:18px}
+.slot{border:3px dashed var(--stone);border-radius:14px;min-height:56px;padding:10px 14px;display:flex;gap:12px;align-items:center;font-family:var(--read-font);font-weight:700;font-size:20px;background:transparent;color:var(--ink);text-align:left;width:100%}
+.slot[disabled]{opacity:1;cursor:default}
+.slot.filled{border-style:solid;border-color:var(--sun);background:var(--sun-soft)}
+.slot.ok{border-color:var(--leaf);background:var(--leaf-soft)}
+.slot.no{border-color:var(--error);background:var(--error-soft)}
+.slot .n{font-family:var(--display);color:var(--muted);min-width:20px}
+.flashbox{min-height:170px;display:grid;place-items:center;border:3px dashed var(--stone);border-radius:18px;margin:14px 0;padding:16px;text-align:center}
+.flashword{font-family:var(--read-font);font-size:54px;font-weight:var(--read-weight)}
+.attempts{border:2px solid var(--leaf);border-radius:14px;padding:10px 14px;min-height:48px;color:var(--muted);font-size:16px}
+input[type=text]{font-family:var(--read-font);font-size:28px;padding:10px 14px;border-radius:14px;border:3px solid var(--stone);width:100%;max-width:440px;background:var(--paper);color:var(--ink)}
+input[type=number],select{font:inherit;font-size:18px;padding:6px 10px;border-radius:10px;border:2px solid var(--stone);background:var(--paper);color:var(--ink)}
+.letters{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.letters button{min-width:54px;padding:8px 12px;font-family:var(--read-font);font-size:22px;border-color:var(--stone);color:var(--ink)}
+.instr{background:var(--sun-soft);border-radius:14px;padding:12px 16px;font-weight:700;margin-bottom:18px}
+.blank{letter-spacing:2px}
+.celebrate{text-align:center}
+.celebrate .big{font-family:var(--display);font-size:72px;font-weight:800;color:var(--leaf);line-height:1;margin-bottom:6px}
+.celebrate.full .big{color:var(--sun);animation:pop .6s ease-out}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.celebrate .nav{justify-content:center}
+.parent{margin-top:18px;border-top:2px solid var(--stone);padding-top:12px}
+.parent summary{cursor:pointer;font-weight:700;color:var(--muted)}
+.parent label{display:block;margin-top:12px}
+.table-wrap{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{border:2px solid var(--stone);padding:10px;text-align:center}
+th{background:var(--leaf);color:var(--paper);font-family:var(--display);font-weight:600}
+td{font-weight:700;font-size:20px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.grass{position:fixed;left:0;right:0;bottom:0;height:calc(64px + env(safe-area-inset-bottom,0px));pointer-events:none;z-index:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='64'%3E%3Cpath d='M0 64 L8 26 L14 64 Z M12 64 L22 12 L30 64 Z M28 64 L36 30 L42 64 Z M40 64 L50 18 L58 64 Z' fill='%234C9A5B'/%3E%3C/svg%3E") repeat-x bottom/60px 64px}
+@media (max-width:560px){
+  .panel{padding:20px}
+  h2{font-size:26px}
+  .reading{font-size:21px}
+  .eye-text{font-size:25px}
+  .flashword{font-size:40px}
+}
+@media (prefers-reduced-motion: reduce){
+  .stone{transition:none}
+  .celebrate.full .big{animation:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1 class="brand">Leesavontuur<small>Prototipe: een volledige les (werknaam)</small></h1>
+  <div class="tools">
+    <button class="small" id="fontBtn" aria-pressed="false">Graad 1-lettertipe: af</button>
+    <button class="small" id="homeBtn" hidden>Begin oor</button>
+  </div>
+</header>
+<nav class="path" id="path" aria-label="Vordering deur die les"></nav>
+<main id="app" aria-live="polite"></main>
+<div class="grass" aria-hidden="true"></div>
+
+<script>
+const LESSON = {
+  title:`Karel se groentetuin`, level:3,
+  cards:[
+    {w:`spit`, d:[`Om die grond met 'n graaf om te draai en los te maak.`], ex:`Pa spit die grond voor hy die blomme plant.`, f:`Ek spit, ek het gespit`, en:`to dig`},
+    {w:`kompos`, d:[`Verrotte blare, gras en groenteskille wat die grond ryk maak.`,`Dit is goed vir plante.`], ex:`Ma gooi die ou groenteskille op die komposhoop.`, f:``, en:`compost`},
+    {w:`onkruid`, d:[`Plante wat groei waar jy hulle nie wil hê nie.`,`Dit steel water en kos van die ander plante.`], ex:`Ons trek elke Saterdag die onkruid in die tuin uit.`, f:``, en:`weeds`},
+    {w:`versigtig`, d:[`Wanneer jy iets stadig en mooi doen sodat niks breek of seerkry nie.`], ex:`Dra die eiers versigtig, anders breek hulle.`, f:`Teenoorgestelde: onversigtig`, en:`careful / carefully`},
+    {w:`heining`, d:[`'n Draad- of houtmuur om 'n tuin of plaas.`,`Dit hou diere in of uit.`], ex:`Die koei staan by die heining en kyk na ons.`, f:`Een heining, baie heinings`, en:`fence`},
+    {w:`gieter`, d:[`'n Houer met 'n lang tuit waarmee jy plante water gee.`], ex:`Die gieter is swaar as dit vol water is.`, f:`Een gieter, baie gieters`, en:`watering can`}
+  ],
+  passage:[
+    `Karel woon saam met sy ouma op 'n klein plasie buite die dorp.`,
+    `Een Saterdagoggend vra hy vir Ouma of hy sy eie groentetuin mag maak.`,
+    `Ouma lag en gee vir hom 'n graaf, 'n hark en 'n pakkie saad.`,
+    `Eers moet Karel 'n sonnige plek kies, want groente het baie lig nodig.`,
+    `Dan spit hy die grond om en haal al die klippe en onkruid uit.`,
+    `Ouma wys hom hoe om kompos deur die grond te meng.`,
+    `"Kompos is soos kos vir die plante," verduidelik sy.`,
+    `Karel maak netjiese rytjies en druk die saadjies versigtig in die grond.`,
+    `Hy plant wortels, boontjies en 'n paar pampoene langs die heining.`,
+    `Elke middag na skool gee hy die tuin water met 'n groen gieter.`,
+    `Na twee weke sien hy klein groen blaartjies wat uit die grond steek.`,
+    `Karel is so opgewonde dat hy sommer die hele familie bel.`,
+    `"Wag maar," sê Ouma, "die lekkerste deel is wanneer ons die eerste groente kan eet!"`
+  ],
+  comp:[
+    {q:`Saam met wie woon Karel?`, o:[`Karel woon saam met sy ma.`,`Karel woon saam met sy oupa.`,`Karel woon saam met sy ouma.`,`Karel woon saam met sy tannie.`,`Karel woon saam met sy broer.`], a:2},
+    {q:`Waarom moet Karel 'n sonnige plek kies?`, o:[`Want groente het baie lig nodig.`,`Want groente het baie skaduwee nodig.`,`Want groente het baie wind nodig.`,`Want groente het baie reën nodig.`,`Want groente het baie sand nodig.`], a:0},
+    {q:`Wat sê Ouma is kompos vir die plante?`, o:[`Kompos is soos water vir die plante.`,`Kompos is soos medisyne vir die plante.`,`Kompos is soos 'n kombers vir die plante.`,`Kompos is soos kos vir die plante.`,`Kompos is soos speelgoed vir die plante.`], a:3},
+    {q:`Wat plant Karel langs die heining?`, o:[`Hy plant 'n paar mielies langs die heining.`,`Hy plant 'n paar pampoene langs die heining.`,`Hy plant 'n paar blomme langs die heining.`,`Hy plant 'n paar bome langs die heining.`,`Hy plant 'n paar aartappels langs die heining.`], a:1},
+    {q:`Hoe lank duur dit voor Karel die eerste blaartjies sien?`, o:[`Dit duur twee dae.`,`Dit duur een week.`,`Dit duur twee weke.`,`Dit duur drie weke.`,`Dit duur twee maande.`], a:2}
+  ],
+  spell:[`onkruid`,`kompos`,`gieter`,`heining`,`versigtig`,`groentetuin`,`sonnige`,`saadjies`,`blaartjies`,`opgewonde`],
+  grammar:{instr:`Gee die verkleinwoord – Bv. hond – hondjie`, items:[
+    {p:`blaar`, a:[`blaartjie`]},{p:`saad`, a:[`saadjie`]},{p:`tuin`, a:[`tuintjie`]},{p:`ry`, a:[`rytjie`]},{p:`klip`, a:[`klippie`]}
+  ]},
+  vocab:[
+    {q:`Oupa gebruik 'n ______ om die blomme water te gee.`, o:[`gieter`,`gieters`,`gitaar`,`giet`], a:0},
+    {q:`Die hond kan nie uitkom nie, want daar is 'n hoë ______ om die erf.`, o:[`heuning`,`heining`,`heinings`,`horing`], a:1},
+    {q:`Ons moet die ______ uittrek, anders kry die blomme nie genoeg water nie.`, o:[`kruie`,`onrus`,`onkruid`,`kruiwa`], a:2},
+    {q:`Sy maak die deur ______ oop sodat die baba nie wakker word nie.`, o:[`onversigtig`,`versigtige`,`vinnig`,`versigtig`], a:3},
+    {q:`Ma gooi die groenteskille op die ______, want dit maak die grond ryk.`, o:[`kompas`,`komposhoop`,`kombuis`,`komposhope`], a:1}
+  ]
+};
+
+const STEPS = [`Woordkaarte`,`Oogoefening`,`Getimede lees`,`Begrip`,`Woordherkenning`,`Grammatika`,`Woordeskat`];
+const LETTERS = [`ê`,`ë`,`é`,`è`,`ô`,`ö`,`û`,`ï`,`î`,`'n`];
+const S = {step:-1, name:``, wpm:100, eyeMode:`reels`, scores:{}, readWpm:null, nextWpm:null, timers:[]};
+const app = document.getElementById(`app`);
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm = s => s.trim().toLowerCase().replace(/[’‘`]/g, `'`).replace(/\s+/g, ` `);
+const wc = s => s.trim().split(/\s+/).length;
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const later = (fn, ms) => S.timers.push(setTimeout(fn, ms));
+const clearTimers = () => { S.timers.forEach(clearTimeout); S.timers = []; };
+const $ = id => document.getElementById(id);
+
+function view(html){
+  app.innerHTML = html;
+  const f = app.querySelector(`[autofocus]`);
+  if (f) f.focus({preventScroll:true});
+}
+
+function setFont(on){
+  document.body.classList.toggle(`g1`, on);
+  const b = $(`fontBtn`);
+  b.setAttribute(`aria-pressed`, on);
+  b.textContent = `Graad 1-lettertipe: ` + (on ? `aan` : `af`);
+}
+$(`fontBtn`).onclick = () => setFont(!document.body.classList.contains(`g1`));
+$(`homeBtn`).onclick = () => go(-1);
+setFont(LESSON.level <= 2);
+
+function renderPath(){
+  const p = $(`path`);
+  $(`homeBtn`).hidden = S.step < 0;
+  if (S.step < 0){ p.innerHTML = ``; return; }
+  p.innerHTML = STEPS.map((s,i) =>
+    `<div class="stone ${i < S.step ? 'done' : i === S.step ? 'now' : ''}" title="${s}" aria-label="${s}${i===S.step?' (nou)':''}">${i+1}</div>`
+  ).join(``) + `<div class="path-label">${S.step < STEPS.length ? `Stap ${S.step+1} van ${STEPS.length}: ${STEPS[S.step]}` : `Les klaar!`}</div>`;
+}
+
+function go(step){
+  clearTimers();
+  S.step = step;
+  renderPath();
+  if (step < 0) intro(); else [cards,eye,timed,comp,spell,grammar,vocab,results][step]();
+  window.scrollTo({top:0});
+}
+
+function praise(p){
+  if (p === 100) return `Uitstekend`;
+  if (p >= 80) return `Baie goed`;
+  if (p >= 60) return `Mooi so`;
+  if (p >= 40) return `Hou so aan`;
+  return `Probeer weer volgende keer`;
+}
+
+function cheer(pct, next){
+  const who = S.name ? `, ${esc(S.name)}` : ``;
+  view(`<section class="panel celebrate ${pct===100?'full':''}">
+    <div class="big">${pct}%</div>
+    <h2>${praise(pct)}${who}!</h2>
+    <p class="sub">${next < STEPS.length ? `Volgende is: ${STEPS[next]}.` : `Kom kyk na jou verslag.`}</p>
+    <div class="nav"><button class="primary" id="nx" autofocus>${next < STEPS.length ? `Gaan voort` : `Wys my verslag`}</button></div>
+  </section>`);
+  $(`nx`).onclick = () => go(next);
+}
+
+/* ---------- Begin ---------- */
+function intro(){
+  view(`<section class="panel">
+    <h2>${LESSON.title}</h2>
+    <p class="sub">Afrikaans, vlak ${LESSON.level}</p>
+    <label for="nm">Wat is jou naam?</label><br>
+    <input type="text" id="nm" value="${esc(S.name)}" autocomplete="off">
+    <details class="parent">
+      <summary>Ouer-instellings</summary>
+      <label>Tempo vir die oogoefening (woorde per minuut)<br>
+        <input type="number" id="wpm" min="30" max="400" value="${S.wpm}"></label>
+      <label>Oogoefening-modus<br>
+        <select id="mode">
+          <option value="reels">Hele reëls</option>
+          <option value="groepe">Woordgroepe</option>
+          <option value="wyser">Bewegende wyser</option>
+        </select></label>
+    </details>
+    <div class="nav"><span></span><button class="primary" id="start">Begin die les</button></div>
+  </section>`);
+  $(`mode`).value = S.eyeMode;
+  $(`start`).onclick = () => {
+    S.name = $(`nm`).value.trim();
+    S.wpm = Math.min(400, Math.max(30, parseInt($(`wpm`).value, 10) || 100));
+    S.eyeMode = $(`mode`).value;
+    S.scores = {};
+    go(0);
+  };
+}
+
+/* ---------- 1. Woordkaarte ---------- */
+function cards(){
+  let i = 0;
+  const n = LESSON.cards.length;
+  const r = () => {
+    const c = LESSON.cards[i];
+    view(`<section class="panel">
+      <h2>Woordkaarte</h2>
+      <p class="sub">Leer eers hierdie moeilike woorde. Blaai met die pyltjies.</p>
+      <div class="wordcard">
+        <div class="card-word">${c.w}</div>
+        ${c.d.map(x => `<p class="reading-sm">${x}</p>`).join(``)}
+        <p class="reading-sm"><em>Bv.</em> ${c.ex}</p>
+        ${c.f ? `<p class="reading-sm">${c.f}</p>` : ``}
+        <p class="en">Engels: “${c.en}”</p>
+      </div>
+      <div class="nav">
+        <button id="prev" ${i===0?'disabled':''}>◀ Vorige</button>
+        <span class="count">${i+1} van ${n}</span>
+        ${i < n-1 ? `<button class="primary" id="next" autofocus>Volgende ▶</button>` : `<button class="primary" id="done" autofocus>Na die oogoefening</button>`}
+      </div>
+    </section>`);
+    $(`prev`).onclick = () => { if (i > 0){ i--; r(); } };
+    if ($(`next`)) $(`next`).onclick = () => { i++; r(); };
+    if ($(`done`)) $(`done`).onclick = () => go(1);
+  };
+  r();
+}
+
+/* ---------- 2. Oogoefening ---------- */
+function eye(){
+  view(`<section class="panel">
+    <h2>Oogoefening</h2>
+    <p class="sub">Kyk net mooi na die woorde. Jy hoef niks te klik nie.</p>
+    <div class="eye-stage" id="stage"><button class="primary" id="go" autofocus>Begin</button></div>
+  </section>`);
+  const ms = words => words / S.wpm * 60000;
+  const stage = () => $(`stage`);
+  const finish = () => {
+    stage().innerHTML = `<div><p class="q">Klaar met die oogoefening!</p><button class="primary" id="nx">Volgende: Getimede lees</button></div>`;
+    $(`nx`).onclick = () => go(2);
+    $(`nx`).focus({preventScroll:true});
+  };
+  const flashSeq = (units, minMs) => {
+    let k = 0;
+    const next = () => {
+      if (k >= units.length) return finish();
+      stage().innerHTML = `<p class="reading eye-text">${units[k]}</p>`;
+      const d = Math.max(minMs, ms(wc(units[k])));
+      k++;
+      later(() => { stage().innerHTML = ``; later(next, 200); }, d);
+    };
+    next();
+  };
+  $(`go`).onclick = () => {
+    const lines = LESSON.passage;
+    if (S.eyeMode === `reels`) flashSeq(lines, 700);
+    else if (S.eyeMode === `groepe`){
+      const w = lines.join(` `).split(/\s+/), chunks = [];
+      for (let i = 0; i < w.length; i += 3) chunks.push(w.slice(i, i+3).join(` `));
+      flashSeq(chunks, 450);
+    } else {
+      stage().innerHTML = `<div class="reading pacer">${lines.map((l,j) => `<span class="pace-line" id="pl${j}">${l}<span class="bar"></span></span>`).join(``)}</div>`;
+      let j = 0;
+      const step = () => {
+        if (j >= lines.length) return later(finish, 400);
+        const el = $(`pl${j}`), d = Math.max(700, ms(wc(lines[j])));
+        el.style.setProperty(`--dur`, d + `ms`);
+        el.classList.add(`on`);
+        later(() => { el.classList.remove(`on`); j++; step(); }, d);
+      };
+      step();
+    }
+  };
+}
+
+/* ---------- 3. Getimede lees ---------- */
+function timed(){
+  const lines = LESSON.passage;
+  const words = lines.reduce((t, l) => t + wc(l), 0);
+  view(`<section class="panel">
+    <h2>Getimede lees</h2>
+    <p class="sub">Lees die hele storie op jou eie tempo. Druk <strong>Klaar gelees</strong> wanneer jy klaar is.</p>
+    <div class="nav"><span></span><button class="primary" id="go" autofocus>Begin lees</button></div>
+  </section>`);
+  $(`go`).onclick = () => {
+    view(`<section class="panel">
+      <h2>Getimede lees</h2>
+      <div class="passage reading">${lines.map(l => `<p>${l}</p>`).join(``)}</div>
+      <div class="nav"><span class="count">Lees op jou eie tempo.</span><button class="primary" id="fin">Klaar gelees</button></div>
+    </section>`);
+    const t0 = performance.now();
+    $(`fin`).onclick = () => {
+      const sec = (performance.now() - t0) / 1000;
+      const wpm = Math.round(words / sec * 60);
+      if (wpm > 350){
+        view(`<section class="panel">
+          <h2>Dit was baie vinnig!</h2>
+          <p class="sub">${wpm} woorde per minuut. Het jy regtig elke woord gelees?</p>
+          <div class="nav"><button id="again" autofocus>Lees weer</button><button class="primary" id="on">Gaan voort</button></div>
+        </section>`);
+        $(`again`).onclick = () => timed();
+        $(`on`).onclick = () => done(wpm, sec);
+      } else done(wpm, sec);
+    };
+  };
+  const done = (wpm, sec) => {
+    S.readWpm = wpm;
+    S.nextWpm = Math.round(wpm * 1.05);
+    const m = Math.floor(sec / 60), s = String(Math.round(sec % 60)).padStart(2, `0`);
+    view(`<section class="panel celebrate">
+      <div class="big">${wpm}</div>
+      <h2>woorde per minuut</h2>
+      <p class="sub">Jy het die storie in ${m}:${s} gelees (${words} woorde).</p>
+      <div class="nav"><button class="primary" id="nx" autofocus>Volgende: Begrip</button></div>
+    </section>`);
+    $(`nx`).onclick = () => go(3);
+  };
+}
+
+/* ---------- Meerkeuse (Begrip en Woordeskat) ---------- */
+function mc(cfg){
+  let qi = 0, score = 0;
+  const n = cfg.items.length;
+  const r = () => {
+    const it = cfg.items[qi];
+    let tries = 0, done = false;
+    view(`<section class="panel">
+      <h2>${cfg.title}</h2>
+      <p class="sub">${cfg.sub}</p>
+      <p class="q">${it.q}</p>
+      <div class="opts">${it.o.map((o, k) => `<button class="opt" data-k="${k}"><span>${o}</span><span class="mark" aria-hidden="true"></span></button>`).join(``)}</div>
+      <p class="feedback" id="fb" aria-live="polite"></p>
+      <div class="nav"><span class="count" id="cnt">Vraag ${qi+1} van ${n}, punte: ${score}</span>
+        <button class="primary" id="nx" hidden>${qi < n-1 ? 'Volgende vraag' : 'Klaar'}</button></div>
+    </section>`);
+    const btns = [...app.querySelectorAll(`.opt`)], fb = $(`fb`);
+    const reveal = () => {
+      done = true;
+      btns.forEach((b, k) => {
+        b.disabled = true;
+        b.classList.add(k === it.a ? `right` : `wrong`);
+        b.querySelector(`.mark`).textContent = k === it.a ? `✓` : `✗`;
+      });
+      $(`cnt`).textContent = `Vraag ${qi+1} van ${n}, punte: ${score}`;
+      $(`nx`).hidden = false;
+      $(`nx`).focus({preventScroll:true});
+    };
+    btns.forEach((b, k) => b.onclick = () => {
+      if (done) return;
+      if (k === it.a){
+        if (tries === 0) score++;
+        fb.className = `feedback good`;
+        fb.textContent = tries === 0 ? `Reg so!` : `Reg, op die tweede probeer.`;
+        reveal();
+      } else {
+        tries++;
+        b.disabled = true;
+        b.classList.add(`wrong`);
+        b.querySelector(`.mark`).textContent = `✗`;
+        fb.className = `feedback bad`;
+        if (tries >= 2){ fb.textContent = `Die regte antwoord is groen gemerk.`; reveal(); }
+        else fb.textContent = `Nie heeltemal nie. Probeer nog een keer.`;
+      }
+    });
+    $(`nx`).onclick = () => {
+      qi++;
+      if (qi < n) r();
+      else { const pct = Math.round(score / n * 100); S.scores[cfg.key] = pct; cheer(pct, cfg.next); }
+    };
+  };
+  r();
+}
+function comp(){ mc({title:`Begrip`, sub:`Kies die regte antwoord. Jy kry twee kanse.`, items:LESSON.comp, key:`Be`, next:4}); }
+function vocab(){ mc({title:`Woordeskat`, sub:`Watter woord pas in die sin?`, items:LESSON.vocab, key:`WS`, next:7}); }
+
+/* ---------- Spesiale letters ---------- */
+const lettersHtml = () => `<div class="letters" role="group" aria-label="Spesiale letters">${LETTERS.map(c => `<button type="button" data-ch="${c}">${c}</button>`).join(``)}</div>`;
+function bindLetters(inp){
+  app.querySelectorAll(`[data-ch]`).forEach(b => b.onclick = () => {
+    if (inp.disabled) return;
+    const a = inp.selectionStart ?? inp.value.length, z = inp.selectionEnd ?? inp.value.length;
+    inp.value = inp.value.slice(0, a) + b.dataset.ch + inp.value.slice(z);
+    const p = a + b.dataset.ch.length;
+    inp.focus();
+    inp.setSelectionRange(p, p);
+  });
+}
+
+/* ---------- 5. Woordherkenning ---------- */
+function spell(){
+  const W = LESSON.spell, n = W.length, flashMs = LESSON.level <= 2 ? 2000 : 1500;
+  let wi = 0, score = 0, attempt = 1, log = [];
+  const frame = (inner, bottom = ``) => view(`<section class="panel">
+    <h2>Woordherkenning</h2>
+    <p class="sub">Die woord flits kort op die skerm. Tik dit dan so reg as moontlik.</p>
+    <div class="attempts">${log.length ? log.map((l, i) => `Probeer ${i+1}: <strong>${esc(l)}</strong>`).join(`<br>`) : `Hier sien jy jou pogings.`}</div>
+    <div class="flashbox">${inner}</div>
+    ${bottom}
+    <div class="nav"><span class="count">Woord ${wi+1} van ${n}, punte: ${score}</span></div>
+  </section>`);
+  const ready = () => { frame(`<button class="primary" id="show" autofocus>Wys die woord</button>`); $(`show`).onclick = flash; };
+  const flash = () => { frame(`<span class="flashword">${W[wi]}</span>`); later(type, flashMs); };
+  const type = () => {
+    frame(`<span class="flashword" aria-hidden="true">?</span>`,
+      `<label for="ans" class="sr">Tik die woord</label>
+       <input type="text" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" autofocus>
+       ${lettersHtml()}
+       <p class="feedback" id="fb" aria-live="polite"></p>
+       <div class="nav"><span></span><button class="primary" id="chk">Kontroleer</button></div>`);
+    const inp = $(`ans`);
+    bindLetters(inp);
+    $(`chk`).onclick = check;
+    inp.onkeydown = e => { if (e.key === `Enter`) check(); };
+  };
+  const check = () => {
+    const inp = $(`ans`), v = inp.value;
+    if (!v.trim() || inp.disabled) return;
+    log.push(v);
+    if (norm(v) === norm(W[wi])){ if (attempt === 1) score++; result(true); }
+    else if (attempt === 1){
+      attempt = 2;
+      inp.disabled = true;
+      $(`chk`).disabled = true;
+      const fb = $(`fb`);
+      fb.className = `feedback bad`;
+      fb.textContent = `Nie heeltemal nie. Kyk weer mooi, die woord kom nog een keer.`;
+      later(flash, 1600);
+    } else result(false);
+  };
+  const result = ok => {
+    frame(`<div><span class="flashword">${W[wi]}</span>
+      <p class="feedback ${ok ? 'good' : 'bad'}">${ok ? (attempt === 1 ? 'Reg so!' : 'Reg op die tweede probeer!') : 'Kyk mooi hoe die woord gespel word.'}</p></div>`,
+      `<div class="nav"><span></span><button class="primary" id="nx" autofocus>${wi < n-1 ? 'Volgende woord' : 'Klaar'}</button></div>`);
+    $(`nx`).onclick = () => {
+      wi++; attempt = 1; log = [];
+      if (wi < n) ready();
+      else { const pct = Math.round(score / n * 100); S.scores.WH = pct; cheer(pct, 5); }
+    };
+  };
+  ready();
+}
+
+/* ---------- 6. Grammatika ---------- */
+function grammar(){
+  const G = LESSON.grammar, n = G.items.length;
+  let qi = 0, score = 0;
+  const r = () => {
+    const it = G.items[qi];
+    let tries = 0, done = false;
+    view(`<section class="panel">
+      <h2>Grammatika</h2>
+      <div class="instr">${G.instr}</div>
+      <p class="q">${it.p} – <span class="blank">______</span></p>
+      <label for="ans" class="sr">Jou antwoord</label>
+      <input type="text" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" autofocus>
+      ${lettersHtml()}
+      <p class="feedback" id="fb" aria-live="polite"></p>
+      <div class="nav"><span class="count" id="cnt">Vraag ${qi+1} van ${n}, punte: ${score}</span><button class="primary" id="chk">Kontroleer</button></div>
+    </section>`);
+    const inp = $(`ans`), fb = $(`fb`), btn = $(`chk`);
+    bindLetters(inp);
+    const finish = () => {
+      done = true;
+      inp.disabled = true;
+      $(`cnt`).textContent = `Vraag ${qi+1} van ${n}, punte: ${score}`;
+      btn.textContent = qi < n-1 ? `Volgende vraag` : `Klaar`;
+      btn.focus({preventScroll:true});
+    };
+    const check = () => {
+      if (done){
+        qi++;
+        if (qi < n) r();
+        else { const pct = Math.round(score / n * 100); S.scores.Gr = pct; cheer(pct, 6); }
+        return;
+      }
+      const v = inp.value;
+      if (!v.trim()) return;
+      if (it.a.some(a => norm(a) === norm(v))){
+        if (tries === 0) score++;
+        fb.className = `feedback good`;
+        fb.textContent = tries === 0 ? `Reg so!` : `Reg, op die tweede probeer.`;
+        finish();
+      } else {
+        tries++;
+        fb.className = `feedback bad`;
+        if (tries >= 2){ fb.textContent = `Die antwoord is: ${it.a[0]}`; finish(); }
+        else { fb.textContent = `Nie heeltemal nie. Probeer nog een keer.`; inp.select(); }
+      }
+    };
+    btn.onclick = check;
+    inp.onkeydown = e => { if (e.key === `Enter`) check(); };
+  };
+  r();
+}
+
+/* ---------- Verslag ---------- */
+function results(){
+  const s = S.scores, v = k => s[k] != null ? s[k] : `–`;
+  view(`<section class="panel">
+    <h2>Jou verslag${S.name ? `, ${esc(S.name)}` : ``}</h2>
+    <p class="sub">${LESSON.title}, Afrikaans vlak ${LESSON.level}</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>W/min</th><th>Begrip</th><th>Woord&shy;herkenning</th><th>Gramm.</th><th>Woordeskat</th></tr></thead>
+      <tbody><tr><td>${S.readWpm ?? '–'}</td><td>${v('Be')}</td><td>${v('WH')}</td><td>${v('Gr')}</td><td>${v('WS')}</td></tr></tbody>
+    </table></div>
+    ${S.nextWpm ? `<p>Volgende keer begin die oogoefening teen <strong>${S.nextWpm} woorde per minuut</strong>.</p>` : ``}
+    <div class="nav"><span></span><button class="primary" id="again" autofocus>Doen die les weer</button></div>
+  </section>`);
+  $(`again`).onclick = () => { if (S.nextWpm) S.wpm = S.nextWpm; go(-1); };
+}
+
+go(-1);
+</script>
+</body>
+</html>

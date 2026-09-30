@@ -321,6 +321,31 @@ describe.skipIf(!url)("database access rules", () => {
     expect(kinds).toEqual(["topic_ready", "topic_declined"]);
   });
 
+  it("shows visitors published articles only; only staff write articles", async () => {
+    const drafts = (await db.query("select count(*)::int as n from public.articles where status = 'draft'")).rows[0].n;
+    expect(drafts).toBe(6);
+    expect(await as(null, async (q) => (await q("select * from public.articles")).rows)).toHaveLength(0);
+    await as(ids.admin, (q) => q("update public.articles set status = 'published' where slug = 'tips-for-parents'"), true);
+    const visible = await as(null, async (q) => (await q("select slug, published_at from public.articles")).rows);
+    expect(visible.map((r) => r.slug)).toEqual(["tips-for-parents"]);
+    expect(visible[0].published_at).not.toBeNull();
+    expect(await as(ids.parentB, async (q) => (await q("select slug from public.articles")).rows)).toHaveLength(1);
+    await expect(as(ids.parentB, (q) => q("insert into public.articles (slug, language, title) values ('x', 'en', 'X')"))).rejects.toThrow(/row-level security/);
+    await expect(as(null, (q) => q("update public.articles set title = 'Hacked'"))).rejects.toThrow(/permission denied/);
+    const afrikaans = (await db.query("select title, summary from public.articles where slug = 'hoe-kinders-leer-lees'")).rows[0];
+    expect(afrikaans.summary).toContain("'n hele paar");
+  });
+
+  it("keeps game time per child for the child's own parent only", async () => {
+    const rone = (await db.query("select id from public.learners where name = 'Rone'")).rows[0].id;
+    await as(ids.parentA, (q) => q("insert into public.game_sessions (learner_id, game, language, level, seconds, words_played, words_won) values ($1, 'galgie', 'af', 1, 120, 3, 2)", [rone]), true);
+    await expect(
+      as(ids.parentB, (q) => q("insert into public.game_sessions (learner_id, game, language, level, seconds) values ($1, 'galgie', 'af', 1, 60)", [rone])),
+    ).rejects.toThrow(/row-level security/);
+    expect(await as(ids.parentB, async (q) => (await q("select * from public.game_sessions")).rows)).toHaveLength(0);
+    expect(await as(ids.parentA, async (q) => (await q("select seconds from public.game_sessions")).rows)).toEqual([{ seconds: 120 }]);
+  });
+
   it("deletes a family's children when the account is deleted", async () => {
     await db.query("delete from auth.users where id = $1", [ids.parentA]);
     const { rows } = await db.query("select count(*)::int as n from public.learners where parent_id = $1", [ids.parentA]);

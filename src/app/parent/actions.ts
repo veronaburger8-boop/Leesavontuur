@@ -30,7 +30,7 @@ export async function addLearner(formData: FormData) {
     p_level_af: f.levelAf,
     p_level_en: f.levelEn,
   });
-  if (error) redirect("/parent/learners/new?error=failed");
+  if (error) redirect(`/parent/learners/new?error=${/learner_limit/.test(error.message) ? "limit" : "failed"}`);
   redirect("/parent?added=1");
 }
 

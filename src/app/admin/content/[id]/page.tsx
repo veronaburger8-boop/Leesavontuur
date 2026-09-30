@@ -56,6 +56,13 @@ export default async function ContentItemPage({ params, searchParams }: PageProp
           {item.language === "af" ? "Afrikaans" : "English"} · Level {item.level} · {item.type === "lesson" ? `Lesson ${item.sequence ?? ""}` : "Calibration passage"}
           {item.topic ? ` · ${item.topic}` : ""} · <code>{item.id}</code>
         </p>
+        {item.type === "lesson" && (
+          <p>
+            <Link className="button primary" href={`/admin/content/${row.id}/play`}>
+              ▶ Play as a child (preview)
+            </Link>
+          </p>
+        )}
         <p>
           Status: <span className={`badge ${row.status}`}>{STATUS_LABELS[row.status]}</span>
           {row.status === "published" ? " – children can see this item." : " – children cannot see this item."}

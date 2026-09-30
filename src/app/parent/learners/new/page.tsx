@@ -16,7 +16,15 @@ export default async function NewLearnerPage({ searchParams }: PageProps<"/paren
       <section className="panel">
         <h1>{t("addChild")}</h1>
         <Message kind="error">
-          {error === "consent" ? t("mustConsent") : error === "name" ? t("nameRequired") : error ? t("somethingWrong") : null}
+          {error === "consent"
+            ? t("mustConsent")
+            : error === "name"
+              ? t("nameRequired")
+              : error === "limit"
+                ? t("childLimit")
+                : error
+                  ? t("somethingWrong")
+                  : null}
         </Message>
         <form action={addLearner} className="form">
           <LearnerFields t={t} />

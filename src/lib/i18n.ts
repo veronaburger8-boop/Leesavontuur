@@ -83,6 +83,13 @@ const text = {
   },
   addChild: { af: "Voeg 'n kind by", en: "Add a child" },
   editChild: { af: "Wysig", en: "Edit" },
+  startReading: { af: "Begin lees", en: "Start reading" },
+  recentLessons: { af: "Onlangse lesse", en: "Recent lessons" },
+  noLessonsYet: { af: "Nog geen lesse gelees nie.", en: "No lessons read yet." },
+  childLimit: {
+    af: "Jy kan hoogstens 2 kinders per gesin byvoeg.",
+    en: "You can add at most 2 children per family.",
+  },
   childName: { af: "Voornaam of bynaam", en: "First name or nickname" },
   childNameHint: {
     af: "Net 'n voornaam of bynaam. Moet asseblief nie 'n van gebruik nie.",

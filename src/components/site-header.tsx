@@ -2,11 +2,11 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { logOut } from "@/app/actions";
 import { LanguageSwitch } from "@/components/language-switch";
-import { getSession, isStaff } from "@/lib/auth";
+import { getSession, inChildMode, isStaff } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
 
 export async function SiteHeader() {
-  const [session, locale] = await Promise.all([getSession(), getLocale()]);
+  const [session, locale, childMode] = await Promise.all([getSession(), getLocale(), inChildMode()]);
   const t = translator(locale);
   return (
     <header className="site-header">
@@ -14,7 +14,12 @@ export async function SiteHeader() {
         Leesavontuur
       </Link>
       <nav className="site-nav" aria-label="Main">
-        {session ? (
+        {session && childMode ? (
+          // While a child reads, only a locked link back to the parent area.
+          <Link className="button small" href="/unlock?next=/parent">
+            {t("childModeLocked")}
+          </Link>
+        ) : session ? (
           <>
             <Link className="button small" href="/parent">
               {t("parentArea")}

@@ -148,11 +148,15 @@ export default async function ParentHome({ searchParams }: PageProps<"/parent">)
                   ))}
 
                   <div className="row">
-                    <Link className="button small primary" href={`/learn/${l.id}`}>
+                    {/* A full page load, so the whole page (header included) switches to child mode. */}
+                    <a className="button small primary" href={`/learn/${l.id}`}>
                       {t("startReading")}
-                    </Link>
+                    </a>
                     <Link className="button small" href={`/parent/learners/${l.id}`}>
                       {t("editChild")}
+                    </Link>
+                    <Link className="button small" href={`/parent/reports/${l.id}`}>
+                      {t("report")}
                     </Link>
                   </div>
 

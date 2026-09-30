@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalibrationPlayer } from "@/components/lesson/calibration-player";
-import { setLevel } from "@/app/parent/actions";
 import { requireAccount } from "@/lib/auth";
 import type { Language } from "@/lib/content/types";
 import { getLocale } from "@/lib/i18n";
@@ -32,7 +31,7 @@ export default async function CalibratePage({ params, searchParams }: PageProps<
           learnerName={learner.name}
           displayStyle={learner.displayStyle}
           onSave={saveCalibrationResult.bind(null, learner.id, item.id)}
-          setLevel={setLevel.bind(null, learner.id, language)}
+          learnerId={learner.id}
           parentLocale={await getLocale()}
           backHref={home}
         />

@@ -13,6 +13,7 @@ const text = {
     waiting: (next: number) => `Ons wag nog vir Ma of Pa se antwoord oor Vlak ${next}.`,
     challenge: (next: number) => `Jou volgende les is 'n uitdagingsles van Vlak ${next}!`,
     declined: (level: number) => `Kom ons oefen nog 'n bietjie op Vlak ${level}.`,
+    progress: (done: number, total: number) => `${done} van ${total} lesse gelees`,
   },
   en: {
     level: "Level",
@@ -20,6 +21,7 @@ const text = {
     waiting: (next: number) => `We're still waiting for Mom or Dad's answer about Level ${next}.`,
     challenge: (next: number) => `Your next lesson is a challenge lesson from Level ${next}!`,
     declined: (level: number) => `Let's keep practising at Level ${level} for now.`,
+    progress: (done: number, total: number) => `${done} of ${total} lessons read`,
   },
 };
 
@@ -45,7 +47,15 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
         .eq("child_informed", false)
         .limit(1);
       if (declined?.length) await supabase.from("level_requests").update({ child_informed: true }).eq("id", declined[0].id);
-      return { language, learner, request, declined: Boolean(declined?.length) };
+      // Progress at the current level: which published lessons have been read.
+      const [{ data: lessons }, { data: read }] = await Promise.all([
+        supabase.from("content_items").select("id").eq("type", "lesson").eq("language", language).eq("level", learner.level).eq("status", "published"),
+        supabase.from("lesson_results").select("content_id").eq("learner_id", learnerId).eq("language", language).eq("level", learner.level).eq("content_type", "lesson"),
+      ]);
+      const readIds = new Set((read ?? []).map((r) => r.content_id));
+      const total = lessons?.length ?? 0;
+      const done = (lessons ?? []).filter((x) => readIds.has(x.id)).length;
+      return { language, learner, request, declined: Boolean(declined?.length), done, total };
     }),
   );
 
@@ -54,7 +64,7 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
       <section className="panel" style={{ textAlign: "center" }}>
         <h1>{learners[0].name}</h1>
         <div className="cards" style={{ marginTop: 18 }}>
-          {cards.map(({ language, learner, request, declined }) => {
+          {cards.map(({ language, learner, request, declined, done, total }) => {
             const t = text[language];
             return (
               <Link key={language} href={`/learn/${learnerId}/${language}`} className="card" lang={language} style={{ textDecoration: "none" }}>
@@ -62,6 +72,14 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
                 <p className="sub">
                   {t.level} {learner.level}
                 </p>
+                <div className="path" aria-label={t.progress(done, total)}>
+                  {Array.from({ length: total }, (_, i) => (
+                    <div key={i} className={`stone${i < done ? " done" : i === done ? " now" : ""}`} aria-hidden="true">
+                      {i + 1}
+                    </div>
+                  ))}
+                  <div className="path-label">{t.progress(done, total)}</div>
+                </div>
                 {request?.status === "pending" && <p className="message info">{t.waiting(request.toLevel)}</p>}
                 {request?.status === "approved" && <p className="message ok">{t.challenge(request.toLevel)}</p>}
                 {declined && !request && <p className="message info">{t.declined(learner.level)}</p>}
@@ -69,6 +87,12 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
               </Link>
             );
           })}
+        </div>
+        <div className="card" style={{ marginTop: 18, borderStyle: "dashed" }}>
+          <h2>🎲 Speletjies · Games</h2>
+          <p className="sub" style={{ margin: 0 }}>
+            Kom binnekort! · Coming soon!
+          </p>
         </div>
       </section>
     </main>

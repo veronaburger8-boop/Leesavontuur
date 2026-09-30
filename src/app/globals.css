@@ -833,3 +833,39 @@ input.answer {
   border-color: transparent;
   background: var(--sun-soft);
 }
+
+/* ---------- reports */
+
+.report-table tfoot th,
+.report-table .average-row td {
+  background: var(--leaf-soft);
+  color: var(--leaf);
+  font-weight: 800;
+}
+
+.speed-chart .speed-point:hover .speed-dot,
+.speed-chart .speed-point:focus .speed-dot {
+  r: 7;
+}
+
+.speed-chart .speed-point:focus {
+  outline: none;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  main,
+  main.wide {
+    max-width: none;
+    padding: 0;
+  }
+  .panel {
+    padding: 0;
+  }
+  .report-table th {
+    background: #e2f0e3 !important;
+    color: #1d2b36 !important;
+  }
+}

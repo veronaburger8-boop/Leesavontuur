@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getSession, safeNext } from "@/lib/auth";
+import { CHILD_COOKIE } from "@/lib/child-mode";
 import { LOCALE_COOKIE, type Locale } from "@/lib/i18n";
 
 /** Switches the interface language and remembers it for the account. */
@@ -17,5 +18,6 @@ export async function setLocale(formData: FormData) {
 export async function logOut() {
   const session = await getSession();
   if (session) await session.supabase.auth.signOut();
+  (await cookies()).delete(CHILD_COOKIE);
   redirect("/");
 }

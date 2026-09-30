@@ -2,7 +2,7 @@
 
 A reading program in Afrikaans and English for South African children. The full specification is in [PROJECT-BRIEF.md](PROJECT-BRIEF.md). Instructions for Claude Code are in [CLAUDE.md](CLAUDE.md).
 
-**Status: Phase 3 (Calibration and levels)**: placement tests, level suggestions for parents, the child's "Ready for the next level?" prompt with challenge lessons, and parent settings per child. Built on Phase 1 (accounts, profiles, content library) and Phase 2 (the 7-step lesson player).
+**Status: Phase 4 (Reports and parent area)**: reports per child with a reading-speed chart and a print/PDF button, a parent PIN that locks the parent area while a child reads, and a child home screen with a progress path. Built on Phase 1 (accounts, profiles, content library), Phase 2 (the 7-step lesson player) and Phase 3 (placement tests and levels).
 
 ## What's where
 
@@ -20,7 +20,7 @@ A reading program in Afrikaans and English for South African children. The full 
 You need a **Supabase** account (database and logins) and a **Vercel** account (hosting). Both can be free while testing.
 
 1. **Supabase:** create a new project. Choose the region closest to South Africa that's offered.
-2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`.)
+2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`, then `…_parent_pin.sql`.)
 3. **Login settings:** in Supabase, go to **Authentication → URL Configuration**. Set **Site URL** to your website address (for example the `….vercel.app` address), and add `https://<your-address>/**` under **Redirect URLs**.
 4. **Vercel:** import the GitHub repository as a new project, and add these **Environment Variables**. The values are under Supabase → **Project Settings → API Keys**:
    - `NEXT_PUBLIC_SUPABASE_URL`: the project URL
@@ -82,6 +82,16 @@ Supabase's built-in email is fine for testing but only sends a few emails an hou
 5. **Suggestions for you:** after 5 lessons averaging 90%+ (or below 50%), the child's card suggests moving up (or down). **Skuif na Vlak …** or **Ignoreer**.
 6. **Settings:** under **Wysig**, choose how the passage looks (plain, coloured border, tinted background), fix one eye-exercise mode, and choose "Ask me first" or "Let my child move up after a challenge lesson".
 7. **Admin → Settings:** the thresholds above (90%, 5 lessons, 80% …) can be changed here.
+
+## Trying out Phase 4
+
+1. **Update the database first:** in Supabase **SQL Editor**, run `supabase/migrations/20260930112518_parent_pin.sql` once.
+2. **Report:** on a child's card, press **Verslag**. Choose the language and level at the top. The table has one row per lesson with an average row at the bottom; placement tests and challenge lessons are marked and not counted in the average. Below it is the reading-speed chart: hover over (or tap) a point to see the lesson and speed.
+3. **Print or PDF:** press **Druk of stoor as PDF**. In the print window, choose "Save as PDF" to keep a copy.
+4. **Parent PIN:** go to **My rekening** and choose a 4-digit PIN.
+5. **Child mode:** press **Begin lees** on a child's card. The top bar now only shows **Ouerarea 🔒**. The child sees their name, a path of stepping stones per language and a "Speletjies – binnekort" corner.
+6. **Unlock:** press **Ouerarea 🔒** and type your PIN. After 5 wrong tries it locks for 5 minutes. Without a PIN, the site asks for your password instead.
+7. **Placement test result:** at the end of a placement test, **Stel vlak op …** now asks for the PIN first, then asks you to confirm the level.
 
 ## For developers
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { requireAccount } from "@/lib/auth";
+import { requireParent } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Language } from "@/lib/content/types";
 import { getResults } from "@/lib/lesson/next";
@@ -22,7 +22,7 @@ function readLearnerForm(formData: FormData) {
 }
 
 export async function addLearner(formData: FormData) {
-  const { supabase } = await requireAccount("/parent");
+  const { supabase } = await requireParent("/parent");
   if (formData.get("consent") !== "yes") redirect("/parent/learners/new?error=consent");
   const f = readLearnerForm(formData);
   if (!f.valid) redirect("/parent/learners/new?error=name");
@@ -37,7 +37,7 @@ export async function addLearner(formData: FormData) {
 }
 
 export async function updateLearner(formData: FormData) {
-  const { supabase } = await requireAccount("/parent");
+  const { supabase } = await requireParent("/parent");
   const id = str(formData.get("id"));
   const f = readLearnerForm(formData);
   if (!f.valid) redirect(`/parent/learners/${id}?error=name`);
@@ -63,7 +63,7 @@ export async function updateLearner(formData: FormData) {
 }
 
 export async function deleteLearner(formData: FormData) {
-  const { supabase } = await requireAccount("/parent");
+  const { supabase } = await requireParent("/parent");
   const id = str(formData.get("id"));
   if (formData.get("confirm") !== "yes") redirect(`/parent/learners/${id}?error=confirm`);
   const { error } = await supabase.from("learners").delete().eq("id", id);
@@ -73,7 +73,7 @@ export async function deleteLearner(formData: FormData) {
 
 /** Deletes the account. Children and their results are removed with it (database cascade). */
 export async function deleteAccount(formData: FormData) {
-  const { supabase, user } = await requireAccount("/parent/account");
+  const { supabase, user } = await requireParent("/parent/account");
   if (formData.get("confirm") !== "yes") redirect("/parent/account?error=confirm");
   const { error } = await createAdminClient().auth.admin.deleteUser(user.id);
   if (error) redirect("/parent/account?error=failed");
@@ -86,7 +86,7 @@ const lang = (v: string): Language => (v === "en" ? "en" : "af");
 
 /** The parent sets a child's level in one language (past results are kept). */
 export async function setLevel(learnerId: string, language: Language, formData: FormData) {
-  const { supabase } = await requireAccount("/parent");
+  const { supabase } = await requireParent("/parent");
   const level = Number(formData.get("level"));
   if (!AVAILABLE_LEVELS.includes(level)) redirect("/parent?error=level");
   const { error } = await supabase
@@ -104,7 +104,7 @@ export async function setLevel(learnerId: string, language: Language, formData: 
 
 /** The parent approves (challenge lesson next) or declines the child's request to move up. */
 export async function decideRequest(formData: FormData) {
-  const { supabase } = await requireAccount("/parent");
+  const { supabase } = await requireParent("/parent");
   const id = Number(formData.get("id"));
   const approve = formData.get("approve") === "yes";
   const { data: request } = await supabase
@@ -128,7 +128,7 @@ export async function decideRequest(formData: FormData) {
 
 /** The parent ignores a level suggestion; it comes back after a few more lessons. */
 export async function ignoreSuggestion(formData: FormData) {
-  const { supabase } = await requireAccount("/parent");
+  const { supabase } = await requireParent("/parent");
   const learnerId = str(formData.get("learner_id"));
   const language = lang(str(formData.get("language")));
   const results = await getResults(supabase, learnerId, language);
@@ -141,7 +141,20 @@ export async function ignoreSuggestion(formData: FormData) {
 }
 
 export async function dismissNotification(formData: FormData) {
-  const { supabase } = await requireAccount("/parent");
+  const { supabase } = await requireParent("/parent");
   await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", Number(formData.get("id")));
   redirect("/parent");
+}
+
+/** Sets or removes the parent PIN that unlocks the parent area in child mode. */
+export async function savePin(formData: FormData) {
+  const { supabase } = await requireParent("/parent/account");
+  if (formData.get("action") === "remove") {
+    await supabase.rpc("set_parent_pin", { p_pin: null });
+    redirect("/parent/account?pin=removed");
+  }
+  const pin = str(formData.get("pin"));
+  if (!/^[0-9]{4}$/.test(pin)) redirect("/parent/account?pin=format");
+  const { error } = await supabase.rpc("set_parent_pin", { p_pin: pin });
+  redirect(error ? "/parent/account?pin=format" : "/parent/account?pin=saved");
 }

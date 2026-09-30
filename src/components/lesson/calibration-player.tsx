@@ -32,7 +32,7 @@ export function CalibrationPlayer({
   learnerName,
   displayStyle,
   onSave,
-  setLevel,
+  learnerId,
   parentLocale,
   backHref,
 }: {
@@ -40,8 +40,7 @@ export function CalibrationPlayer({
   learnerName: string;
   displayStyle: DisplayStyle;
   onSave: (r: CalibrationResultInput) => Promise<{ ok: boolean; verdict?: CalibrationVerdict }>;
-  /** Server action that sets the child's level (form field "level"). */
-  setLevel: (formData: FormData) => Promise<void>;
+  learnerId: string;
   /** Language of the parent area, for the parent's part of the result. */
   parentLocale: "af" | "en";
   backHref: string;
@@ -117,7 +116,7 @@ export function CalibrationPlayer({
         result={result}
         onSave={onSave}
         parentBox={(verdict) => (
-          <ParentBox verdict={verdict} result={result} level={item.level} language={item.language} locale={parentLocale} setLevel={setLevel} backHref={backHref} />
+          <ParentBox verdict={verdict} result={result} level={item.level} language={item.language} locale={parentLocale} learnerId={learnerId} backHref={backHref} />
         )}
         backHref={backHref}
       />
@@ -244,7 +243,7 @@ function ParentBox({
   level,
   language,
   locale,
-  setLevel,
+  learnerId,
   backHref,
 }: {
   verdict: CalibrationVerdict;
@@ -252,7 +251,7 @@ function ParentBox({
   level: number;
   language: "af" | "en";
   locale: "af" | "en";
-  setLevel: (formData: FormData) => Promise<void>;
+  learnerId: string;
   backHref: string;
 }) {
   const p = parentText[locale];
@@ -269,12 +268,10 @@ function ParentBox({
       <p className="sub">{result.unusuallyFast ? p.fast : p.speed}</p>
       <p className="message info">{suggestion}</p>
       <div className="row">
-        <form action={setLevel}>
-          <input type="hidden" name="level" value={recommended} />
-          <button className="primary" type="submit">
-            {p.setLevel(recommended)}
-          </button>
-        </form>
+        {/* Setting the level is a parent action: it asks for the parent PIN first. */}
+        <Link className="button primary" href={`/parent/learners/${learnerId}/level?language=${language}&level=${recommended}`}>
+          {p.setLevel(recommended)}
+        </Link>
         {testLevel && (
           <Link className="button" href={calibrateHref(testLevel)}>
             {p.test(testLevel)}

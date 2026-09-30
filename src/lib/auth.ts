@@ -1,5 +1,7 @@
 import "server-only";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { CHILD_COOKIE } from "@/lib/child-mode";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Locale } from "@/lib/i18n";
@@ -36,11 +38,28 @@ export async function requireAccount(next: string) {
   return session;
 }
 
+/** True while this device is in child mode (parent area locked). */
+export async function inChildMode() {
+  return (await cookies()).get(CHILD_COOKIE)?.value === "1";
+}
+
+/**
+ * For parent actions (settings, levels, deleting): a signed-in account and
+ * child mode unlocked. The pages are already locked by the proxy; this also
+ * covers actions sent from elsewhere.
+ */
+export async function requireParent(next = "/parent") {
+  const session = await requireAccount(next);
+  if (await inChildMode()) redirect(`/unlock?next=${encodeURIComponent(next)}`);
+  return session;
+}
+
 /** For the admin area: only admins and reviewers get in; parents are sent to the parent area. */
 export async function requireStaff() {
   const session = await getSession();
   if (!session) redirect("/login?next=/admin");
   if (!isStaff(session.profile)) redirect("/parent");
+  if (await inChildMode()) redirect("/unlock?next=/admin");
   return session;
 }
 

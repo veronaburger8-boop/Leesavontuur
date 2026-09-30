@@ -37,7 +37,7 @@ describe.skipIf(!url)("database access rules", () => {
 
   beforeAll(async () => {
     await db.connect();
-    await db.query("drop schema if exists public cascade; drop schema if exists auth cascade; create schema public;");
+    await db.query("drop schema if exists public cascade; drop schema if exists auth cascade; drop schema if exists extensions cascade; create schema public;");
     await db.query("drop type if exists public.user_role cascade");
     await db.query(readFileSync(join(dir, "tests/supabase-shim.sql"), "utf8"));
     for (const f of readdirSync(join(dir, "migrations")).sort()) await db.query(readFileSync(join(dir, "migrations", f), "utf8"));
@@ -254,6 +254,22 @@ describe.skipIf(!url)("database access rules", () => {
     await expect(as(ids.parentB, (q) => q("insert into public.level_requests (learner_id, language, from_level, to_level) values ($1, 'en', 1, 2)", [rone]))).rejects.toThrow(
       /row-level security/,
     );
+  });
+
+  it("protects the parent area with a PIN that locks after 5 wrong tries", async () => {
+    await expect(as(ids.parentB, (q) => q("select public.set_parent_pin('12a4')"))).rejects.toThrow(/pin_must_be_4_digits/);
+    expect(await as(ids.parentB, async (q) => (await q("select public.has_parent_pin() as h")).rows[0].h)).toBe(false);
+    await as(ids.parentB, (q) => q("select public.set_parent_pin('2468')"), true);
+    const check = (pin: string) => as(ids.parentB, async (q) => (await q("select public.check_parent_pin($1) as r", [pin])).rows[0].r, true);
+    expect(await check("2468")).toBe("ok");
+    for (let i = 0; i < 4; i++) expect(await check("0000")).toBe("wrong");
+    expect(await check("0000")).toBe("locked");
+    expect(await check("2468")).toBe("locked");
+    // Another parent's PIN check is about their own account.
+    expect(await as(ids.admin, async (q) => (await q("select public.check_parent_pin('2468') as r")).rows[0].r)).toBe("no_pin");
+    const hash = (await db.query("select pin_hash from public.profiles where id = $1", [ids.parentB])).rows[0].pin_hash;
+    expect(hash).not.toContain("2468");
+    await expect(as(ids.parentB, (q) => q("update public.profiles set pin_failures = 0 where id = $1", [ids.parentB]))).rejects.toThrow(/permission denied/);
   });
 
   it("deletes a family's children when the account is deleted", async () => {

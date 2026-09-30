@@ -299,6 +299,9 @@ Each phase should end with something the owner can try out.
 - **Sound on/off** is left out until the site has audio.
 - **Lesson order with topics:** the next lesson is the first unread lesson (in the lessons document's order) in one of the child's favourite topics; when none is left at the level, the first unread lesson of any topic. Children who have no favourites yet get the document's order.
 - **Topic requests:** a parent can have at most 5 requests being prepared at a time. A request becomes Ready by itself (and the parent is told on the site) as soon as a lesson for its topic is published at the requesting child's language and level. Staff see the child's language and level, never the child's name.
+- **Mascot:** Mika the meerkat (erdmannetjie), original artwork drawn for the site (header, home page, child screens, browser icon). The name "Leesavontuur" stays for now.
+- **Galgie** uses a bunch of 7 balloons (one pops with each wrong letter), held by Mika. In the English sequence the game is called Hangman. Each finished word is saved as time played; the parent report shows minutes played this month. Games never count towards lesson scores.
+- **"About reading" articles** are in Phase 6. Six starter articles (3 Afrikaans, 3 English) were drafted with Claude's help as Drafts; the owner rewrites and publishes them.
 - **AI drafting** uses the Claude API (Claude Opus 5.5) with the owner's own Anthropic account; the key is stored only in Vercel as `ANTHROPIC_API_KEY`. Each run writes up to 5 lessons, saves each one as a Draft as soon as it is written, and shows the estimated cost. Until the key is added, the button says "Not set up yet".
 
 **Open questions for the owner**

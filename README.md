@@ -2,7 +2,7 @@
 
 A reading program in Afrikaans and English for South African children. The full specification is in [PROJECT-BRIEF.md](PROJECT-BRIEF.md). Instructions for Claude Code are in [CLAUDE.md](CLAUDE.md).
 
-**Status: Phase 5 (Topics and requests)**: favourite topics per child, topic requests from parents with an admin inbox, a form to write and edit lessons with live checks, and "Draft with AI". Built on Phase 1 (accounts, profiles, content library), Phase 2 (the 7-step lesson player), Phase 3 (placement tests and levels) and Phase 4 (reports, PIN and child mode).
+**Status: Phase 6 (Games and polish)**: the Galgie game, "About reading" articles, Mika the meerkat mascot, and an accessibility check of every page. Built on Phase 1 (accounts, profiles, content library), Phase 2 (the 7-step lesson player), Phase 3 (placement tests and levels), Phase 4 (reports, PIN and child mode) and Phase 5 (topics, requests, lesson form and AI drafting).
 
 ## What's where
 
@@ -20,7 +20,7 @@ A reading program in Afrikaans and English for South African children. The full 
 You need a **Supabase** account (database and logins) and a **Vercel** account (hosting). Both can be free while testing.
 
 1. **Supabase:** create a new project. Choose the region closest to South Africa that's offered.
-2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`, then `…_parent_pin.sql`, then `…_topics_and_requests.sql`.)
+2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`, then `…_parent_pin.sql`, then `…_topics_and_requests.sql`, then `…_games_and_articles.sql`.)
 3. **Login settings:** in Supabase, go to **Authentication → URL Configuration**. Set **Site URL** to your website address (for example the `….vercel.app` address), and add `https://<your-address>/**` under **Redirect URLs**.
 4. **Vercel:** import the GitHub repository as a new project, and add these **Environment Variables**. The values are under Supabase → **Project Settings → API Keys**:
    - `NEXT_PUBLIC_SUPABASE_URL`: the project URL
@@ -105,6 +105,27 @@ Supabase's built-in email is fine for testing but only sends a few emails an hou
 7. **Fix the 4 lessons in review:** open one from the content library (status *In review*), press **✎ Edit**, rewrite the shortened options, **Save changes**, then **Publish**.
 8. **Draft with AI:** shows "Not set up yet" until `ANTHROPIC_API_KEY` is added in Vercel (then redeploy). After that, choose the language, level, topic and number, and press **Draft passages**. It takes a few minutes; the lessons appear as Drafts with a note, and the page shows the estimated cost.
 9. **Admin → Topics:** add topics, or hide one.
+
+## Trying out Phase 6
+
+1. **Update the database first:** in Supabase **SQL Editor**, run `supabase/migrations/20261002080000_games_and_articles.sql` once.
+2. **Mika the meerkat** is in the top-left corner, on the home page and on the child's screen. The browser tab shows Mika's face.
+3. **Galgie:** press **Begin lees**, then **🎈 Galgie** (or **🎈 Hangman** for English) in the games corner. Tap letters (or type them). Each wrong letter pops a balloon; 7 balloons per word. The words come from the child's own level.
+4. **Game time in the report:** after a few words, open the child's **Verslag**: "Speletjies hierdie maand: … min" appears under the summary line.
+5. **About reading articles:** go to **Admin → Articles**. There are 6 drafts (3 Afrikaans, 3 English). Open one, rewrite it in your own words and check every fact, press **Save**, then **Publish**. Visitors (also people who are not signed in) find it under **Oor lees** at the bottom of every page.
+
+### Testing with real children (checklist)
+
+Try this with one or two children, on a phone and on a tablet if you can:
+
+- Can the child find their name and start a lesson without help?
+- Is the reading text big enough and comfortable to read? Is anything too small to tap?
+- Do the special letter buttons (ê, ë, 'n …) work when typing answers?
+- Does the eye exercise feel too fast or too slow?
+- Are the encouraging messages understood? Does anything confuse or upset the child?
+- Is Galgie fun, and are the words right for the child's level?
+- How long does one lesson take? (About 15–20 minutes is a good target.)
+- Write down anything the child says or struggles with, and send it to me.
 
 ## For developers
 

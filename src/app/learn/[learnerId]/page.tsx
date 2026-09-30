@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Meerkat } from "@/components/art/meerkat";
 import { notFound } from "next/navigation";
 import { requireAccount } from "@/lib/auth";
 import type { Language } from "@/lib/content/types";
@@ -62,6 +63,7 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
   return (
     <main>
       <section className="panel" style={{ textAlign: "center" }}>
+        <Meerkat size={90} className="child-mascot" />
         <h1>{learners[0].name}</h1>
         <div className="cards" style={{ marginTop: 18 }}>
           {cards.map(({ language, learner, request, declined, done, total }) => {
@@ -93,11 +95,16 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
             ⭐ My onderwerpe · My topics
           </Link>
         </p>
-        <div className="card" style={{ marginTop: 18, borderStyle: "dashed" }}>
+        <div className="card" style={{ marginTop: 18 }}>
           <h2>🎲 Speletjies · Games</h2>
-          <p className="sub" style={{ margin: 0 }}>
-            Kom binnekort! · Coming soon!
-          </p>
+          <div className="row" style={{ justifyContent: "center" }}>
+            <Link className="button" href={`/learn/${learnerId}/galgie?language=af`} lang="af">
+              🎈 Galgie
+            </Link>
+            <Link className="button" href={`/learn/${learnerId}/galgie?language=en`} lang="en">
+              🎈 Hangman
+            </Link>
+          </div>
         </div>
       </section>
     </main>

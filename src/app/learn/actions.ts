@@ -140,3 +140,17 @@ export async function saveChildTopics(learnerId: string, formData: FormData) {
   if (insertError) redirect(`${back}?error=failed`);
   redirect(`${back}?saved=1`);
 }
+
+/** Saves the time spent on one Galgie word (for the parent report; never part of lesson scores). */
+export async function saveGameRound(learnerId: string, language: Language, level: number, seconds: number, won: boolean) {
+  const { supabase } = await requireAccount("/parent");
+  await supabase.from("game_sessions").insert({
+    learner_id: learnerId,
+    game: "galgie",
+    language: language === "en" ? "en" : "af",
+    level: Math.min(15, Math.max(1, Math.round(level))),
+    seconds: Math.min(600, Math.max(0, Math.round(seconds))),
+    words_played: 1,
+    words_won: won ? 1 : 0,
+  });
+}

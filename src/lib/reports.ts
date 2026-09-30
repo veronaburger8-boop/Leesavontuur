@@ -71,3 +71,12 @@ export function speedTicks(max: number): number[] {
   for (let v = 0; v <= top; v += step) ticks.push(v);
   return ticks;
 }
+
+/** A date safely before the start of this month, to fetch this month's games. */
+export const aboutFortyDaysAgo = () => new Date(Date.now() - 40 * 24 * 3600 * 1000).toISOString();
+
+/** Minutes of games played in this South African month. */
+export function gameMinutesThisMonth(games: { seconds: number; played_at: string }[], now: Date): number {
+  const month = saMonth(now.toISOString());
+  return Math.round(games.filter((g) => saMonth(g.played_at) === month).reduce((a, g) => a + g.seconds, 0) / 60);
+}

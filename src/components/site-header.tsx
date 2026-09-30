@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { logOut } from "@/app/actions";
+import { Meerkat } from "@/components/art/meerkat";
 import { LanguageSwitch } from "@/components/language-switch";
 import { getSession, inChildMode, isStaff } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
@@ -11,6 +12,7 @@ export async function SiteHeader() {
   return (
     <header className="site-header">
       <Link href="/" className="brand">
+        <Meerkat size={30} reading={false} className="brand-mascot" />
         Leesavontuur
       </Link>
       <nav className="site-nav" aria-label="Main">

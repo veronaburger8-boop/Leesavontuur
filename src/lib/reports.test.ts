@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { averages, monthSummary, type ReportResult, reportRows, speedPoints, speedTicks } from "./reports";
+import { averages, gameMinutesThisMonth, monthSummary, type ReportResult, reportRows, speedPoints, speedTicks } from "./reports";
 
 const r = (day: string, extra: Partial<ReportResult> = {}): ReportResult => ({
   completed_at: `2026-${day}T08:00:00Z`,
@@ -49,5 +49,14 @@ describe("reports", () => {
     expect(speedPoints(results).map((p) => p.wpm)).toEqual([100, 90, 100, 110, 100]);
     expect(speedTicks(137)).toEqual([0, 25, 50, 75, 100, 125, 150]);
     expect(speedTicks(212)).toEqual([0, 50, 100, 150, 200, 250]);
+  });
+
+  it("adds up this month's game time in minutes", () => {
+    const games = [
+      { seconds: 90, played_at: "2026-09-03T10:00:00Z" },
+      { seconds: 150, played_at: "2026-09-20T10:00:00Z" },
+      { seconds: 600, played_at: "2026-08-31T10:00:00Z" },
+    ];
+    expect(gameMinutesThisMonth(games, new Date("2026-09-25T10:00:00Z"))).toBe(4);
   });
 });

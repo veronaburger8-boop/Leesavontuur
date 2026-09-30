@@ -1,3 +1,4 @@
+import Link from "next/link";
 import "@fontsource/andika/400.css";
 import "@fontsource/atkinson-hyperlegible/400.css";
 import "@fontsource/atkinson-hyperlegible/700.css";
@@ -22,6 +23,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <SiteHeader />
         {children}
         <footer className="site-footer">
+          <Link href="/articles">{t("aboutReading")}</Link>
           <a href="/privacy">{t("privacyPolicy")}</a>
         </footer>
         <div className="grass" aria-hidden="true" />

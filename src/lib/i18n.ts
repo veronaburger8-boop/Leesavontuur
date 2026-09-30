@@ -92,6 +92,16 @@ const text = {
     en: "Choose 2 to 4. Lessons about these topics come first.",
   },
   topicsCount: { af: "Kies asseblief 2 tot 4 gunsteling-onderwerpe.", en: "Please choose 2 to 4 favourite topics." },
+  mascotName: { af: "Mika die erdmannetjie lees 'n boek", en: "Mika the meerkat reading a book" },
+  aboutReading: { af: "Oor lees", en: "About reading" },
+  aboutReadingIntro: {
+    af: "Kort artikels oor hoe kinders leer lees, en hoe u by die huis kan help.",
+    en: "Short articles about how children learn to read, and how you can help at home.",
+  },
+  noArticles: { af: "Nog geen artikels nie. Kom kyk binnekort weer!", en: "No articles yet. Check back soon!" },
+  otherLanguageArticles: { af: "Ook in Engels:", en: "Also in Afrikaans:" },
+  allArticles: { af: "Alle artikels", en: "All articles" },
+  gamesThisMonth: { af: "Speletjies hierdie maand: {m} min", en: "Games this month: {m} min" },
   askTopic: { af: "Vra vir 'n nuwe onderwerp", en: "Ask for a new topic" },
   askTopicHint: {
     af: "Is jou kind mal oor iets wat nie in die lys is nie? Vertel ons, en ons maak lesse daaroor.",

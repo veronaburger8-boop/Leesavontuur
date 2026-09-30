@@ -4,7 +4,7 @@ import { PrintButton } from "@/components/print-button";
 import { SpeedChart } from "@/components/speed-chart";
 import { requireParent } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
-import { averages, monthSummary, type ReportResult, reportRows, SCORE_KEYS } from "@/lib/reports";
+import { aboutFortyDaysAgo, averages, gameMinutesThisMonth, monthSummary, type ReportResult, reportRows, SCORE_KEYS } from "@/lib/reports";
 import { levelIn, listLearners } from "../../data";
 
 export const metadata = { title: "Report" };
@@ -16,7 +16,7 @@ export default async function ReportPage({ params, searchParams }: PageProps<"/p
   const learner = (await listLearners(supabase)).find((l) => l.id === id);
   if (!learner) notFound();
   const language = sp.language === "en" ? "en" : "af";
-  const [locale, { data }] = await Promise.all([
+  const [locale, { data }, { data: games }] = await Promise.all([
     getLocale(),
     supabase
       .from("lesson_results")
@@ -24,6 +24,12 @@ export default async function ReportPage({ params, searchParams }: PageProps<"/p
       .eq("learner_id", id)
       .eq("language", language)
       .order("completed_at"),
+    supabase
+      .from("game_sessions")
+      .select("seconds, played_at")
+      .eq("learner_id", id)
+      .eq("language", language)
+      .gte("played_at", aboutFortyDaysAgo()),
   ]);
   const t = translator(locale);
   const results = (data ?? []) as ReportResult[];
@@ -32,6 +38,8 @@ export default async function ReportPage({ params, searchParams }: PageProps<"/p
   const rows = reportRows(results, level);
   const avg = averages(rows);
   const month = monthSummary(results, new Date());
+  // Games are extras: time played is shown, but never counted in the scores.
+  const gameMinutes = gameMinutesThisMonth((games ?? []) as { seconds: number; played_at: string }[], new Date());
   const langName = language === "af" ? t("languageAf") : t("languageEn");
   const date = (s: string) => new Date(s).toLocaleDateString(locale === "af" ? "af-ZA" : "en-ZA", { day: "numeric", month: "short", year: "numeric", timeZone: "Africa/Johannesburg" });
   const cell = (v: number | null, pct = true) => (v === null ? "–" : pct ? `${v}%` : String(v));
@@ -71,6 +79,7 @@ export default async function ReportPage({ params, searchParams }: PageProps<"/p
         <p style={{ fontWeight: 700 }}>
           {month.lessons ? t("monthSummary", { n: month.lessons, c: month.comprehension ?? "–" }) : t("monthSummaryNone")}
         </p>
+        {gameMinutes > 0 && <p className="sub">{t("gamesThisMonth", { m: gameMinutes })}</p>}
 
         {rows.length === 0 ? (
           <p className="message info">{t("noResultsLevel")}</p>

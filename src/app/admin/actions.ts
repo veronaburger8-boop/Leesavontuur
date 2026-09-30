@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { slugify } from "@/lib/articles/format";
 import { requireStaff } from "@/lib/auth";
 import { type ContentItem, type Status, STATUSES, wordCount } from "@/lib/content/types";
 import { aiConfigured, draftLessons } from "@/lib/content/draft";
@@ -348,4 +349,39 @@ export async function draftWithAI(_prev: DraftState, formData: FormData): Promis
   });
   revalidatePath("/admin");
   return state;
+}
+
+// ---------------------------------------------------------------- About reading articles
+
+/** Saves an article (new ones as Drafts). Publishing is a separate button. */
+export async function saveArticle(formData: FormData) {
+  const { supabase } = await requireStaff();
+  const id = Number(formData.get("id")) || null;
+  const title = str(formData.get("title")).slice(0, 120);
+  const slug = slugify(str(formData.get("slug")) || title);
+  const fields = {
+    title,
+    slug,
+    language: str(formData.get("language")) === "en" ? "en" : "af",
+    summary: str(formData.get("summary")).slice(0, 300),
+    body: String(formData.get("body") ?? "").replace(/\r\n?/g, "\n").trim().slice(0, 20000),
+    sort_order: Number(formData.get("sort_order")) || 0,
+  };
+  const back = id ? `/admin/articles/${id}` : "/admin/articles/new";
+  if (!title || !slug) redirect(`${back}?error=title`);
+  const { data, error } = id
+    ? await supabase.from("articles").update(fields).eq("id", id).select("id").single()
+    : await supabase.from("articles").insert({ ...fields, status: "draft" }).select("id").single();
+  if (error) redirect(`${back}?error=${/duplicate|unique/.test(error.message) ? "slug" : "failed"}`);
+  revalidatePath("/articles");
+  redirect(`/admin/articles/${data.id}?saved=1`);
+}
+
+export async function setArticleStatus(formData: FormData) {
+  const { supabase } = await requireStaff();
+  const id = Number(formData.get("id"));
+  const status = formData.get("status") === "published" ? "published" : "draft";
+  const { error } = await supabase.from("articles").update({ status }).eq("id", id);
+  revalidatePath("/articles");
+  redirect(`/admin/articles/${id}?${error ? "error=failed" : `status=${status}`}`);
 }

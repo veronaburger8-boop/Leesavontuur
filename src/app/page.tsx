@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Meerkat } from "@/components/art/meerkat";
 import { Message } from "@/components/message";
 import { getSession } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
@@ -9,7 +10,8 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   return (
     <main>
       <Message kind="ok">{deleted ? t("accountDeleted") : null}</Message>
-      <section className="panel">
+      <section className="panel home-hero">
+        <Meerkat size={150} title={t("mascotName")} className="hero-mascot" />
         <h1>{t("homeTitle")}</h1>
         <p className="sub">{t("siteTagline")}</p>
         <p>{t("homeIntro")}</p>
@@ -29,6 +31,9 @@ export default async function Home({ searchParams }: PageProps<"/">) {
               </Link>
             </>
           )}
+          <Link className="button" href="/articles">
+            {t("aboutReading")}
+          </Link>
         </div>
       </section>
     </main>

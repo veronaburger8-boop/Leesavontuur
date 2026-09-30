@@ -57,6 +57,7 @@ describe.skipIf(!url)("database access rules", () => {
     await item("review-item", "in_review");
     await item("draft-item", "draft");
     await item("retired-item", "retired");
+    await item("lesson-two", "published");
   });
 
   afterAll(async () => {
@@ -71,7 +72,7 @@ describe.skipIf(!url)("database access rules", () => {
 
   it("shows parents only published content", async () => {
     const rows = await as(ids.parentA, async (q) => (await q("select id from public.content_items order by id")).rows);
-    expect(rows.map((r) => r.id)).toEqual(["published-item"]);
+    expect(rows.map((r) => r.id)).toEqual(["lesson-two", "published-item"]);
   });
 
   it("does not show unpublished content even when asked for it by id", async () => {
@@ -81,7 +82,7 @@ describe.skipIf(!url)("database access rules", () => {
 
   it("shows staff all content", async () => {
     const rows = await as(ids.admin, async (q) => (await q("select id from public.content_items")).rows);
-    expect(rows).toHaveLength(4);
+    expect(rows).toHaveLength(5);
   });
 
   it("gives visitors who are not signed in no access at all", async () => {
@@ -162,12 +163,49 @@ describe.skipIf(!url)("database access rules", () => {
   it("hides retired content from parents", async () => {
     await as(ids.admin, (q) => q("update public.content_items set status = 'retired' where id = 'published-item'"), true);
     const rows = await as(ids.parentA, async (q) => (await q("select id from public.content_items")).rows);
-    expect(rows.map((r) => r.id)).toEqual(["review-item"]);
+    expect(rows.map((r) => r.id)).toEqual(["lesson-two", "review-item"]);
+  });
+
+  it("allows at most 2 children per family", async () => {
+    await as(ids.parentB, (q) => q("insert into public.learners (name) values ('Lerato'), ('Thabo')"), true);
+    await expect(as(ids.parentB, (q) => q("insert into public.learners (name) values ('Derde')"))).rejects.toThrow(/learner_limit/);
+    await expect(as(ids.parentB, (q) => q("select public.create_learner('Derde', null, 1::smallint, 1::smallint)"))).rejects.toThrow(/learner_limit/);
+  });
+
+  const record = (learner: string, content: string, wpm: number, fast = false) =>
+    `select public.record_lesson_result('${learner}', '${content}', ${wpm}, ${fast}, 80::smallint, 90::smallint, 100::smallint, 60::smallint, 'lines', 300)`;
+
+  it("saves a finished lesson and the child's new reading speed", async () => {
+    const rone = (await db.query("select id from public.learners where name = 'Rone'")).rows[0].id;
+    await as(ids.parentA, (q) => q(record(rone, "lesson-two", 95)), true);
+    const rows = await as(ids.parentA, async (q) => (await q("select content_title, words_per_minute, comprehension_pct, vocabulary_pct from public.lesson_results")).rows);
+    expect(rows).toEqual([{ content_title: "lesson-two", words_per_minute: 95, comprehension_pct: 80, vocabulary_pct: 60 }]);
+    const speed = await as(ids.parentA, async (q) => (await q("select reading_wpm from public.learner_languages where learner_id = $1 and language = 'af'", [rone])).rows[0].reading_wpm);
+    expect(speed).toBe(95);
+    // An impossibly fast reading is saved, but does not change the speed.
+    await as(ids.parentA, (q) => q(record(rone, "lesson-two", 500, true)), true);
+    const after = await as(ids.parentA, async (q) => (await q("select reading_wpm from public.learner_languages where learner_id = $1 and language = 'af'", [rone])).rows[0].reading_wpm);
+    expect(after).toBe(95);
+  });
+
+  it("only saves results for your own child and for published lessons", async () => {
+    const rone = (await db.query("select id from public.learners where name = 'Rone'")).rows[0].id;
+    await expect(as(ids.parentB, (q) => q(record(rone, "lesson-two", 90)))).rejects.toThrow(/not_your_learner/);
+    await expect(as(ids.parentA, (q) => q(record(rone, "draft-item", 90)))).rejects.toThrow(/not_published/);
+    await expect(
+      as(ids.parentA, (q) => q("insert into public.lesson_results (learner_id, content_title, content_type, language, level) values ($1, 'x', 'lesson', 'af', 1)", [rone])),
+    ).rejects.toThrow(/permission denied/);
+    const others = await as(ids.parentB, async (q) => (await q("select * from public.lesson_results")).rows);
+    expect(others).toHaveLength(0);
+    const staff = await as(ids.admin, async (q) => (await q("select * from public.lesson_results")).rows);
+    expect(staff).toHaveLength(0);
   });
 
   it("deletes a family's children when the account is deleted", async () => {
     await db.query("delete from auth.users where id = $1", [ids.parentA]);
-    const { rows } = await db.query("select count(*)::int as n from public.learners");
+    const { rows } = await db.query("select count(*)::int as n from public.learners where parent_id = $1", [ids.parentA]);
     expect(rows[0].n).toBe(0);
+    const results = await db.query("select count(*)::int as n from public.lesson_results");
+    expect(results.rows[0].n).toBe(0);
   });
 });

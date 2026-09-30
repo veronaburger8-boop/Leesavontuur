@@ -272,6 +272,55 @@ describe.skipIf(!url)("database access rules", () => {
     await expect(as(ids.parentB, (q) => q("update public.profiles set pin_failures = 0 where id = $1", [ids.parentB]))).rejects.toThrow(/permission denied/);
   });
 
+  it("keeps 2 to 4 favourite topics per child, for the child's own parent only", async () => {
+    const rone = (await db.query("select id from public.learners where name = 'Rone'")).rows[0].id;
+    const add = (who: string, topic: string) => as(who, (q) => q("insert into public.learner_topics (learner_id, topic) values ($1, $2)", [rone, topic]), true);
+    for (const t of ["animals", "space", "sport", "food"]) await add(ids.parentA, t);
+    await expect(add(ids.parentA, "nature")).rejects.toThrow(/topic_limit/);
+    await expect(add(ids.parentB, "nature")).rejects.toThrow(/row-level security/);
+    const seen = await as(ids.parentB, async (q) => (await q("select * from public.learner_topics")).rows);
+    expect(seen).toHaveLength(0);
+  });
+
+  it("handles topic requests: parent asks, admin links a topic, publishing makes it ready", async () => {
+    const rone = (await db.query("select id from public.learners where name = 'Rone'")).rows[0].id;
+    const level = (await db.query("select level from public.learner_languages where learner_id = $1 and language = 'en'", [rone])).rows[0].level;
+    const id = await as(ids.parentA, async (q) => (await q("select public.request_topic('  Perde   en ponies ', $1, 'en') as id", [rone])).rows[0].id, true);
+    const row = (await db.query("select * from public.topic_requests where id = $1", [id])).rows[0];
+    expect(row).toMatchObject({ request: "Perde en ponies", language: "en", level, status: "received", parent_id: ids.parentA });
+
+    // Only the parent's own child, and nobody else sees the request.
+    await expect(as(ids.parentB, (q) => q("select public.request_topic('rugby', $1, 'en')", [rone]))).rejects.toThrow(/not_your_child/);
+    expect(await as(ids.parentB, async (q) => (await q("select * from public.topic_requests")).rows)).toHaveLength(0);
+    const changed = await as(ids.parentA, async (q) => (await q("update public.topic_requests set status = 'declined' where id = $1", [id])).rowCount, true);
+    expect(changed).toBe(0);
+    await expect(as(ids.parentA, (q) => q("insert into public.topic_requests (parent_id, request, language, level) values ($1, 'x x', 'en', 1)", [ids.parentA]))).rejects.toThrow(/permission denied/);
+
+    // The admin adds a topic and links the request: "being prepared".
+    await as(ids.admin, (q) => q("insert into public.topics (key, name_en, name_af, sort_order) values ('horses', 'Horses', 'Perde', 9)"), true);
+    await as(ids.admin, (q) => q("update public.topic_requests set topic = 'horses' where id = $1", [id]), true);
+    expect((await db.query("select status from public.topic_requests where id = $1", [id])).rows[0].status).toBe("preparing");
+
+    // A draft does nothing; publishing a lesson at the child's level makes it ready and tells the parent.
+    await as(
+      ids.admin,
+      (q) =>
+        q(`insert into public.content_items (id, type, language, level, topic, status, title, data) values ('horse-1', 'lesson', 'en', $1, 'horses', 'draft', 'Horse', '{}')`, [level]),
+      true,
+    );
+    expect((await db.query("select status from public.topic_requests where id = $1", [id])).rows[0].status).toBe("preparing");
+    await as(ids.admin, (q) => q("update public.content_items set status = 'published' where id = 'horse-1'"), true);
+    expect((await db.query("select status from public.topic_requests where id = $1", [id])).rows[0].status).toBe("ready");
+    const notes = await as(ids.parentA, async (q) => (await q("select kind, topic_request_id from public.notifications where kind like 'topic_%'")).rows);
+    expect(notes).toEqual([{ kind: "topic_ready", topic_request_id: id }]);
+
+    // Declining tells the parent too, with the reply.
+    const second = await as(ids.parentA, async (q) => (await q("select public.request_topic('Monster trucks', $1, 'af') as id", [rone])).rows[0].id, true);
+    await as(ids.admin, (q) => q("update public.topic_requests set status = 'declined', reply = 'Sorry!' where id = $1", [second]), true);
+    const kinds = await as(ids.parentA, async (q) => (await q("select kind from public.notifications where kind like 'topic_%' order by id")).rows.map((r) => r.kind));
+    expect(kinds).toEqual(["topic_ready", "topic_declined"]);
+  });
+
   it("deletes a family's children when the account is deleted", async () => {
     await db.query("delete from auth.users where id = $1", [ids.parentA]);
     const { rows } = await db.query("select count(*)::int as n from public.learners where parent_id = $1", [ids.parentA]);

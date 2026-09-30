@@ -201,6 +201,61 @@ describe.skipIf(!url)("database access rules", () => {
     expect(staff).toHaveLength(0);
   });
 
+  it("lets parents read the thresholds, but only the admin change them", async () => {
+    const rows = await as(ids.parentB, async (q) => (await q("select value from public.app_settings where key = 'challenge_pass_pct'")).rows);
+    expect(Number(rows[0].value)).toBe(80);
+    const changed = await as(ids.parentB, async (q) => (await q("update public.app_settings set value = 10 where key = 'challenge_pass_pct'")).rowCount);
+    expect(changed).toBe(0);
+    const byAdmin = await as(ids.admin, async (q) => (await q("update public.app_settings set value = 80 where key = 'challenge_pass_pct'")).rowCount);
+    expect(byAdmin).toBe(1);
+  });
+
+  it("lets parents choose settings for their own child only", async () => {
+    const rone = (await db.query("select id from public.learners where name = 'Rone'")).rows[0].id;
+    const own = await as(ids.parentA, async (q) => (await q("update public.learners set display_style = 'tint', eye_mode_fixed = 'pacer', level_up_mode = 'auto' where id = $1", [rone])).rowCount);
+    expect(own).toBe(1);
+    const other = await as(ids.parentB, async (q) => (await q("update public.learners set display_style = 'plain' where id = $1", [rone])).rowCount);
+    expect(other).toBe(0);
+  });
+
+  it("runs a challenge lesson: pass moves the child up and tells the parent", async () => {
+    const rone = (await db.query("select id from public.learners where name = 'Rone'")).rows[0].id;
+    await as(
+      ids.parentA,
+      async (q) => {
+        await q("update public.learner_languages set level = 1 where learner_id = $1 and language = 'af'", [rone]);
+        const { rows } = await q("insert into public.level_requests (learner_id, language, from_level, to_level, status) values ($1, 'af', 1, 2, 'approved') returning id", [rone]);
+        // Only one open request per child and language.
+        await q("savepoint s");
+        await expect(q("insert into public.level_requests (learner_id, language, from_level, to_level) values ($1, 'af', 1, 2)", [rone])).rejects.toThrow(/duplicate key/);
+        await q("rollback to savepoint s");
+        const passed = (await q("select public.finish_challenge($1, null, 85) as passed", [rows[0].id])).rows[0].passed;
+        expect(passed).toBe(true);
+      },
+      true,
+    );
+    const level = (await db.query("select level from public.learner_languages where learner_id = $1 and language = 'af'", [rone])).rows[0].level;
+    expect(level).toBe(2);
+    const notes = await as(ids.parentA, async (q) => (await q("select kind, level from public.notifications")).rows);
+    expect(notes).toEqual([{ kind: "moved_up", level: 2 }]);
+    const othersNotes = await as(ids.parentB, async (q) => (await q("select * from public.notifications")).rows);
+    expect(othersNotes).toHaveLength(0);
+  });
+
+  it("runs a challenge lesson: not passing keeps the level", async () => {
+    const rone = (await db.query("select id from public.learners where name = 'Rone'")).rows[0].id;
+    const passed = await as(ids.parentA, async (q) => {
+      const { rows } = await q("insert into public.level_requests (learner_id, language, from_level, to_level, status) values ($1, 'af', 2, 3, 'approved') returning id", [rone]);
+      return (await q("select public.finish_challenge($1, null, 60) as passed", [rows[0].id])).rows[0].passed;
+    }, true);
+    expect(passed).toBe(false);
+    const level = (await db.query("select level from public.learner_languages where learner_id = $1 and language = 'af'", [rone])).rows[0].level;
+    expect(level).toBe(2);
+    await expect(as(ids.parentB, (q) => q("insert into public.level_requests (learner_id, language, from_level, to_level) values ($1, 'en', 1, 2)", [rone]))).rejects.toThrow(
+      /row-level security/,
+    );
+  });
+
   it("deletes a family's children when the account is deleted", async () => {
     await db.query("delete from auth.users where id = $1", [ids.parentA]);
     const { rows } = await db.query("select count(*)::int as n from public.learners where parent_id = $1", [ids.parentA]);

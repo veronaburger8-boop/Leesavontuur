@@ -292,6 +292,11 @@ Each phase should end with something the owner can try out.
 - **Unfinished lessons** start again from the beginning; only finished lessons are saved.
 - **Word cards:** the word is shown in regular weight, like all reading text (not bold as in the prototype).
 - **Starting reading speed** comes from the calibration test, not from a fixed number per level.
+- **Recommended starting age:** Grade 1, Term 3, when children know all the sounds used at Level 1. Parents see this recommendation when they add a child and whenever a child is in Grade R or Grade 1. It is advice only; nothing is blocked.
+- **Calibration rule:** the level fits with at least 3 of 4 questions and 5 of 7 spelling words right; test one level up with 4 of 4 and at least 6 of 7; test one level down with at most 1 of 4 or at most 3 of 7. Reading speed sets the starting speed, not the level.
+- **Parent level suggestions:** move up when the average of the last 5 lessons is 90% or more; move down when it is below 50%.
+- **Notifications:** on the site for now; emails once the site has its own domain and an email service.
+- **Sound on/off** is left out until the site has audio.
 
 **Open questions for the owner**
 
@@ -309,6 +314,10 @@ A public section of the site (also for visitors who have not signed up) with sho
 - Articles are data, managed in the admin area like lessons: Draft → Published, in Afrikaans and English.
 - The owner writes or approves every article. Claude may help draft, but nothing is published without the owner's review.
 - Planned for Phase 6, or earlier if the owner wants it at launch.
+
+## 13. Future product: Klanke Avontuur
+
+A separate website for younger children (Grade R and Grade 1, before Term 3) that teaches the sounds needed for Leesavontuur Level 1. To be built after Leesavontuur.
 
 ## Appendix: writing guide for new passages
 

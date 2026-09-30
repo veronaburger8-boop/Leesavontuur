@@ -12,6 +12,18 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
         <Link className="button small" href="/admin/import">
           Import
         </Link>
+        <Link className="button small" href="/admin/content/new">
+          Write a lesson
+        </Link>
+        <Link className="button small" href="/admin/draft">
+          Draft with AI
+        </Link>
+        <Link className="button small" href="/admin/requests">
+          Requests
+        </Link>
+        <Link className="button small" href="/admin/topics">
+          Topics
+        </Link>
         <Link className="button small" href="/admin/settings">
           Settings
         </Link>

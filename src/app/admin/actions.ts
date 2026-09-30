@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireStaff } from "@/lib/auth";
 import { type ContentItem, type Status, STATUSES, wordCount } from "@/lib/content/types";
-import { validateContentFile } from "@/lib/content/validate";
+import { aiConfigured, draftLessons } from "@/lib/content/draft";
+import { type Draft, draftToLesson, estimateCost } from "@/lib/content/draft-map";
+import { type EditorForm, fromForm, makeId } from "@/lib/content/editor";
+import { checkItem } from "@/lib/content/parse-source";
+import { contentItemSchema, validateContentFile } from "@/lib/content/validate";
 
 const str = (v: FormDataEntryValue | null) => (typeof v === "string" ? v.trim() : "");
 
@@ -123,4 +127,225 @@ export async function saveSettings(formData: FormData) {
     if (error) redirect("/admin/settings?error=1");
   }
   redirect("/admin/settings?saved=1");
+}
+
+// ---------------------------------------------------------------- topics and topic requests
+
+/** A topic key from its English name, e.g. "Horses and ponies" → "horses-and-ponies". */
+function topicKey(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+}
+
+const backTo = (formData: FormData, fallback: string) => {
+  const b = str(formData.get("back"));
+  return b.startsWith("/admin") ? b : fallback;
+};
+
+const withParam = (url: string, param: string) => `${url}${url.includes("?") ? "&" : "?"}${param}`;
+
+/** Adds a topic (admin only; the database refuses anyone else). Returns its key. */
+async function createTopic(supabase: Awaited<ReturnType<typeof requireStaff>>["supabase"], nameEn: string, nameAf: string) {
+  const key = topicKey(nameEn);
+  if (!key || !nameAf) return { key: null, error: "names" };
+  const { data: last } = await supabase.from("topics").select("sort_order").order("sort_order", { ascending: false }).limit(1);
+  const { error } = await supabase.from("topics").insert({ key, name_en: nameEn, name_af: nameAf, sort_order: ((last?.[0]?.sort_order as number) ?? 0) + 1 });
+  if (error) return { key: null, error: /duplicate/.test(error.message) ? "exists" : "failed" };
+  return { key, error: null };
+}
+
+export async function addTopic(formData: FormData) {
+  const { supabase } = await requireStaff();
+  const back = backTo(formData, "/admin/topics");
+  const { error } = await createTopic(supabase, str(formData.get("name_en")).slice(0, 60), str(formData.get("name_af")).slice(0, 60));
+  revalidatePath("/admin/topics");
+  redirect(withParam(back, error ? `error=${error}` : "added=1"));
+}
+
+export async function setTopicActive(formData: FormData) {
+  const { supabase } = await requireStaff();
+  await supabase.from("topics").update({ active: formData.get("active") === "yes" }).eq("key", str(formData.get("key")));
+  revalidatePath("/admin/topics");
+  redirect("/admin/topics");
+}
+
+const requestIds = (formData: FormData) =>
+  str(formData.get("ids"))
+    .split(",")
+    .map(Number)
+    .filter((n) => Number.isInteger(n) && n > 0);
+
+/** Links a group of requests to a topic (an existing one, or a new one made here). */
+export async function linkRequests(formData: FormData) {
+  const { supabase } = await requireStaff();
+  const ids = requestIds(formData);
+  let topic = str(formData.get("topic"));
+  if (topic === "new") {
+    const made = await createTopic(supabase, str(formData.get("name_en")).slice(0, 60), str(formData.get("name_af")).slice(0, 60));
+    if (!made.key) redirect(`/admin/requests?error=${made.error}`);
+    topic = made.key;
+  }
+  if (!ids.length || !/^[a-z0-9-]+$/.test(topic)) redirect("/admin/requests?error=failed");
+  const { error } = await supabase.from("topic_requests").update({ topic }).in("id", ids).in("status", ["received", "preparing"]);
+  if (error) redirect("/admin/requests?error=failed");
+  revalidatePath("/admin/requests");
+  redirect("/admin/requests?linked=1");
+}
+
+/** Declines a group of requests with an optional short reply; the parents are told on the site. */
+export async function declineRequests(formData: FormData) {
+  const { supabase } = await requireStaff();
+  const ids = requestIds(formData);
+  const reply = str(formData.get("reply")).slice(0, 300) || null;
+  if (!ids.length) redirect("/admin/requests?error=failed");
+  const { error } = await supabase.from("topic_requests").update({ status: "declined", reply }).in("id", ids).in("status", ["received", "preparing"]);
+  if (error) redirect("/admin/requests?error=failed");
+  revalidatePath("/admin/requests");
+  redirect("/admin/requests?declined=1");
+}
+
+// ---------------------------------------------------------------- the lesson form
+
+export interface EditorState {
+  errors: string[];
+}
+
+/**
+ * Saves the lesson form. A new item is saved as a Draft; an existing item
+ * keeps its status (a published item changes for children straight away).
+ */
+export async function saveContentForm(_prev: EditorState, formData: FormData): Promise<EditorState> {
+  const { supabase } = await requireStaff();
+  let form: EditorForm;
+  try {
+    form = JSON.parse(str(formData.get("form"))) as EditorForm;
+  } catch {
+    return { errors: ["The form could not be read. Please try again."] };
+  }
+  const isNew = formData.get("mode") === "new";
+  if (isNew) {
+    const base = makeId(form.language, form.level, form.title);
+    const { data: taken } = await supabase.from("content_items").select("id").like("id", `${base}%`);
+    const ids = new Set((taken ?? []).map((r) => r.id as string));
+    let id = base;
+    for (let n = 2; ids.has(id); n++) id = `${base}-${n}`;
+    const { data: last } = await supabase
+      .from("content_items")
+      .select("sequence")
+      .eq("language", form.language)
+      .eq("level", form.level)
+      .eq("type", form.type)
+      .order("sequence", { ascending: false, nullsFirst: false })
+      .limit(1);
+    form = { ...form, id, sequence: ((last?.[0]?.sequence as number | null) ?? 0) + 1 };
+  }
+
+  const parsed = contentItemSchema.safeParse({ ...fromForm(form), status: "draft" });
+  if (!parsed.success) {
+    return { errors: parsed.error.issues.map((i) => `${i.path.join(" › ") || "item"}: ${i.message}`) };
+  }
+  const item = parsed.data as ContentItem;
+  const data: Partial<ContentItem> = { ...item };
+  delete data.status;
+  delete data.reviewNote;
+  const row = {
+    type: item.type,
+    language: item.language,
+    level: item.level,
+    topic: item.topic,
+    title: item.title,
+    sequence: item.sequence ?? null,
+    word_count: wordCount(item.passage),
+    data,
+  };
+  const { error } = isNew
+    ? await supabase.from("content_items").insert({ ...row, id: item.id, status: "draft", review_note: "Written in the admin area" })
+    : await supabase.from("content_items").update(row).eq("id", item.id);
+  if (error) return { errors: [`Nothing was saved: ${error.message}`] };
+  revalidatePath("/admin");
+  redirect(`/admin/content/${item.id}?saved=1`);
+}
+
+// ---------------------------------------------------------------- Draft with AI
+
+export interface DraftState {
+  done: boolean;
+  saved: { id: string; title: string; warnings: string[] }[];
+  errors: string[];
+  cost: number | null;
+}
+
+/** "Draft passages": Claude writes lessons from the writing guide; they are saved as Drafts only. */
+export async function draftWithAI(_prev: DraftState, formData: FormData): Promise<DraftState> {
+  const { supabase } = await requireStaff();
+  const fail = (message: string): DraftState => ({ done: true, saved: [], errors: [message], cost: null });
+  if (!aiConfigured()) return fail("AI drafting is not set up yet (no ANTHROPIC_API_KEY).");
+  const language = str(formData.get("language")) === "en" ? "en" : "af";
+  const level = Number(formData.get("level"));
+  const count = Number(formData.get("count"));
+  if (!Number.isInteger(level) || level < 1 || level > 15 || !Number.isInteger(count) || count < 1 || count > 5) return fail("Choose a level and 1 to 5 lessons.");
+  const { data: topic } = await supabase.from("topics").select("key, name_en, name_af").eq("key", str(formData.get("topic"))).maybeSingle();
+  if (!topic) return fail("Choose a topic.");
+
+  const { data: existing } = await supabase.from("content_items").select("id, title, sequence").eq("language", language).eq("level", level).eq("type", "lesson");
+  const ids = new Set((existing ?? []).map((e) => e.id as string));
+  let sequence = Math.max(0, ...(existing ?? []).map((e) => (e.sequence as number | null) ?? 0));
+  const state: DraftState = { done: true, saved: [], errors: [], cost: null };
+  const today = new Date().toLocaleDateString("en-ZA", { dateStyle: "medium", timeZone: "Africa/Johannesburg" });
+
+  // Saves each lesson as soon as it is written.
+  const save = async (draft: Draft) => {
+    const lesson = draftToLesson(draft, language, level, topic.key, ++sequence);
+    const base = lesson.id;
+    const { data: taken } = await supabase.from("content_items").select("id").like("id", `${base}%`);
+    for (const t of taken ?? []) ids.add(t.id as string);
+    for (let n = 2; ids.has(lesson.id); n++) lesson.id = `${base}-${n}`;
+    ids.add(lesson.id);
+
+    const parsed = contentItemSchema.safeParse(lesson);
+    if (!parsed.success) {
+      state.errors.push(`“${lesson.title}” could not be saved: ${parsed.error.issues.map((i) => `${i.path.join(" › ")}: ${i.message}`).join("; ")}`);
+      return;
+    }
+    const warnings = checkItem(lesson);
+    const data: Partial<ContentItem> = { ...lesson };
+    delete data.status;
+    const { error } = await supabase.from("content_items").insert({
+      id: lesson.id,
+      type: "lesson",
+      language,
+      level,
+      topic: topic.key,
+      status: "draft",
+      title: lesson.title,
+      sequence: lesson.sequence,
+      word_count: wordCount(lesson.passage),
+      data,
+      review_note: [`Drafted with AI on ${today}. Read every part carefully before publishing.`, ...warnings].join("\n"),
+    });
+    if (error) state.errors.push(`“${lesson.title}” could not be saved: ${error.message}`);
+    else state.saved.push({ id: lesson.id, title: lesson.title, warnings });
+  };
+
+  const result = await draftLessons({ language, level, topic, count, existingTitles: (existing ?? []).map((e) => e.title as string) }, save);
+  state.errors.unshift(...result.errors);
+  state.cost = estimateCost(result.inputTokens, result.outputTokens);
+
+  await supabase.from("draft_runs").insert({
+    language,
+    level,
+    topic: topic.key,
+    requested: count,
+    saved: state.saved.length,
+    input_tokens: result.inputTokens,
+    output_tokens: result.outputTokens,
+    error: state.errors.join("\n").slice(0, 2000) || null,
+  });
+  revalidatePath("/admin");
+  return state;
 }

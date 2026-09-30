@@ -4,7 +4,7 @@ import { Message } from "@/components/message";
 import { requireAccount } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
 import { deleteLearner, updateLearner } from "../../actions";
-import { listLearners } from "../../data";
+import { availableTopics, listLearners } from "../../data";
 import { LearnerFields } from "../../learner-form";
 
 export const metadata = { title: "Edit child" };
@@ -12,7 +12,7 @@ export const metadata = { title: "Edit child" };
 export default async function EditLearnerPage({ params, searchParams }: PageProps<"/parent/learners/[id]">) {
   const { id } = await params;
   const { supabase } = await requireAccount(`/parent/learners/${id}`);
-  const [{ error, saved }, locale, learners] = await Promise.all([searchParams, getLocale(), listLearners(supabase)]);
+  const [{ error, saved }, locale, learners, topics] = await Promise.all([searchParams, getLocale(), listLearners(supabase), availableTopics(supabase)]);
   const learner = learners.find((l) => l.id === id);
   if (!learner) notFound();
   const t = translator(locale);
@@ -21,10 +21,10 @@ export default async function EditLearnerPage({ params, searchParams }: PageProp
       <section className="panel">
         <h1>{learner.name}</h1>
         <Message kind="ok">{saved ? t("saved") : null}</Message>
-        <Message kind="error">{error === "name" ? t("nameRequired") : error ? t("somethingWrong") : null}</Message>
+        <Message kind="error">{error === "name" ? t("nameRequired") : error === "topics" ? t("topicsCount") : error ? t("somethingWrong") : null}</Message>
         <form action={updateLearner} className="form">
           <input type="hidden" name="id" value={learner.id} />
-          <LearnerFields t={t} learner={learner} />
+          <LearnerFields t={t} learner={learner} topics={topics} locale={locale} />
           <div className="row">
             <button className="primary" type="submit">
               {t("save")}

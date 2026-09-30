@@ -3,14 +3,15 @@ import { Message } from "@/components/message";
 import { requireAccount } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
 import { addLearner } from "../../actions";
+import { availableTopics } from "../../data";
 import { LearnerFields } from "../../learner-form";
 
 export const metadata = { title: "Add a child" };
 
 export default async function NewLearnerPage({ searchParams }: PageProps<"/parent/learners/new">) {
-  await requireAccount("/parent/learners/new");
-  const { error } = await searchParams;
-  const t = translator(await getLocale());
+  const { supabase } = await requireAccount("/parent/learners/new");
+  const [{ error }, locale, topics] = await Promise.all([searchParams, getLocale(), availableTopics(supabase)]);
+  const t = translator(locale);
   return (
     <main>
       <section className="panel">
@@ -20,14 +21,16 @@ export default async function NewLearnerPage({ searchParams }: PageProps<"/paren
             ? t("mustConsent")
             : error === "name"
               ? t("nameRequired")
-              : error === "limit"
-                ? t("childLimit")
-                : error
-                  ? t("somethingWrong")
-                  : null}
+              : error === "topics"
+                ? t("topicsCount")
+                : error === "limit"
+                  ? t("childLimit")
+                  : error
+                    ? t("somethingWrong")
+                    : null}
         </Message>
         <form action={addLearner} className="form">
-          <LearnerFields t={t} />
+          <LearnerFields t={t} topics={topics} locale={locale} />
           <label className="check">
             <input type="checkbox" name="consent" value="yes" required />
             <span>

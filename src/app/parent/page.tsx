@@ -6,6 +6,7 @@ import { belowRecommendedGrade, levelSuggestion, type ResultScores } from "@/lib
 import { getSettings } from "@/lib/lesson/next";
 import { decideRequest, dismissNotification, ignoreSuggestion, setLevel } from "./actions";
 import { AVAILABLE_LEVELS, listLearners, levelIn, MAX_CHILDREN } from "./data";
+import { listTopicRequests, TopicRequests } from "./topic-requests";
 
 export const metadata = { title: "Parent area" };
 
@@ -16,8 +17,8 @@ interface FamilyResult extends ResultScores {
 }
 
 export default async function ParentHome({ searchParams }: PageProps<"/parent">) {
-  const { supabase, profile } = await requireAccount("/parent");
-  const [sp, locale, learners, settings, { data: results }, { data: requests }, { data: notes }] = await Promise.all([
+  const { supabase, profile, user } = await requireAccount("/parent");
+  const [sp, locale, learners, settings, { data: results }, { data: requests }, { data: notes }, topicRequests] = await Promise.all([
     searchParams,
     getLocale(),
     listLearners(supabase),
@@ -28,7 +29,8 @@ export default async function ParentHome({ searchParams }: PageProps<"/parent">)
       .order("completed_at", { ascending: false })
       .limit(500),
     supabase.from("level_requests").select("id, learner_id, language, to_level, status").in("status", ["pending", "approved"]),
-    supabase.from("notifications").select("id, learner_id, kind, language, level").is("read_at", null).order("created_at", { ascending: false }),
+    supabase.from("notifications").select("id, learner_id, kind, language, level, topic_request_id").is("read_at", null).order("created_at", { ascending: false }),
+    listTopicRequests(supabase, user.id),
   ]);
   const t = translator(locale);
   const all = (results ?? []) as FamilyResult[];
@@ -67,9 +69,17 @@ export default async function ParentHome({ searchParams }: PageProps<"/parent">)
               </div>
             ))}
             {(notes ?? []).map((n) => (
-              <div key={`n${n.id}`} className={`message ${n.kind === "moved_up" ? "ok" : "info"}`}>
-                <strong>{nameOf(n.learner_id)}</strong>{" "}
-                {t(n.kind === "moved_up" ? "movedUp" : "notPassed", { level: n.level ?? "", language: langName(n.language ?? "af") })}
+              <div key={`n${n.id}`} className={`message ${n.kind === "moved_up" || n.kind === "topic_ready" ? "ok" : "info"}`}>
+                {n.kind === "topic_ready" || n.kind === "topic_declined" ? (
+                  t(n.kind === "topic_ready" ? "topicReadyNote" : "topicDeclinedNote", {
+                    topic: topicRequests.find((r) => r.id === n.topic_request_id)?.request ?? "",
+                  })
+                ) : (
+                  <>
+                    <strong>{nameOf(n.learner_id)}</strong>{" "}
+                    {t(n.kind === "moved_up" ? "movedUp" : "notPassed", { level: n.level ?? "", language: langName(n.language ?? "af") })}
+                  </>
+                )}
                 <form action={dismissNotification} style={{ display: "inline", marginLeft: 8 }}>
                   <input type="hidden" name="id" value={n.id} />
                   <button className="small" type="submit">
@@ -221,6 +231,13 @@ export default async function ParentHome({ searchParams }: PageProps<"/parent">)
           </Link>
         </div>
       </section>
+      <TopicRequests
+        t={t}
+        learners={learners}
+        requests={topicRequests}
+        sent={Boolean(sp.topicSent)}
+        error={typeof sp.topicError === "string" ? sp.topicError : undefined}
+      />
     </main>
   );
 }

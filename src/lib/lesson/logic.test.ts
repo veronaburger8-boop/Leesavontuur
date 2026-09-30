@@ -3,6 +3,7 @@ import {
   band,
   displayMs,
   eyeModeFor,
+  pickUnread,
   eyeSpeed,
   grammarCorrect,
   matches,
@@ -91,5 +92,19 @@ describe("shuffleOptions", () => {
       expect(s.options[s.answer]).toBe("c");
       expect([...s.options].sort()).toEqual(["a", "b", "c", "d", "e"]);
     }
+  });
+
+  it("picks the next unread lesson, favourite topics first", () => {
+    const lessons = [
+      { id: "a", topic: "animals" },
+      { id: "b", topic: "space" },
+      { id: "c", topic: "sport" },
+      { id: "d", topic: "space" },
+    ];
+    expect(pickUnread(lessons, new Set(["a"]), new Set())?.id).toBe("b");
+    expect(pickUnread(lessons, new Set(["b"]), new Set(["space", "food"]))?.id).toBe("d");
+    // No unread favourite left: the next unread lesson of any topic.
+    expect(pickUnread(lessons, new Set(["b", "d"]), new Set(["space"]))?.id).toBe("a");
+    expect(pickUnread(lessons, new Set(["a", "b", "c", "d"]), new Set(["space"]))).toBeUndefined();
   });
 });

@@ -2,7 +2,7 @@
 
 A reading program in Afrikaans and English for South African children. The full specification is in [PROJECT-BRIEF.md](PROJECT-BRIEF.md). Instructions for Claude Code are in [CLAUDE.md](CLAUDE.md).
 
-**Status: Phase 4 (Reports and parent area)**: reports per child with a reading-speed chart and a print/PDF button, a parent PIN that locks the parent area while a child reads, and a child home screen with a progress path. Built on Phase 1 (accounts, profiles, content library), Phase 2 (the 7-step lesson player) and Phase 3 (placement tests and levels).
+**Status: Phase 5 (Topics and requests)**: favourite topics per child, topic requests from parents with an admin inbox, a form to write and edit lessons with live checks, and "Draft with AI". Built on Phase 1 (accounts, profiles, content library), Phase 2 (the 7-step lesson player), Phase 3 (placement tests and levels) and Phase 4 (reports, PIN and child mode).
 
 ## What's where
 
@@ -20,13 +20,14 @@ A reading program in Afrikaans and English for South African children. The full 
 You need a **Supabase** account (database and logins) and a **Vercel** account (hosting). Both can be free while testing.
 
 1. **Supabase:** create a new project. Choose the region closest to South Africa that's offered.
-2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`, then `…_parent_pin.sql`.)
+2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`, then `…_parent_pin.sql`, then `…_topics_and_requests.sql`.)
 3. **Login settings:** in Supabase, go to **Authentication → URL Configuration**. Set **Site URL** to your website address (for example the `….vercel.app` address), and add `https://<your-address>/**` under **Redirect URLs**.
 4. **Vercel:** import the GitHub repository as a new project, and add these **Environment Variables**. The values are under Supabase → **Project Settings → API Keys**:
    - `NEXT_PUBLIC_SUPABASE_URL`: the project URL
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: the publishable key
    - `SUPABASE_SECRET_KEY`: the secret key (**never** share this one)
    - `NEXT_PUBLIC_SITE_URL`: your website address
+   - `ANTHROPIC_API_KEY` (optional, for "Draft with AI"): an API key from your Anthropic account (console.anthropic.com). **Never** share this one either.
 5. **Deploy**, then sign up on the site with your own email address.
 6. **Make yourself admin:** in Supabase **SQL Editor**, run (with your email address):
    ```sql
@@ -92,6 +93,18 @@ Supabase's built-in email is fine for testing but only sends a few emails an hou
 5. **Child mode:** press **Begin lees** on a child's card. The top bar now only shows **Ouerarea 🔒**. The child sees their name, a path of stepping stones per language and a "Speletjies – binnekort" corner.
 6. **Unlock:** press **Ouerarea 🔒** and type your PIN. After 5 wrong tries it locks for 5 minutes. Without a PIN, the site asks for your password instead.
 7. **Placement test result:** at the end of a placement test, **Stel vlak op …** now asks for the PIN first, then asks you to confirm the level.
+
+## Trying out Phase 5
+
+1. **Update the database first:** in Supabase **SQL Editor**, run `supabase/migrations/20261001090000_topics_and_requests.sql` once.
+2. **Favourite topics:** under **Wysig** on a child's card, tick 2 to 4 favourite topics and save. (Children added before Phase 5 have none yet, so the site asks for them the next time you save that child.) The next lesson now comes from a favourite topic first.
+3. **The child chooses too:** press **Begin lees**, then **⭐ My onderwerpe · My topics**.
+4. **Ask for a topic:** in the parent area, under **Vra vir 'n nuwe onderwerp**, type for example "perde", choose the child and language, and press **Stuur**. The request shows **Ontvang → Word voorberei → Gereed**.
+5. **Requests inbox (Admin → Requests):** requests are grouped, with the children's languages and levels. **Link to a topic** (a new one, e.g. English "Horses", Afrikaans "Perde") or **Decline** with a short reply. Once linked, buttons appear to draft or write lessons for it.
+6. **Write a lesson (Admin → Write a lesson):** fill in every part. The **Checks** bar at the bottom shows what must be fixed and what is worth a second look (for example a passage much longer than the level's benchmark). It is saved as a Draft. Publish it on its page: the parents who asked for that topic see "Goeie nuus!" in their parent area, and the topic appears in their children's choices.
+7. **Fix the 4 lessons in review:** open one from the content library (status *In review*), press **✎ Edit**, rewrite the shortened options, **Save changes**, then **Publish**.
+8. **Draft with AI:** shows "Not set up yet" until `ANTHROPIC_API_KEY` is added in Vercel (then redeploy). After that, choose the language, level, topic and number, and press **Draft passages**. It takes a few minutes; the lessons appear as Drafts with a note, and the page shows the estimated cost.
+9. **Admin → Topics:** add topics, or hide one.
 
 ## For developers
 

@@ -2,7 +2,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Calibration, Language, Lesson } from "@/lib/content/types";
 import { DEFAULT_SETTINGS, type ResultScores, type Settings } from "@/lib/levels";
-import { type EyeMode, eyeModeFor } from "./logic";
+import { type EyeMode, eyeModeFor, pickUnread } from "./logic";
 
 export type DisplayStyle = "plain" | "border" | "tint";
 
@@ -105,18 +105,19 @@ export type NextLesson =
 /**
  * Picks the next lesson: the first unread published lesson at the child's
  * level, in the order of the lessons document. After the parent approves a
- * move up, it is a challenge lesson from the next level instead. When all are
- * read, `again` picks the one read longest ago. (Topics come in Phase 5.)
+ * move up, it is a challenge lesson from the next level instead. Lessons in
+ * the child's favourite topics come first. When all are read, `again` picks
+ * the one read longest ago.
  */
 export async function nextLesson(supabase: SupabaseClient, learner: LearnerInLanguage, language: Language, again: boolean): Promise<NextLesson> {
   const request = await getOpenRequest(supabase, learner.id, language);
   const challenge = request?.status === "approved" ? request : null;
   const level = challenge ? challenge.toLevel : learner.level;
 
-  const [{ data: lessons, error }, results] = await Promise.all([
+  const [{ data: lessons, error }, results, { data: favourites }] = await Promise.all([
     supabase
       .from("content_items")
-      .select("id, sequence")
+      .select("id, sequence, topic")
       .eq("type", "lesson")
       .eq("language", language)
       .eq("level", level)
@@ -125,6 +126,7 @@ export async function nextLesson(supabase: SupabaseClient, learner: LearnerInLan
       .eq("status", "published")
       .order("sequence"),
     getResults(supabase, learner.id, language),
+    supabase.from("learner_topics").select("topic").eq("learner_id", learner.id),
   ]);
   if (error) throw error;
   if (!lessons?.length) return { kind: "none" };
@@ -133,7 +135,8 @@ export async function nextLesson(supabase: SupabaseClient, learner: LearnerInLan
   for (const r of results) if (r.content_id && !lastRead.has(r.content_id)) lastRead.set(r.content_id, r.completed_at);
   const eyeSessions = results.filter((r) => r.eye_mode).length;
 
-  let pick = lessons.find((l) => !lastRead.has(l.id));
+  const liked = new Set((favourites ?? []).map((f) => f.topic as string));
+  let pick = pickUnread(lessons, lastRead, liked);
   let reread = false;
   if (!pick) {
     if (!again && !challenge) return { kind: "allDone", count: lessons.length };

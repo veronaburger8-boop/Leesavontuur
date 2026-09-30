@@ -297,6 +297,9 @@ Each phase should end with something the owner can try out.
 - **Parent level suggestions:** move up when the average of the last 5 lessons is 90% or more; move down when it is below 50%.
 - **Notifications:** on the site for now; emails once the site has its own domain and an email service.
 - **Sound on/off** is left out until the site has audio.
+- **Lesson order with topics:** the next lesson is the first unread lesson (in the lessons document's order) in one of the child's favourite topics; when none is left at the level, the first unread lesson of any topic. Children who have no favourites yet get the document's order.
+- **Topic requests:** a parent can have at most 5 requests being prepared at a time. A request becomes Ready by itself (and the parent is told on the site) as soon as a lesson for its topic is published at the requesting child's language and level. Staff see the child's language and level, never the child's name.
+- **AI drafting** uses the Claude API (Claude Opus 5.5) with the owner's own Anthropic account; the key is stored only in Vercel as `ANTHROPIC_API_KEY`. Each run writes up to 5 lessons, saves each one as a Draft as soon as it is written, and shows the estimated cost. Until the key is added, the button says "Not set up yet".
 
 **Open questions for the owner**
 

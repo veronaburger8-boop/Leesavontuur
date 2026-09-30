@@ -126,3 +126,9 @@ export function shuffleOptions(options: string[], answer: number, random: () => 
 export const spellingFlashMs = (level: number) => (level <= 2 ? 2000 : 1500);
 
 export type { Language };
+
+/** The first unread lesson in a favourite topic, or else the first unread lesson (in the document's order). */
+export function pickUnread<L extends { id: string; topic: string | null }>(lessons: L[], read: Map<string, string> | Set<string>, favourites: Set<string>): L | undefined {
+  const unread = lessons.filter((l) => !read.has(l.id));
+  return unread.find((l) => l.topic !== null && favourites.has(l.topic)) ?? unread[0];
+}

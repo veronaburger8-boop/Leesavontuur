@@ -5,7 +5,8 @@ import { requireParent } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Language } from "@/lib/content/types";
 import { getResults } from "@/lib/lesson/next";
-import { AVAILABLE_LEVELS, GRADES } from "./data";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { AVAILABLE_LEVELS, availableTopics, GRADES, MAX_TOPICS, MIN_TOPICS } from "./data";
 
 const str = (v: FormDataEntryValue | null) => (typeof v === "string" ? v.trim() : "");
 
@@ -18,7 +19,22 @@ function readLearnerForm(formData: FormData) {
     return AVAILABLE_LEVELS.includes(n) ? n : 1;
   };
   const valid = name.length >= 1 && name.length <= 40 && (grade === null || GRADES.includes(grade));
-  return { name, grade, levelAf: level("af"), levelEn: level("en"), valid };
+  const topics = [...new Set(formData.getAll("topics").map((v) => str(v)).filter((v) => /^[a-z0-9-]+$/.test(v)))];
+  return { name, grade, levelAf: level("af"), levelEn: level("en"), valid, topics };
+}
+
+/** 2 to 4 topics, from the ones that can be chosen (fewer only while the library has fewer). */
+async function topicsValid(supabase: SupabaseClient, topics: string[]) {
+  const available = new Set((await availableTopics(supabase)).map((t) => t.key));
+  return topics.every((t) => available.has(t)) && topics.length >= Math.min(MIN_TOPICS, available.size) && topics.length <= MAX_TOPICS;
+}
+
+/** Replaces a child's favourite topics (the database allows only the parent's own child). */
+async function saveTopics(supabase: SupabaseClient, learnerId: string, topics: string[]) {
+  const { error } = await supabase.from("learner_topics").delete().eq("learner_id", learnerId);
+  if (error) return error;
+  if (!topics.length) return null;
+  return (await supabase.from("learner_topics").insert(topics.map((topic) => ({ learner_id: learnerId, topic })))).error;
 }
 
 export async function addLearner(formData: FormData) {
@@ -26,13 +42,15 @@ export async function addLearner(formData: FormData) {
   if (formData.get("consent") !== "yes") redirect("/parent/learners/new?error=consent");
   const f = readLearnerForm(formData);
   if (!f.valid) redirect("/parent/learners/new?error=name");
-  const { error } = await supabase.rpc("create_learner", {
+  if (!(await topicsValid(supabase, f.topics))) redirect("/parent/learners/new?error=topics");
+  const { data: newId, error } = await supabase.rpc("create_learner", {
     p_name: f.name,
     p_grade: f.grade,
     p_level_af: f.levelAf,
     p_level_en: f.levelEn,
   });
   if (error) redirect(`/parent/learners/new?error=${/learner_limit/.test(error.message) ? "limit" : "failed"}`);
+  await saveTopics(supabase, newId as string, f.topics);
   redirect("/parent?added=1");
 }
 
@@ -41,6 +59,7 @@ export async function updateLearner(formData: FormData) {
   const id = str(formData.get("id"));
   const f = readLearnerForm(formData);
   if (!f.valid) redirect(`/parent/learners/${id}?error=name`);
+  if (!(await topicsValid(supabase, f.topics))) redirect(`/parent/learners/${id}?error=topics`);
   const { error, count } = await supabase.from("learners").update({ name: f.name, grade: f.grade }, { count: "exact" }).eq("id", id);
   if (error || count !== 1) redirect(`/parent/learners/${id}?error=failed`);
   const displayStyle = str(formData.get("display_style"));
@@ -59,6 +78,7 @@ export async function updateLearner(formData: FormData) {
     { learner_id: id, language: "en", level: f.levelEn },
   ]);
   if (levelError) redirect(`/parent/learners/${id}?error=failed`);
+  if (await saveTopics(supabase, id, f.topics)) redirect(`/parent/learners/${id}?error=failed`);
   redirect(`/parent/learners/${id}?saved=1`);
 }
 
@@ -157,4 +177,18 @@ export async function savePin(formData: FormData) {
   if (!/^[0-9]{4}$/.test(pin)) redirect("/parent/account?pin=format");
   const { error } = await supabase.rpc("set_parent_pin", { p_pin: pin });
   redirect(error ? "/parent/account?pin=format" : "/parent/account?pin=saved");
+}
+
+/** A parent asks for a new topic for one child in one language. */
+export async function requestTopic(formData: FormData) {
+  const { supabase } = await requireParent("/parent");
+  const text = str(formData.get("request")).replace(/\s+/g, " ");
+  if (text.length < 2 || text.length > 60) redirect("/parent?topicError=length#topics");
+  const { error } = await supabase.rpc("request_topic", {
+    p_request: text,
+    p_learner_id: str(formData.get("learner_id")),
+    p_language: lang(str(formData.get("language"))),
+  });
+  if (error) redirect(`/parent?topicError=${/request_limit/.test(error.message) ? "limit" : "failed"}#topics`);
+  redirect("/parent?topicSent=1#topics");
 }

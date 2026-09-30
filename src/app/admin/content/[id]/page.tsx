@@ -32,7 +32,7 @@ const when = (s: string) => new Date(s).toLocaleString("en-ZA", { dateStyle: "me
 export default async function ContentItemPage({ params, searchParams }: PageProps<"/admin/content/[id]">) {
   const { id } = await params;
   const { supabase } = await requireStaff();
-  const [{ error, changed }, { data: row }, { data: log }] = await Promise.all([
+  const [{ error, changed, saved }, { data: row }, { data: log }] = await Promise.all([
     searchParams,
     supabase.from("content_items").select("id, status, review_note, updated_at, published_at, data").eq("id", id).maybeSingle<ItemRow>(),
     supabase.from("content_status_log").select("id, from_status, to_status, note, changed_at, changed_by").eq("content_id", id).order("id", { ascending: false }).returns<LogRow[]>(),
@@ -56,17 +56,21 @@ export default async function ContentItemPage({ params, searchParams }: PageProp
           {item.language === "af" ? "Afrikaans" : "English"} · Level {item.level} · {item.type === "lesson" ? `Lesson ${item.sequence ?? ""}` : "Calibration passage"}
           {item.topic ? ` · ${item.topic}` : ""} · <code>{item.id}</code>
         </p>
-        {item.type === "lesson" && (
-          <p>
+        <p className="row">
+          {item.type === "lesson" && (
             <Link className="button primary" href={`/admin/content/${row.id}/play`}>
               ▶ Play as a child (preview)
             </Link>
-          </p>
-        )}
+          )}
+          <Link className="button" href={`/admin/content/${row.id}/edit`}>
+            ✎ Edit
+          </Link>
+        </p>
         <p>
           Status: <span className={`badge ${row.status}`}>{STATUS_LABELS[row.status]}</span>
           {row.status === "published" ? " – children can see this item." : " – children cannot see this item."}
         </p>
+        <Message kind="ok">{saved ? "Saved." : null}</Message>
         <Message kind="ok">{typeof changed === "string" && changed in STATUS_LABELS ? `Status changed to ${STATUS_LABELS[changed as Status]}.` : null}</Message>
         <Message kind="error">
           {error === "note" ? "Please write a note saying what needs to change." : error ? "The status could not be changed. Please try again." : null}

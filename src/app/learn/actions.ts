@@ -1,6 +1,8 @@
 "use server";
 
 import type { LessonResultInput, SaveOutcome } from "@/components/lesson/lesson-player";
+import { redirect } from "next/navigation";
+import { availableTopics, MAX_TOPICS, MIN_TOPICS } from "@/app/parent/data";
 import { requireAccount } from "@/lib/auth";
 import type { Language } from "@/lib/content/types";
 import { calibrationVerdict, type CalibrationVerdict, lessonAverage, readyForNextLevel } from "@/lib/levels";
@@ -123,4 +125,18 @@ export async function saveCalibrationResult(
   });
   if (error) return { ok: false };
   return { ok: true, verdict: calibrationVerdict(c.comprehensionRight, c.questions, c.spellingRight, c.words) };
+}
+
+/** The child chooses 2 to 4 favourite topics (the database allows only the parent's own child). */
+export async function saveChildTopics(learnerId: string, formData: FormData) {
+  const { supabase } = await requireAccount("/parent");
+  const back = `/learn/${learnerId}/topics`;
+  const available = new Set((await availableTopics(supabase)).map((t) => t.key));
+  const topics = [...new Set(formData.getAll("topics").map(String))].filter((v) => available.has(v));
+  if (topics.length < MIN_TOPICS || topics.length > MAX_TOPICS) redirect(`${back}?error=count`);
+  const { error } = await supabase.from("learner_topics").delete().eq("learner_id", learnerId);
+  if (error) redirect(`${back}?error=failed`);
+  const { error: insertError } = await supabase.from("learner_topics").insert(topics.map((topic) => ({ learner_id: learnerId, topic })));
+  if (insertError) redirect(`${back}?error=failed`);
+  redirect(`${back}?saved=1`);
 }

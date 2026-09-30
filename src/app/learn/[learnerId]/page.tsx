@@ -88,6 +88,11 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
             );
           })}
         </div>
+        <p style={{ marginTop: 18 }}>
+          <Link className="button" href={`/learn/${learnerId}/topics`}>
+            ⭐ My onderwerpe · My topics
+          </Link>
+        </p>
         <div className="card" style={{ marginTop: 18, borderStyle: "dashed" }}>
           <h2>🎲 Speletjies · Games</h2>
           <p className="sub" style={{ margin: 0 }}>

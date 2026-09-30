@@ -31,7 +31,7 @@ Leesavontuur (working name) is a web-based reading program for South African chi
 Every lesson belongs to one language, one level and one interest topic, and runs through 7 steps in this order. A working prototype of one full lesson is in `prototype/leesavontuur-prototipe.html` and shows the intended look and behaviour.
 
 1. **Word cards.** The difficult words from the passage, one card at a time with next/previous arrows. Each card shows the word, 1–2 simple definitions, an example sentence, word forms (plural or verb forms), and the translation into the other language. Levels 1–2 also show a picture. Each lesson has a main set of cards plus extra "support" cards; show the extra cards when the learner's recent scores are low.
-2. **Eye exercise.** The passage is flashed while the child just watches (no clicking). Three modes: whole lines, word groups of about 3 words, and a moving pacer that sweeps along each line. The display speed comes from the learner's reading speed (words per minute). Rotate modes between sessions; a parent can fix one mode.
+2. **Eye exercise.** The passage is flashed while the child just watches (no clicking). Three modes: whole lines, word groups of about 3 words, and a moving pacer that sweeps along each line. The display speed comes from the learner's reading speed (words per minute), which is first measured by the calibration test, because every child reads at a different speed. A learner with no measured speed yet skips the eye exercise in their first lesson; that lesson's timed reading sets the speed. Rotate modes between sessions; a parent can fix one mode.
 3. **Timed reading.** The whole passage appears and a timer starts. The child reads at their own pace and presses "Finished". Words per minute = word count ÷ minutes. If the result is impossibly fast (above about 350 W/min), show "Did you really read every word?" with "Read again" or "Continue". The next session's eye exercise speed is set to about 5% above this result.
 4. **Comprehension.** 5 multiple-choice questions, one per screen, with 5 options (Level 1 may later drop to 3). Two tries per question: only a correct first try scores. After the answer, mark the correct option green and the wrong ones red.
 5. **Word recognition (spelling).** 10 words. A "Ready" button, then the word flashes (2 seconds at Levels 1–2, 1.5 seconds from Level 3; can adapt later), then the child types it. Two tries; the word flashes again before the second try. Only a first-try correct answer scores. An attempts box shows the child's tries.
@@ -103,7 +103,7 @@ The parent area is protected by the parent's password (or a PIN), so a child usi
 
 **Parent can:**
 
-- Create and manage learner profiles (name, and optionally grade). One parent account can have several children.
+- Create and manage learner profiles (name, and optionally grade). One parent account can have **at most 2 children** (enforced by the database).
 - Start or repeat calibration, and set or change each learner's level per language.
 - Accept or ignore level-change suggestions.
 - Set each learner's interest topics.
@@ -278,7 +278,7 @@ The site handles information about children, so South Africa's Protection of Per
 3. **Calibration and levels.** Calibration flow, level suggestions, and parent control of levels and settings.
 4. **Reports and parent area.** Report tables, reading-speed chart, PDF download and the learner home screen.
 5. **Topics and requests.** Interest topics, lesson selection by topic, the topic request flow, the admin requests inbox, notifications, and AI drafting plus the manual entry form.
-6. **Games and polish.** Hangman, final artwork and branding, accessibility checks, and testing with real children on phones and tablets.
+6. **Games and polish.** Hangman, final artwork and branding, the "About reading" articles (see section 12), accessibility checks, and testing with real children on phones and tablets.
 7. **Later.** Eye-tracking games, and Levels 6–15 content.
 
 Each phase should end with something the owner can try out.
@@ -286,7 +286,12 @@ Each phase should end with something the owner can try out.
 **Decisions made**
 
 - **Admin account and contact address:** leesavontuur194@gmail.com (also the contact address in the privacy policy; sign up on the site with this address, then make it admin as described in the README).
-- **Audience:** mainly families. Schools and teachers are not planned for now. An account can already hold several children, so a teacher account could be added later without rebuilding.
+- **Audience:** mainly families. Schools and teachers are not planned for now. A teacher account could be added later without rebuilding.
+
+- **Children per family:** at most 2 per parent account.
+- **Unfinished lessons** start again from the beginning; only finished lessons are saved.
+- **Word cards:** the word is shown in regular weight, like all reading text (not bold as in the prototype).
+- **Starting reading speed** comes from the calibration test, not from a fixed number per level.
 
 **Open questions for the owner**
 
@@ -296,6 +301,14 @@ Each phase should end with something the owner can try out.
 - Would **audio** help (for example hearing a word card read aloud), now or later?
 - Who will check the privacy policy and POPIA compliance?
 - **Domain name** and email address for the site.
+
+## 12. "About reading" articles
+
+A public section of the site (also for visitors who have not signed up) with short articles about reading, for example how children learn to read, why reading speed and comprehension matter, and tips for parents.
+
+- Articles are data, managed in the admin area like lessons: Draft → Published, in Afrikaans and English.
+- The owner writes or approves every article. Claude may help draft, but nothing is published without the owner's review.
+- Planned for Phase 6, or earlier if the owner wants it at launch.
 
 ## Appendix: writing guide for new passages
 

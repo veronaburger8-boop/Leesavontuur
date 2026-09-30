@@ -10,9 +10,16 @@ import { EyeExercise, EyeSkipped } from "./eye-exercise";
 import { GrammarStep } from "./grammar";
 import { MultipleChoice } from "./multiple-choice";
 import { Cheer } from "./shared";
+import type { DisplayStyle } from "@/lib/lesson/next";
 import { Spelling } from "./spelling";
 import { type ReadingResult, TimedReading } from "./timed-reading";
 import { WordCards } from "./word-cards";
+
+export interface SaveOutcome {
+  ok: boolean;
+  promptLevel?: number;
+  challenge?: { passed: boolean; toLevel: number };
+}
 
 export interface LessonResultInput {
   wordsPerMinute: number;
@@ -43,17 +50,25 @@ export function LessonPlayer({
   readingWpm,
   eyeMode,
   onSave,
+  onAnswerPrompt,
   backHref,
   preview = false,
+  displayStyle = "border",
+  challengeLevel = null,
 }: {
   lesson: Lesson;
   learnerName: string;
   /** The child's last measured reading speed, or null (then the eye exercise is skipped). */
   readingWpm: number | null;
   eyeMode: EyeMode;
-  onSave?: (result: LessonResultInput) => Promise<{ ok: boolean }>;
+  onSave?: (result: LessonResultInput) => Promise<SaveOutcome>;
+  onAnswerPrompt?: (yes: boolean) => Promise<{ ok: boolean; mode?: "ask" | "auto" }>;
   backHref: string;
   preview?: boolean;
+  /** How the passage is shown (parent setting): plain, coloured border or tinted background. */
+  displayStyle?: DisplayStyle;
+  /** Set when this is a challenge lesson from the next level. */
+  challengeLevel?: number | null;
 }) {
   const t = lessonText(lesson.language);
   const names = STEP_NAMES[lesson.language];
@@ -84,7 +99,16 @@ export function LessonPlayer({
         break;
       case 1:
         body = eyeWpm ? (
-          <EyeExercise title={names[1]} passage={lesson.passage} layout={lesson.layout} wpm={eyeWpm} mode={eyeMode} t={t} onDone={() => setScreen({ step: 2 })} />
+          <EyeExercise
+            title={names[1]}
+            passage={lesson.passage}
+            layout={lesson.layout}
+            wpm={eyeWpm}
+            mode={eyeMode}
+            displayStyle={displayStyle}
+            t={t}
+            onDone={() => setScreen({ step: 2 })}
+          />
         ) : (
           <EyeSkipped title={names[1]} t={t} onDone={() => setScreen({ step: 2 })} />
         );
@@ -96,6 +120,7 @@ export function LessonPlayer({
             passage={lesson.passage}
             layout={lesson.layout}
             words={words}
+            displayStyle={displayStyle}
             t={t}
             onDone={(r) => {
               setReading(r);
@@ -163,6 +188,7 @@ export function LessonPlayer({
         eyeMode={eyeWpm ? eyeMode : null}
         startedAt={startedAt}
         onSave={preview ? undefined : onSave}
+        onAnswerPrompt={onAnswerPrompt}
         backHref={backHref}
       />
     );
@@ -178,6 +204,7 @@ export function LessonPlayer({
         ))}
         <div className="path-label">{stepIndex < 7 ? t.stepOf(stepIndex + 1, 7, names[stepIndex]) : t.done}</div>
       </nav>
+      {challengeLevel && <p className="message info" style={{ textAlign: "center" }}>{t.challengeBanner(challengeLevel)}</p>}
       {body}
     </div>
   );
@@ -193,6 +220,7 @@ function Report({
   eyeMode,
   startedAt,
   onSave,
+  onAnswerPrompt,
   backHref,
 }: {
   lesson: Lesson;
@@ -201,11 +229,13 @@ function Report({
   scores: Scores;
   eyeMode: EyeMode | null;
   startedAt: number;
-  onSave?: (result: LessonResultInput) => Promise<{ ok: boolean }>;
+  onSave?: (result: LessonResultInput) => Promise<SaveOutcome>;
+  onAnswerPrompt?: (yes: boolean) => Promise<{ ok: boolean; mode?: "ask" | "auto" }>;
   backHref: string;
 }) {
   const t = lessonText(lesson.language);
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "failed">(onSave ? "saving" : "idle");
+  const [outcome, setOutcome] = useState<SaveOutcome | null>(null);
   const sent = useRef(false);
 
   const save = useCallback(async () => {
@@ -223,6 +253,7 @@ function Report({
         durationSeconds: Math.round((Date.now() - startedAt) / 1000),
       });
       setStatus(r.ok ? "saved" : "failed");
+      if (r.ok) setOutcome(r);
     } catch {
       setStatus("failed");
     }
@@ -277,6 +308,21 @@ function Report({
           </button>
         </p>
       )}
+      {outcome?.challenge && (
+        <div className={`celebrate${outcome.challenge.passed ? " full" : ""}`} style={{ marginTop: 18 }}>
+          {outcome.challenge.passed && (
+            <div className="stars" aria-hidden="true">
+              <span>⭐</span>
+              <span>⭐</span>
+              <span>⭐</span>
+            </div>
+          )}
+          <h2>{outcome.challenge.passed ? t.challengePassed(learnerName, outcome.challenge.toLevel) : t.challengeFailed}</h2>
+        </div>
+      )}
+      {outcome?.promptLevel && onAnswerPrompt && (
+        <LevelPrompt t={t} name={learnerName} level={outcome.promptLevel - 1} next={outcome.promptLevel} onAnswer={onAnswerPrompt} />
+      )}
       <div className="player-nav">
         <span />
         <Link className="button primary" href={backHref}>
@@ -284,5 +330,53 @@ function Report({
         </Link>
       </div>
     </section>
+  );
+}
+
+/** "Ready for the next level?": the child can always say "Not yet". */
+function LevelPrompt({
+  t,
+  name,
+  level,
+  next,
+  onAnswer,
+}: {
+  t: ReturnType<typeof lessonText>;
+  name: string;
+  level: number;
+  next: number;
+  onAnswer: (yes: boolean) => Promise<{ ok: boolean; mode?: "ask" | "auto" }>;
+}) {
+  const [answer, setAnswer] = useState<null | "asked" | "auto" | "later">(null);
+  const [busy, setBusy] = useState(false);
+  const answerWith = async (yes: boolean) => {
+    setBusy(true);
+    const r = await onAnswer(yes);
+    setBusy(false);
+    if (r.ok) setAnswer(yes ? (r.mode === "auto" ? "auto" : "asked") : "later");
+  };
+  return (
+    <div className="celebrate full" style={{ marginTop: 18, border: "3px solid var(--sun)", borderRadius: 18, padding: 18 }}>
+      <div className="stars" aria-hidden="true">
+        <span>⭐</span>
+        <span>⭐</span>
+        <span>⭐</span>
+      </div>
+      {answer === null ? (
+        <>
+          <h2>{t.promptTitle(name, level, next)}</h2>
+          <div className="player-nav">
+            <button onClick={() => answerWith(false)} disabled={busy}>
+              {t.promptNo}
+            </button>
+            <button className="primary" autoFocus onClick={() => answerWith(true)} disabled={busy}>
+              {t.promptYes}
+            </button>
+          </div>
+        </>
+      ) : (
+        <h2 role="status">{answer === "asked" ? t.promptAsked : answer === "auto" ? t.promptAuto(next) : t.promptLater(level)}</h2>
+      )}
+    </div>
   );
 }

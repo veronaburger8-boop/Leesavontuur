@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Layout } from "@/lib/content/types";
 import { displayMs, type EyeMode, passageLines, wordGroups } from "@/lib/lesson/logic";
+import type { DisplayStyle } from "@/lib/lesson/next";
 import type { LessonText } from "@/lib/lesson/text";
 import { useTimers } from "./shared";
 
@@ -16,6 +17,7 @@ export function EyeExercise({
   layout,
   wpm,
   mode,
+  displayStyle = "border",
   t,
   onDone,
 }: {
@@ -24,6 +26,7 @@ export function EyeExercise({
   layout: Layout;
   wpm: number;
   mode: EyeMode;
+  displayStyle?: DisplayStyle;
   t: LessonText;
   onDone: () => void;
 }) {
@@ -72,7 +75,7 @@ export function EyeExercise({
     <section className="panel">
       <h2>{title}</h2>
       <p className="sub">{t.eyeIntro}</p>
-      <div className="eye-stage" aria-live="off">
+      <div className={`eye-stage style-${displayStyle}`} aria-live="off">
         {phase === "ready" && (
           <button className="primary" autoFocus onClick={start}>
             {t.eyeStart}

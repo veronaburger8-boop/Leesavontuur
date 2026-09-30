@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import type { Layout } from "@/lib/content/types";
 import { IMPOSSIBLY_FAST, pages, wordsPerMinute } from "@/lib/lesson/logic";
+import type { DisplayStyle } from "@/lib/lesson/next";
 import type { LessonText } from "@/lib/lesson/text";
 
 export interface ReadingResult {
@@ -19,6 +20,7 @@ export function TimedReading({
   passage,
   layout,
   words,
+  displayStyle = "border",
   t,
   onDone,
 }: {
@@ -26,6 +28,7 @@ export function TimedReading({
   passage: string[];
   layout: Layout;
   words: number;
+  displayStyle?: DisplayStyle;
   t: LessonText;
   onDone: (r: ReadingResult) => void;
 }) {
@@ -67,7 +70,7 @@ export function TimedReading({
     return (
       <section className="panel">
         <h2>{title}</h2>
-        <div className={`passage reading ${layout}`}>
+        <div className={`passage reading ${layout} style-${displayStyle}`}>
           {allPages[page].map((p, i) => (
             <p key={i}>{p}</p>
           ))}

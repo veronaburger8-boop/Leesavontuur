@@ -12,6 +12,9 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
         <Link className="button small" href="/admin/import">
           Import
         </Link>
+        <Link className="button small" href="/admin/settings">
+          Settings
+        </Link>
       </nav>
       {children}
     </main>

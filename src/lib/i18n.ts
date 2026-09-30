@@ -125,6 +125,50 @@ const text = {
   },
   confirmDelete: { af: "Ek verstaan. Verwyder permanent.", en: "I understand. Remove permanently." },
 
+  gradeAdvice: {
+    af: "Ons beveel aan dat kinders eers in Graad 1, kwartaal 3 met Leesavontuur begin. Teen dan ken hulle al die klanke wat op Vlak 1 gebruik word.",
+    en: "We recommend that children start Leesavontuur in Grade 1, Term 3. By then they know all the sounds used at Level 1.",
+  },
+  placementTest: { af: "Plasingstoets", en: "Placement test" },
+  placementHint: {
+    af: "Kies die taal en die vlak om te toets. Jou kind kies dan een van drie leesstukke.",
+    en: "Choose the language and level to test. Your child then chooses one of three passages.",
+  },
+  startTest: { af: "Begin die toets", en: "Start the test" },
+  language: { af: "Taal", en: "Language" },
+  notifications: { af: "Kennisgewings", en: "Notifications" },
+  requestText: {
+    af: "wil graag Vlak {level} in {language} probeer. Keur jy goed? Jou kind doen dan eers 'n uitdagingsles.",
+    en: "would like to try Level {level} in {language}. Do you approve? Your child will first do a challenge lesson.",
+  },
+  approve: { af: "Keur goed", en: "Approve" },
+  decline: { af: "Nog nie", en: "Not yet" },
+  movedUp: { af: "het na Vlak {level} in {language} opgeskuif! Jy kan die vlak enige tyd terugskuif.", en: "moved up to Level {level} in {language}! You can move them back at any time." },
+  notPassed: {
+    af: "het die uitdagingsles vir Vlak {level} in {language} probeer. Hulle oefen eers nog 'n bietjie op die huidige vlak.",
+    en: "tried the challenge lesson for Level {level} in {language}. They'll practise a bit more at their current level first.",
+  },
+  ok: { af: "Reg so", en: "OK" },
+  suggestUp: { af: "behaal gemiddeld {avg}% in die laaste lesse op Vlak {level} in {language}. Skuif op na Vlak {to}?", en: "is averaging {avg}% over the last lessons at Level {level} in {language}. Move up to Level {to}?" },
+  suggestDown: { af: "behaal gemiddeld {avg}% in die laaste lesse op Vlak {level} in {language}. Skuif af na Vlak {to}?", en: "is averaging {avg}% over the last lessons at Level {level} in {language}. Move down to Level {to}?" },
+  moveTo: { af: "Skuif na Vlak {to}", en: "Move to Level {to}" },
+  ignore: { af: "Ignoreer", en: "Ignore" },
+  levelSet: { af: "Die vlak is gestoor.", en: "The level has been saved." },
+  calibrationMark: { af: "plasingstoets", en: "placement test" },
+  challengeMark: { af: "uitdagingsles", en: "challenge lesson" },
+  settings: { af: "Instellings", en: "Settings" },
+  displayStyle: { af: "Hoe die leesstuk lyk", en: "How the passage looks" },
+  stylePlain: { af: "Gewoon", en: "Plain" },
+  styleBorder: { af: "Gekleurde rand", en: "Coloured border" },
+  styleTint: { af: "Getinte agtergrond", en: "Tinted background" },
+  eyeMode: { af: "Oogoefening", en: "Eye exercise" },
+  eyeRotate: { af: "Wissel af (aanbeveel)", en: "Take turns (recommended)" },
+  eyeLines: { af: "Altyd hele reëls", en: "Always whole lines" },
+  eyeGroups: { af: "Altyd woordgroepe", en: "Always word groups" },
+  eyePacer: { af: "Altyd bewegende wyser", en: "Always moving pacer" },
+  levelUpMode: { af: "Opskuif na die volgende vlak", en: "Moving up a level" },
+  levelUpAsk: { af: "Vra my eers (aanbeveel)", en: "Ask me first (recommended)" },
+  levelUpAuto: { af: "Laat my kind opskuif ná 'n uitdagingsles (ek word steeds laat weet)", en: "Let my child move up after a challenge lesson (I'm still told)" },
   account: { af: "My rekening", en: "My account" },
   accountLanguage: { af: "Taal van die ouerarea", en: "Language of the parent area" },
   yourData: { af: "Jou data", en: "Your data" },
@@ -145,5 +189,6 @@ const text = {
 export type TextKey = keyof typeof text;
 
 export function translator(locale: Locale) {
-  return (key: TextKey) => text[key][locale];
+  return (key: TextKey, values?: Record<string, string | number>) =>
+    text[key][locale].replace(/\{(\w+)\}/g, (m, k: string) => (values && k in values ? String(values[k]) : m));
 }

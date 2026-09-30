@@ -3,6 +3,8 @@
 import { redirect } from "next/navigation";
 import { requireAccount } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { Language } from "@/lib/content/types";
+import { getResults } from "@/lib/lesson/next";
 import { AVAILABLE_LEVELS, GRADES } from "./data";
 
 const str = (v: FormDataEntryValue | null) => (typeof v === "string" ? v.trim() : "");
@@ -41,6 +43,17 @@ export async function updateLearner(formData: FormData) {
   if (!f.valid) redirect(`/parent/learners/${id}?error=name`);
   const { error, count } = await supabase.from("learners").update({ name: f.name, grade: f.grade }, { count: "exact" }).eq("id", id);
   if (error || count !== 1) redirect(`/parent/learners/${id}?error=failed`);
+  const displayStyle = str(formData.get("display_style"));
+  const eyeMode = str(formData.get("eye_mode_fixed"));
+  const levelUpMode = str(formData.get("level_up_mode"));
+  await supabase
+    .from("learners")
+    .update({
+      display_style: ["plain", "border", "tint"].includes(displayStyle) ? displayStyle : "border",
+      eye_mode_fixed: ["lines", "groups", "pacer"].includes(eyeMode) ? eyeMode : null,
+      level_up_mode: levelUpMode === "auto" ? "auto" : "ask",
+    })
+    .eq("id", id);
   const { error: levelError } = await supabase.from("learner_languages").upsert([
     { learner_id: id, language: "af", level: f.levelAf },
     { learner_id: id, language: "en", level: f.levelEn },
@@ -67,4 +80,68 @@ export async function deleteAccount(formData: FormData) {
   // The account no longer exists, so only clear this browser's session.
   await supabase.auth.signOut({ scope: "local" });
   redirect("/?deleted=1");
+}
+
+const lang = (v: string): Language => (v === "en" ? "en" : "af");
+
+/** The parent sets a child's level in one language (past results are kept). */
+export async function setLevel(learnerId: string, language: Language, formData: FormData) {
+  const { supabase } = await requireAccount("/parent");
+  const level = Number(formData.get("level"));
+  if (!AVAILABLE_LEVELS.includes(level)) redirect("/parent?error=level");
+  const { error } = await supabase
+    .from("learner_languages")
+    .upsert({ learner_id: learnerId, language: lang(language), level });
+  // A new level starts fresh: an open request for the old level no longer applies.
+  await supabase
+    .from("level_requests")
+    .update({ status: "cancelled", decided_at: new Date().toISOString() })
+    .eq("learner_id", learnerId)
+    .eq("language", lang(language))
+    .in("status", ["pending", "approved"]);
+  redirect(error ? "/parent?error=level" : "/parent?levelSet=1");
+}
+
+/** The parent approves (challenge lesson next) or declines the child's request to move up. */
+export async function decideRequest(formData: FormData) {
+  const { supabase } = await requireAccount("/parent");
+  const id = Number(formData.get("id"));
+  const approve = formData.get("approve") === "yes";
+  const { data: request } = await supabase
+    .from("level_requests")
+    .update({ status: approve ? "approved" : "declined", decided_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("status", "pending")
+    .select("learner_id, language")
+    .maybeSingle<{ learner_id: string; language: Language }>();
+  if (request && !approve) {
+    // Ask again only after a few more lessons.
+    const results = await getResults(supabase, request.learner_id, request.language);
+    await supabase
+      .from("learner_languages")
+      .update({ prompt_snoozed_at: results.filter((r) => r.content_type === "lesson").length })
+      .eq("learner_id", request.learner_id)
+      .eq("language", request.language);
+  }
+  redirect("/parent");
+}
+
+/** The parent ignores a level suggestion; it comes back after a few more lessons. */
+export async function ignoreSuggestion(formData: FormData) {
+  const { supabase } = await requireAccount("/parent");
+  const learnerId = str(formData.get("learner_id"));
+  const language = lang(str(formData.get("language")));
+  const results = await getResults(supabase, learnerId, language);
+  await supabase
+    .from("learner_languages")
+    .update({ suggestion_snoozed_at: results.filter((r) => r.content_type === "lesson").length })
+    .eq("learner_id", learnerId)
+    .eq("language", language);
+  redirect("/parent");
+}
+
+export async function dismissNotification(formData: FormData) {
+  const { supabase } = await requireAccount("/parent");
+  await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", Number(formData.get("id")));
+  redirect("/parent");
 }

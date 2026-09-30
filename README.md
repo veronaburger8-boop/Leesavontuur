@@ -2,7 +2,7 @@
 
 A reading program in Afrikaans and English for South African children. The full specification is in [PROJECT-BRIEF.md](PROJECT-BRIEF.md). Instructions for Claude Code are in [CLAUDE.md](CLAUDE.md).
 
-**Status: Phase 2 (The lesson)**: the full 7-step lesson player, scoring, reading-speed adaptation, encouraging messages and saved report rows, on top of Phase 1 (accounts, children's profiles, the content library and the 130 imported passages).
+**Status: Phase 3 (Calibration and levels)**: placement tests, level suggestions for parents, the child's "Ready for the next level?" prompt with challenge lessons, and parent settings per child. Built on Phase 1 (accounts, profiles, content library) and Phase 2 (the 7-step lesson player).
 
 ## What's where
 
@@ -20,7 +20,7 @@ A reading program in Afrikaans and English for South African children. The full 
 You need a **Supabase** account (database and logins) and a **Vercel** account (hosting). Both can be free while testing.
 
 1. **Supabase:** create a new project. Choose the region closest to South Africa that's offered.
-2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`.)
+2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`.)
 3. **Login settings:** in Supabase, go to **Authentication → URL Configuration**. Set **Site URL** to your website address (for example the `….vercel.app` address), and add `https://<your-address>/**` under **Redirect URLs**.
 4. **Vercel:** import the GitHub repository as a new project, and add these **Environment Variables**. The values are under Supabase → **Project Settings → API Keys**:
    - `NEXT_PUBLIC_SUPABASE_URL`: the project URL
@@ -72,6 +72,16 @@ Supabase's built-in email is fine for testing but only sends a few emails an hou
 7. Start the next lesson: it's the next unread one, and now the eye exercise runs at the measured speed. The three eye-exercise modes take turns.
 8. Try adding a third child: the site allows at most 2 per family.
 9. As admin, open any lesson in the library and press **▶ Play as a child (preview)**. You can choose the eye-exercise mode and speed. Nothing is saved.
+
+## Trying out Phase 3
+
+1. **Update the database first:** in Supabase **SQL Editor**, run `supabase/migrations/20260930100856_levels_and_calibration.sql` once.
+2. **Grade advice:** add or edit a child in Grade R or Grade 1. The card shows the recommendation to start in Grade 1, Term 3.
+3. **Placement test:** on a child's card, open **Plasingstoets**, choose a language and level, and press **Begin die toets**. The child picks one of three passages, reads it, answers 4 questions and spells 7 words. At the end, **Vir die ouer** shows the result and a suggestion. Press **Stel vlak op …** to set the level. The reading speed becomes the eye exercise's starting speed.
+4. **"Ready for the next level?":** after 5 lessons at 90% or more in every score, the child is asked at the end of a lesson. **Ja, kom ons gaan!** sends you a request in the parent area. **Keur goed** makes the next lesson a challenge lesson from the next level; with 80% or more, the child moves up and you're told.
+5. **Suggestions for you:** after 5 lessons averaging 90%+ (or below 50%), the child's card suggests moving up (or down). **Skuif na Vlak …** or **Ignoreer**.
+6. **Settings:** under **Wysig**, choose how the passage looks (plain, coloured border, tinted background), fix one eye-exercise mode, and choose "Ask me first" or "Let my child move up after a challenge lesson".
+7. **Admin → Settings:** the thresholds above (90%, 5 lessons, 80% …) can be changed here.
 
 ## For developers
 

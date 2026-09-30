@@ -108,3 +108,19 @@ export async function importContent(_prev: ImportState, formData: FormData): Pro
   state.message = `Saved ${rows.length} item(s).`;
   return state;
 }
+
+/** Saves the thresholds (admin only; the database refuses anyone else). */
+export async function saveSettings(formData: FormData) {
+  const { supabase } = await requireStaff();
+  const { data } = await supabase.from("app_settings").select("key");
+  for (const { key } of data ?? []) {
+    const raw = str(formData.get(key));
+    const value = Number(raw);
+    if (!/^\d+$/.test(raw) || value < 0 || value > 100) redirect("/admin/settings?error=1");
+  }
+  for (const { key } of data ?? []) {
+    const { error } = await supabase.from("app_settings").update({ value: Number(str(formData.get(key))), updated_at: new Date().toISOString() }).eq("key", key);
+    if (error) redirect("/admin/settings?error=1");
+  }
+  redirect("/admin/settings?saved=1");
+}

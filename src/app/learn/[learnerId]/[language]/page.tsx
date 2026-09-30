@@ -4,7 +4,7 @@ import { LessonPlayer } from "@/components/lesson/lesson-player";
 import { requireAccount } from "@/lib/auth";
 import type { Language } from "@/lib/content/types";
 import { getLearner, nextLesson } from "@/lib/lesson/next";
-import { saveLessonResult } from "../../actions";
+import { answerLevelPrompt, saveLessonResult } from "../../actions";
 
 export const metadata = { title: "Les" };
 
@@ -78,7 +78,10 @@ export default async function LessonPage({ params, searchParams }: PageProps<"/l
         learnerName={learner.name}
         readingWpm={learner.readingWpm}
         eyeMode={next.eyeMode}
-        onSave={saveLessonResult.bind(null, learner.id, next.lesson.id)}
+        displayStyle={learner.displayStyle}
+        challengeLevel={next.challenge?.toLevel ?? null}
+        onSave={saveLessonResult.bind(null, learner.id, next.lesson.id, next.challenge?.id ?? null)}
+        onAnswerPrompt={answerLevelPrompt.bind(null, learner.id, language)}
         backHref={home}
       />
     </main>

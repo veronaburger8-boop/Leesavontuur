@@ -821,3 +821,15 @@ input.answer {
     font-size: 40px;
   }
 }
+
+/* Passage display style, chosen by the parent per child */
+.passage.style-plain,
+.eye-stage.style-plain {
+  border-color: transparent;
+}
+
+.passage.style-tint,
+.eye-stage.style-tint {
+  border-color: transparent;
+  background: var(--sun-soft);
+}

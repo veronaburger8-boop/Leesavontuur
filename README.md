@@ -37,6 +37,19 @@ You need a **Supabase** account (database and logins) and a **Vercel** account (
 
 Supabase's built-in email is fine for testing but only sends a few emails an hour. Before real families sign up, connect an email service (Supabase → Authentication → Emails → SMTP).
 
+## If something goes wrong
+
+- **Use the site's main address.** In Vercel, open the project and use **Overview → Visit** (or **Settings → Domains**). Addresses with an extra code in them, like `leesavontuur-abc123x-….vercel.app`, are frozen snapshots of old versions.
+- **Updates publish from `main`.** Vercel publishes automatically when `main` changes on GitHub, as long as **Settings → Git** shows the connected repository. If it doesn't, use **Deployments → Create Deployment → `main`**.
+- **Locked out, and the reset email doesn't arrive?** Supabase's built-in email only sends a few emails per hour. Set a new password directly in Supabase **SQL Editor** (replace the password, and delete the query afterwards):
+  ```sql
+  update auth.users
+  set encrypted_password = extensions.crypt('NewPassword123', extensions.gen_salt('bf')),
+      email_confirmed_at = coalesce(email_confirmed_at, now())
+  where email = 'leesavontuur194@gmail.com';
+  ```
+- **Admin button missing?** Check the role with `select u.email, p.role from auth.users u join public.profiles p on p.id = u.id;` and run the "make yourself admin" line again if needed.
+
 ## Trying out Phase 1
 
 1. Open the site and choose **Skep 'n rekening**. Try it once *without* ticking the privacy box: it should refuse.

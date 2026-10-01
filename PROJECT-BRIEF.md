@@ -299,6 +299,7 @@ Each phase should end with something the owner can try out.
 - **Sound on/off** is left out until the site has audio.
 - **Lesson order with topics:** the next lesson is the first unread lesson (in the lessons document's order) in one of the child's favourite topics; when none is left at the level, the first unread lesson of any topic. Children who have no favourites yet get the document's order.
 - **Topic requests:** a parent can have at most 5 requests being prepared at a time. A request becomes Ready by itself (and the parent is told on the site) as soon as a lesson for its topic is published at the requesting child's language and level. Staff see the child's language and level, never the child's name.
+- **Pricing:** a free pilot of about two weeks with invited families first. After that, a monthly subscription of **R99 per family** (up to 2 children), paid online (option B; no free trial for now). Charging needs an online payment provider, Vercel Pro and Supabase Pro.
 - **Mascot:** Mika the meerkat (erdmannetjie), original artwork drawn for the site (header, home page, child screens, browser icon). The name "Leesavontuur" stays for now.
 - **Galgie** uses a bunch of 7 balloons (one pops with each wrong letter), held by Mika. In the English sequence the game is called Hangman. Each finished word is saved as time played; the parent report shows minutes played this month. Games never count towards lesson scores.
 - **"About reading" articles** are in Phase 6. Six starter articles (3 Afrikaans, 3 English) were drafted with Claude's help as Drafts; the owner rewrites and publishes them.
@@ -308,7 +309,6 @@ Each phase should end with something the owner can try out.
 **Open questions for the owner**
 
 - Final **name, mascot and look** of the site.
-- **Pricing:** free, subscription per family, or a free trial? This decides whether online payments are needed at launch.
 - **Pictures** for the Level 1–2 word cards: illustrated, photos, or generated? Who supplies them?
 - Would **audio** help (for example hearing a word card read aloud), now or later?
 - Who will check the privacy policy and POPIA compliance?

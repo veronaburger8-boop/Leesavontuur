@@ -6,7 +6,7 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 
 ## A. Decide first
 
-- [ ] **1. Pricing**: free, subscription per family, or a free trial then a subscription? Charging needs online payments (e.g. PayFast, Yoco, Paystack) and paid hosting plans (4).
+- [x] **1. Pricing**: decided. A free pilot of about two weeks with invited families, then R99 per family per month (option B). Still to do before charging: an online payment provider account (e.g. PayFast), the subscription part of the site, and the paid hosting plans (4).
 - [ ] **2. Final name**: keep "Leesavontuur"? Check the name isn't used by another business or trademark (CIPC, Google) before buying a domain.
 
 ## B. Sign up or buy (costs money)

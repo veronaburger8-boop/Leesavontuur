@@ -7,11 +7,11 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 ## A. Decide first
 
 - [x] **1. Pricing**: decided. A free pilot of about two weeks with invited families, then R99 per family per month (option B). Still to do before charging: an online payment provider account (e.g. PayFast), the subscription part of the site, and the paid hosting plans (4).
-- [ ] **2. Final name**: keep "Leesavontuur"? Check the name isn't used by another business or trademark (CIPC, Google) before buying a domain.
+- [x] **2. Final name**: decided. The name stays "Leesavontuur".
 
 ## B. Sign up or buy (costs money)
 
-- [ ] **3. Domain name**, e.g. `leesavontuur.co.za` (roughly R50–R150 a year from a South African registrar). Connect it to Vercel.
+- [ ] **3. Domain name**: `leesavontuur.co.za` bought. Still to do: connect it to Vercel (DNS records), then update `NEXT_PUBLIC_SITE_URL` in Vercel and the Site URL / Redirect URLs in Supabase.
 - [ ] **4. Hosting plans**: Vercel's free plan is non-commercial only (Pro about US$20/month if charging). Supabase free pauses inactive projects and has no daily backups (Pro about US$25/month with daily backups).
 - [ ] **5. Email service** (e.g. Resend or Brevo, free plans available) so sign-up and password emails come from your own domain without Supabase's hourly limit. Needs the domain first.
 

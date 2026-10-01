@@ -11,7 +11,7 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 
 ## B. Sign up or buy (costs money)
 
-- [ ] **3. Domain name**: `leesavontuur.co.za` bought. Still to do: connect it to Vercel (DNS records), then update `NEXT_PUBLIC_SITE_URL` in Vercel and the Site URL / Redirect URLs in Supabase.
+- [x] **3. Domain name**: done. `leesavontuur.co.za` (registered at registerdomain.co.za) uses Vercel's nameservers, so DNS records are managed in Vercel → Domains. The site's address is `https://www.leesavontuur.co.za` (the bare domain redirects there). `NEXT_PUBLIC_SITE_URL` is set in Vercel; Supabase's Site URL and Redirect URLs point to the new address (the old `leesavontuur-rho.vercel.app` stays as a spare).
 - [ ] **4. Hosting plans**: Vercel's free plan is non-commercial only (Pro about US$20/month if charging). Supabase free pauses inactive projects and has no daily backups (Pro about US$25/month with daily backups).
 - [ ] **5. Email service** (e.g. Resend or Brevo, free plans available) so sign-up and password emails come from your own domain without Supabase's hourly limit. Needs the domain first.
 

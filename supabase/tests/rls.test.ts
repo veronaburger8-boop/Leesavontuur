@@ -346,6 +346,20 @@ describe.skipIf(!url)("database access rules", () => {
     expect(await as(ids.parentA, async (q) => (await q("select seconds from public.game_sessions")).rows)).toEqual([{ seconds: 120 }]);
   });
 
+  it("remembers eye-game difficulty per child, for the child's own parent only", async () => {
+    const rone = (await db.query("select id from public.learners where name = 'Rone'")).rows[0].id;
+    const save = (who: string, step: number) =>
+      as(who, (q) => q("insert into public.game_progress (learner_id, game, step) values ($1, 'vuurvliegie', $2) on conflict (learner_id, game) do update set step = excluded.step", [rone, step]), true);
+    await save(ids.parentA, 3);
+    await save(ids.parentA, 4);
+    await expect(save(ids.parentB, 9)).rejects.toThrow(/row-level security/);
+    await expect(save(ids.parentA, 25)).rejects.toThrow(/check constraint/);
+    expect(await as(ids.parentA, async (q) => (await q("select step from public.game_progress")).rows)).toEqual([{ step: 4 }]);
+    expect(await as(ids.parentB, async (q) => (await q("select step from public.game_progress")).rows)).toHaveLength(0);
+    await as(ids.parentA, (q) => q("insert into public.game_sessions (learner_id, game, language, level, seconds, words_played, words_won) values ($1, 'soek', 'en', 1, 80, 3, 3)", [rone]), true);
+    await expect(as(ids.parentA, (q) => q("insert into public.game_sessions (learner_id, game, language, level, seconds) values ($1, 'snake', 'en', 1, 80)", [rone]))).rejects.toThrow(/check constraint/);
+  });
+
   it("deletes a family's children when the account is deleted", async () => {
     await db.query("delete from auth.users where id = $1", [ids.parentA]);
     const { rows } = await db.query("select count(*)::int as n from public.learners where parent_id = $1", [ids.parentA]);

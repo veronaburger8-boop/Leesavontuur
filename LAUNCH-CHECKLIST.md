@@ -13,7 +13,7 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 
 - [x] **3. Domain name**: done. `leesavontuur.co.za` (registered at registerdomain.co.za) uses Vercel's nameservers, so DNS records are managed in Vercel → Domains. The site's address is `https://www.leesavontuur.co.za` (the bare domain redirects there). `NEXT_PUBLIC_SITE_URL` is set in Vercel; Supabase's Site URL and Redirect URLs point to the new address (the old `leesavontuur-rho.vercel.app` stays as a spare).
 - [ ] **4. Hosting plans**: Vercel's free plan is non-commercial only (Pro about US$20/month if charging). Supabase free pauses inactive projects and has no daily backups (Pro about US$25/month with daily backups).
-- [ ] **5. Email service** (e.g. Resend or Brevo, free plans available) so sign-up and password emails come from your own domain without Supabase's hourly limit. Needs the domain first.
+- [ ] **5. Email service**: chosen **Resend** (free plan). Next steps: (1) sign up at resend.com with leesavontuur194@gmail.com, add domain `leesavontuur.co.za` (region Ireland eu-west-1); (2) add Resend's DNS records in **Vercel → Domains** (DNS is at Vercel); (3) create an API key in Resend (secret, never share it) and enter the SMTP details in Supabase → Authentication → Emails → SMTP settings, sender `noreply@leesavontuur.co.za`; (4) test sign-up and password-reset emails.
 
 ## C. Check
 

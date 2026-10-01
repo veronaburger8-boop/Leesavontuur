@@ -1187,3 +1187,190 @@ input.answer {
     opacity: 0;
   }
 }
+
+/* ---------------------------------------------------------------- eye-movement games */
+
+.games-list {
+  margin-top: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+}
+
+.eye-intro {
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  max-width: 520px;
+  margin: 0 auto;
+  font-size: 19px;
+}
+
+.eye-intro h2 {
+  margin: 0;
+}
+
+button.big {
+  font-size: 22px;
+  padding: 14px 34px;
+}
+
+.eye-message {
+  text-align: center;
+  min-height: 1.6em;
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+/* Catch the firefly */
+.firefly-area {
+  position: relative;
+  height: min(60vh, 440px);
+  border-radius: 18px;
+  background: radial-gradient(circle at 30% 20%, #1f3b52, #0d1b26);
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+.firefly {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.firefly span {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #c8f07a;
+  box-shadow: 0 0 18px 6px rgb(200 240 122 / 0.55);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.firefly.gold span {
+  background: #ffc933;
+  box-shadow: 0 0 26px 10px rgb(255 201 51 / 0.8);
+  transform: scale(1.5);
+}
+
+.firefly:not(.calm) span {
+  animation: glow 1.6s ease-in-out infinite;
+}
+
+@keyframes glow {
+  50% {
+    box-shadow: 0 0 10px 3px rgb(200 240 122 / 0.35);
+  }
+}
+
+.firefly.gold:not(.calm) span {
+  animation: none;
+}
+
+/* Find it */
+.find-target {
+  text-align: center;
+  font-size: 22px;
+  margin: 0 0 10px;
+}
+
+.find-target strong {
+  font-family: var(--read-font);
+  font-weight: 400;
+  font-size: 34px;
+  padding: 0 12px;
+  border: 3px solid var(--leaf);
+  border-radius: 12px;
+  margin-left: 6px;
+}
+
+.find-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.find-grid button {
+  min-height: 52px;
+  padding: 4px;
+  font-family: var(--read-font);
+  font-weight: 400;
+  font-size: clamp(18px, 4.5vw, 28px);
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--stone);
+}
+
+.find-grid button.found {
+  background: var(--leaf-soft);
+  border-color: var(--leaf);
+}
+
+.find-grid button.wrong {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+
+/* Jumping words */
+.jump-area {
+  position: relative;
+  height: min(55vh, 400px);
+  border-radius: 18px;
+  border: 2px solid var(--stone);
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.jump-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--leaf);
+}
+
+.jump-word {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--read-font);
+  font-size: clamp(26px, 6vw, 40px);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.jump-choices {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.jump-choices button {
+  font-family: var(--read-font);
+  font-weight: 400;
+  font-size: 26px;
+  min-width: 120px;
+  min-height: 60px;
+}
+
+.jump-choices button.right {
+  background: var(--leaf-soft);
+  border-color: var(--leaf);
+  color: var(--ink);
+  opacity: 1;
+}

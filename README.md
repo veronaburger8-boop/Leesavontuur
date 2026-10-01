@@ -20,7 +20,7 @@ A reading program in Afrikaans and English for South African children. The full 
 You need a **Supabase** account (database and logins) and a **Vercel** account (hosting). Both can be free while testing.
 
 1. **Supabase:** create a new project. Choose the region closest to South Africa that's offered.
-2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`, then `…_parent_pin.sql`, then `…_topics_and_requests.sql`, then `…_games_and_articles.sql`.)
+2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`, then `…_parent_pin.sql`, then `…_topics_and_requests.sql`, then `…_games_and_articles.sql`, then `…_eye_games.sql`.)
 3. **Login settings:** in Supabase, go to **Authentication → URL Configuration**. Set **Site URL** to your website address (for example the `….vercel.app` address), and add `https://<your-address>/**` under **Redirect URLs**.
 4. **Vercel:** import the GitHub repository as a new project, and add these **Environment Variables**. The values are under Supabase → **Project Settings → API Keys**:
    - `NEXT_PUBLIC_SUPABASE_URL`: the project URL
@@ -113,6 +113,15 @@ Supabase's built-in email is fine for testing but only sends a few emails an hou
 3. **Galgie:** press **Begin lees**, then **🎈 Galgie** (or **🎈 Hangman** for English) in the games corner. Tap letters (or type them). Each wrong letter pops a balloon; 7 balloons per word. The words come from the child's own level.
 4. **Game time in the report:** after a few words, open the child's **Verslag**: "Speletjies hierdie maand: … min" appears under the summary line.
 5. **About reading articles:** go to **Admin → Articles**. There are 6 drafts (3 Afrikaans, 3 English). Open one, rewrite it in your own words and check every fact, press **Save**, then **Publish**. Visitors (also people who are not signed in) find it under **Oor lees** at the bottom of every page.
+
+## Trying out the eye games
+
+1. **Update the database first:** in Supabase **SQL Editor**, run `supabase/migrations/20261003080000_eye_games.sql` once. (Supabase may warn that it drops something: it only replaces the list of allowed game names, so it is safe to run.)
+2. Press **Begin lees**, then **Speel · Play** in the games corner. The games page shows Galgie and the three eye games, each in Afrikaans or English.
+3. **✨ Vang die vuurvliegie:** follow the firefly with your eyes; tap it when it turns gold. 8 gold moments per game.
+4. **🔍 Soek-en-vind:** find all the letters shown at the top; at higher difficulty they become short words from the child's lessons. 3 grids per game.
+5. **🦘 Spring-woorde:** a word flashes somewhere on the screen; choose which word you saw. 8 words per game.
+6. Each game adapts: after a very good game the next one is a step harder (faster firefly, bigger grid, shorter flash); after a hard game, a step easier. Time played appears in the report with the other games.
 
 ### Testing with real children (checklist)
 

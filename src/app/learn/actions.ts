@@ -4,6 +4,7 @@ import type { LessonResultInput, SaveOutcome } from "@/components/lesson/lesson-
 import { redirect } from "next/navigation";
 import { availableTopics, MAX_TOPICS, MIN_TOPICS } from "@/app/parent/data";
 import { requireAccount } from "@/lib/auth";
+import { EYE_GAMES, type EyeGame, nextStep } from "@/lib/games/eyes";
 import type { Language } from "@/lib/content/types";
 import { calibrationVerdict, type CalibrationVerdict, lessonAverage, readyForNextLevel } from "@/lib/levels";
 import { getLearner, getOpenRequest, getResults, getSettings } from "@/lib/lesson/next";
@@ -153,4 +154,29 @@ export async function saveGameRound(learnerId: string, language: Language, level
     words_played: 1,
     words_won: won ? 1 : 0,
   });
+}
+
+/**
+ * Saves one eye-game session (time for the parent report) and adapts the
+ * difficulty for next time. Returns true when the next session is a step harder.
+ */
+export async function saveEyeGame(learnerId: string, game: EyeGame, language: Language, level: number, seconds: number, tries: number, hits: number): Promise<boolean> {
+  const { supabase } = await requireAccount("/parent");
+  if (!EYE_GAMES.includes(game)) return false;
+  const t = Math.min(500, Math.max(0, Math.round(tries)));
+  const h = Math.min(t, Math.max(0, Math.round(hits)));
+  await supabase.from("game_sessions").insert({
+    learner_id: learnerId,
+    game,
+    language: language === "en" ? "en" : "af",
+    level: Math.min(15, Math.max(1, Math.round(level))),
+    seconds: Math.min(1800, Math.max(0, Math.round(seconds))),
+    words_played: t,
+    words_won: h,
+  });
+  const { data } = await supabase.from("game_progress").select("step").eq("learner_id", learnerId).eq("game", game).maybeSingle();
+  const before = (data?.step as number | undefined) ?? 1;
+  const after = nextStep(before, t, h);
+  await supabase.from("game_progress").upsert({ learner_id: learnerId, game, step: after, updated_at: new Date().toISOString() });
+  return after > before;
 }

@@ -279,7 +279,7 @@ The site handles information about children, so South Africa's Protection of Per
 4. **Reports and parent area.** Report tables, reading-speed chart, PDF download and the learner home screen.
 5. **Topics and requests.** Interest topics, lesson selection by topic, the topic request flow, the admin requests inbox, notifications, and AI drafting plus the manual entry form.
 6. **Games and polish.** Hangman, final artwork and branding, the "About reading" articles (see section 12), accessibility checks, and testing with real children on phones and tablets.
-7. **Later.** Eye-tracking games, and Levels 6–15 content.
+7. **Later.** Levels 6–15 content. (The eye-tracking games were built early, after Phase 6.)
 
 Each phase should end with something the owner can try out.
 
@@ -302,6 +302,7 @@ Each phase should end with something the owner can try out.
 - **Mascot:** Mika the meerkat (erdmannetjie), original artwork drawn for the site (header, home page, child screens, browser icon). The name "Leesavontuur" stays for now.
 - **Galgie** uses a bunch of 7 balloons (one pops with each wrong letter), held by Mika. In the English sequence the game is called Hangman. Each finished word is saved as time played; the parent report shows minutes played this month. Games never count towards lesson scores.
 - **"About reading" articles** are in Phase 6. Six starter articles (3 Afrikaans, 3 English) were drafted with Claude's help as Drafts; the owner rewrites and publishes them.
+- **Eye-movement games** (built early, at the owner's request): ✨ Vang die vuurvliegie / Catch the firefly (smooth following), 🔍 Soek-en-vind / Find it (scanning; letters, then words from the child's lessons) and 🦘 Spring-woorde / Jumping words (quick jumps). No camera is used. Difficulty adapts per child and game (steps 1–20); time played appears in the parent report; games never count towards lesson scores. All games are reached from one games page.
 - **AI drafting** uses the Claude API (Claude Opus 5.5) with the owner's own Anthropic account; the key is stored only in Vercel as `ANTHROPIC_API_KEY`. Each run writes up to 5 lessons, saves each one as a Draft as soon as it is written, and shows the estimated cost. Until the key is added, the button says "Not set up yet".
 
 **Open questions for the owner**

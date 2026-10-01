@@ -97,14 +97,12 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
         </p>
         <div className="card" style={{ marginTop: 18 }}>
           <h2>🎲 Speletjies · Games</h2>
-          <div className="row" style={{ justifyContent: "center" }}>
-            <Link className="button" href={`/learn/${learnerId}/galgie?language=af`} lang="af">
-              🎈 Galgie
-            </Link>
-            <Link className="button" href={`/learn/${learnerId}/galgie?language=en`} lang="en">
-              🎈 Hangman
-            </Link>
-          </div>
+          <p className="sub" style={{ margin: "0 0 10px" }}>
+            🎈 Galgie · ✨ Vuurvliegie · 🔍 Soek-en-vind · 🦘 Spring-woorde
+          </p>
+          <Link className="button primary" href={`/learn/${learnerId}/games`}>
+            Speel · Play
+          </Link>
         </div>
       </section>
     </main>

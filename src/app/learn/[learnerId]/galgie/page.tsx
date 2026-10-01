@@ -24,7 +24,7 @@ export default async function GalgiePage({ params, searchParams }: PageProps<"/l
     .eq("level", learner.level)
     .eq("status", "published");
   const words = shuffled(galgieWords((data ?? []).map((r) => r.data as Pick<Lesson, "spelling" | "wordCards">)));
-  const back = `/learn/${learnerId}`;
+  const back = `/learn/${learnerId}/games`;
   if (!words.length)
     return (
       <main>

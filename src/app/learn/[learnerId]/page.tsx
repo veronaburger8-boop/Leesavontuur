@@ -65,6 +65,15 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
       <section className="panel" style={{ textAlign: "center" }}>
         <Meerkat size={90} className="child-mascot" />
         <h1>{learners[0].name}</h1>
+        <div className="card games-banner" style={{ marginTop: 18 }}>
+          <h2>🎲 Speletjies · Games</h2>
+          <p className="sub" style={{ margin: "0 0 10px" }}>
+            🎈 Galgie · ✨ Vuurvliegie · 🔍 Soek-en-vind · 🦘 Spring-woorde
+          </p>
+          <Link className="button primary" href={`/learn/${learnerId}/games`}>
+            Speel · Play
+          </Link>
+        </div>
         <div className="cards" style={{ marginTop: 18 }}>
           {cards.map(({ language, learner, request, declined, done, total }) => {
             const t = text[language];
@@ -95,15 +104,6 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
             ⭐ My onderwerpe · My topics
           </Link>
         </p>
-        <div className="card" style={{ marginTop: 18 }}>
-          <h2>🎲 Speletjies · Games</h2>
-          <p className="sub" style={{ margin: "0 0 10px" }}>
-            🎈 Galgie · ✨ Vuurvliegie · 🔍 Soek-en-vind · 🦘 Spring-woorde
-          </p>
-          <Link className="button primary" href={`/learn/${learnerId}/games`}>
-            Speel · Play
-          </Link>
-        </div>
       </section>
     </main>
   );

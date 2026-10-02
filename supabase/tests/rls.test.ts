@@ -360,6 +360,16 @@ describe.skipIf(!url)("database access rules", () => {
     await expect(as(ids.parentA, (q) => q("insert into public.game_sessions (learner_id, game, language, level, seconds) values ($1, 'snake', 'en', 1, 80)", [rone]))).rejects.toThrow(/check constraint/);
   });
 
+  it("lets anyone view word-card pictures, but only staff add or remove them", async () => {
+    const id = await as(ids.admin, async (q) => (await q("insert into public.pictures (data, source) values ('AAAA', 'test') returning id")).rows[0].id, true);
+    expect(await as(null, async (q) => (await q("select data from public.pictures where id = $1", [id])).rows)).toEqual([{ data: "AAAA" }]);
+    await expect(as(ids.parentB, (q) => q("insert into public.pictures (data) values ('BBBB')"))).rejects.toThrow(/row-level security/);
+    await expect(as(null, (q) => q("insert into public.pictures (data) values ('BBBB')"))).rejects.toThrow(/permission denied/);
+    const removed = await as(ids.parentB, async (q) => (await q("delete from public.pictures where id = $1", [id])).rowCount, true);
+    expect(removed).toBe(0);
+    expect(await as(ids.admin, async (q) => (await q("delete from public.pictures where id = $1", [id])).rowCount, true)).toBe(1);
+  });
+
   it("deletes a family's children when the account is deleted", async () => {
     await db.query("delete from auth.users where id = $1", [ids.parentA]);
     const { rows } = await db.query("select count(*)::int as n from public.learners where parent_id = $1", [ids.parentA]);

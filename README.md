@@ -20,7 +20,7 @@ A reading program in Afrikaans and English for South African children. The full 
 You need a **Supabase** account (database and logins) and a **Vercel** account (hosting). Both can be free while testing.
 
 1. **Supabase:** create a new project. Choose the region closest to South Africa that's offered.
-2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`, then `…_parent_pin.sql`, then `…_topics_and_requests.sql`, then `…_games_and_articles.sql`, then `…_eye_games.sql`.)
+2. **Create the database:** in Supabase, open **SQL Editor** and run each file in `supabase/migrations/` **in order, once each**: paste the whole file and press **Run**. (`…_foundation.sql` first, then `…_lesson_results.sql`, then `…_levels_and_calibration.sql`, then `…_parent_pin.sql`, then `…_topics_and_requests.sql`, then `…_games_and_articles.sql`, then `…_eye_games.sql`, then `…_pictures.sql`.)
 3. **Login settings:** in Supabase, go to **Authentication → URL Configuration**. Set **Site URL** to your website address (for example the `….vercel.app` address), and add `https://<your-address>/**` under **Redirect URLs**.
 4. **Vercel:** import the GitHub repository as a new project, and add these **Environment Variables**. The values are under Supabase → **Project Settings → API Keys**:
    - `NEXT_PUBLIC_SUPABASE_URL`: the project URL
@@ -122,6 +122,14 @@ Supabase's built-in email is fine for testing but only sends a few emails an hou
 4. **🔍 Soek-en-vind:** find all the letters shown at the top; at higher difficulty they become short words from the child's lessons. 3 grids per game.
 5. **🦘 Spring-woorde:** a word flashes somewhere on the screen; choose which word you saw. 8 words per game.
 6. Each game adapts: after a very good game the next one is a step harder (faster firefly, bigger grid, shorter flash); after a hard game, a step easier. Time played appears in the report with the other games.
+
+## Word-card pictures
+
+1. **Update the database first:** in Supabase **SQL Editor**, run `supabase/migrations/20261004080000_pictures.sql` once.
+2. **Admin → Pictures** shows how many Level 1–2 word cards have a picture, and lists the cards without one, with each card's picture idea.
+3. **Import a pictures file** (made with the image generator): choose the file, untick any picture that isn't right, and press **Save**. The site downloads each picture, makes it small for phones, and puts it on the word card.
+4. Or **upload** a picture for one card from your computer, or **Remove picture**.
+5. Pictures show on the word cards straight away, also in published lessons. Re-importing `lessons.json` keeps the pictures.
 
 ### Testing with real children (checklist)
 

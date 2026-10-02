@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { slugify } from "@/lib/articles/format";
 import { requireStaff } from "@/lib/auth";
+import { type PictureEntry, parsePictureFile } from "@/lib/pictures/cards";
+import { attachPicture, detachPicture, download } from "@/lib/pictures/store";
 import { type ContentItem, type Status, STATUSES, wordCount } from "@/lib/content/types";
 import { aiConfigured, draftLessons } from "@/lib/content/draft";
 import { type Draft, draftToLesson, estimateCost } from "@/lib/content/draft-map";
@@ -72,8 +74,14 @@ export async function importContent(_prev: ImportState, formData: FormData): Pro
   const replace = formData.get("replace") === "yes";
   const statusChoice = str(formData.get("status"));
   const ids = items.map((i) => i.id);
-  const { data: existingRows } = ids.length ? await supabase.from("content_items").select("id").in("id", ids) : { data: [] };
+  const { data: existingRows } = ids.length ? await supabase.from("content_items").select("id, data").in("id", ids) : { data: [] };
   const existing = new Set((existingRows ?? []).map((r) => r.id as string));
+  // Pictures added on the site are kept when an item is replaced by an import.
+  const oldPictures = new Map<string, Map<string, string>>();
+  for (const r of existingRows ?? []) {
+    const cards = ((r.data as { wordCards?: { word: string; image: string | null }[] }).wordCards ?? []).filter((c) => c.image);
+    oldPictures.set(r.id as string, new Map(cards.map((c) => [c.word.trim().toLowerCase(), c.image as string])));
+  }
 
   const rows = [];
   for (const item of items) {
@@ -86,6 +94,9 @@ export async function importContent(_prev: ImportState, formData: FormData): Pro
     let status: Status = statusChoice === "draft" || statusChoice === "in_review" ? statusChoice : item.status;
     if (status === "published" && state.warnings.some((w) => w.id === item.id)) status = "in_review";
     // The status and review note live in their own columns; `data` holds the content.
+    const kept = oldPictures.get(item.id);
+    if (kept?.size && item.type === "lesson")
+      item.wordCards = item.wordCards.map((c) => (c.image ? c : { ...c, image: kept.get(c.word.trim().toLowerCase()) ?? null }));
     const data: Partial<ContentItem> = { ...item };
     delete data.status;
     delete data.reviewNote;
@@ -384,4 +395,70 @@ export async function setArticleStatus(formData: FormData) {
   const { error } = await supabase.from("articles").update({ status }).eq("id", id);
   revalidatePath("/articles");
   redirect(`/admin/articles/${id}?${error ? "error=failed" : `status=${status}`}`);
+}
+
+// ---------------------------------------------------------------- word-card pictures
+
+export interface PictureResult {
+  lessonId: string;
+  word: string;
+  ok: boolean;
+  error?: string;
+}
+
+/** Saves pictures from a pictures file the admin has checked (downloaded from the image generator). */
+export async function importPictures(entries: PictureEntry[]): Promise<PictureResult[]> {
+  const { supabase } = await requireStaff();
+  const { entries: valid, problems } = parsePictureFile(entries);
+  const results: PictureResult[] = problems.map((p) => ({ lessonId: "-", word: "-", ok: false, error: p }));
+  // A few at a time, so the database isn't asked to change one lesson twice at once.
+  const byLesson = new Map<string, PictureEntry[]>();
+  for (const e of valid.slice(0, 200)) byLesson.set(e.lessonId, [...(byLesson.get(e.lessonId) ?? []), e]);
+  const lessons = [...byLesson.values()];
+  for (let i = 0; i < lessons.length; i += 4) {
+    await Promise.all(
+      lessons.slice(i, i + 4).map(async (list) => {
+        for (const e of list) {
+          try {
+            await attachPicture(supabase, e.lessonId, e.word, await download(e.url), e.url);
+            results.push({ lessonId: e.lessonId, word: e.word, ok: true });
+          } catch (err) {
+            results.push({ lessonId: e.lessonId, word: e.word, ok: false, error: err instanceof Error ? err.message : "Failed." });
+          }
+        }
+      }),
+    );
+  }
+  revalidatePath("/admin/pictures");
+  return results;
+}
+
+/** Uploads one picture from the admin's computer for a word card. */
+export async function uploadPicture(formData: FormData) {
+  const { supabase } = await requireStaff();
+  const lessonId = str(formData.get("lessonId"));
+  const word = str(formData.get("word"));
+  const file = formData.get("file");
+  const back = `/admin/pictures?${new URLSearchParams({ show: str(formData.get("show")) || "missing" })}`;
+  if (!(file instanceof File) || file.size === 0 || file.size > 4 * 1024 * 1024 || !file.type.startsWith("image/")) redirect(`${back}&error=file`);
+  try {
+    await attachPicture(supabase, lessonId, word, Buffer.from(await file.arrayBuffer()), file.name);
+  } catch {
+    redirect(`${back}&error=failed`);
+  }
+  revalidatePath("/admin/pictures");
+  redirect(`${back}&saved=1#${encodeURIComponent(lessonId)}`);
+}
+
+export async function removePicture(formData: FormData) {
+  const { supabase } = await requireStaff();
+  const lessonId = str(formData.get("lessonId"));
+  const back = `/admin/pictures?${new URLSearchParams({ show: str(formData.get("show")) || "all" })}`;
+  try {
+    await detachPicture(supabase, lessonId, str(formData.get("word")));
+  } catch {
+    redirect(`${back}&error=failed`);
+  }
+  revalidatePath("/admin/pictures");
+  redirect(`${back}&removed=1#${encodeURIComponent(lessonId)}`);
 }

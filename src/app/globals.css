@@ -1381,3 +1381,77 @@ button.big {
   padding: 2px 6px;
   border-radius: 6px;
 }
+
+/* ---------------------------------------------------------------- word-card pictures */
+
+.picture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.picture-pick {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border: 2px solid var(--leaf);
+  border-radius: 12px;
+  background: var(--paper);
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.picture-pick.off {
+  border-color: var(--stone);
+  opacity: 0.45;
+}
+
+.picture-pick img,
+.picture-thumb img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.picture-cards {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.picture-cards li {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.picture-thumb {
+  width: 90px;
+  height: 90px;
+  display: grid;
+  place-items: center;
+  border: 2px dashed var(--stone);
+  border-radius: 10px;
+  color: var(--muted);
+}
+
+.picture-lesson + .picture-lesson {
+  border-top: 1px solid var(--stone);
+  padding-top: 8px;
+}
+
+/* Line drawings keep a white card, also in dark mode. */
+.wordcard img {
+  background: #fff;
+  border-radius: 12px;
+  padding: 6px;
+}
+
+/* Lists inside messages use the normal text colour, so they stay easy to read. */
+.message ul li {
+  color: var(--ink);
+}

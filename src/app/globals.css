@@ -1455,3 +1455,236 @@ button.big {
 .message ul li {
   color: var(--ink);
 }
+
+/* ---------------------------------------------------------------- welcome page (visitors) */
+
+.landing-note {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.button.big {
+  font-size: 20px;
+  padding: 14px 26px;
+}
+
+.pill {
+  display: inline-block;
+  background: var(--sun-soft);
+  color: var(--ink);
+  border: 2px solid var(--sun);
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.landing .lead {
+  font-size: 20px;
+}
+
+.landing-hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.landing-hero h1 {
+  font-size: 40px;
+}
+
+/* Screenshots of the real site sit in a soft frame. */
+.shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 3px solid var(--stone);
+  background: #fff;
+}
+
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.steps li {
+  background: var(--leaf-soft);
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.steps p,
+.trust p,
+.feature p {
+  margin: 0;
+}
+
+.step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--sun);
+  color: #1d2b36;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.features {
+  align-items: start;
+}
+
+.feature .shot {
+  margin-bottom: 12px;
+}
+
+/* The text-only feature runs across the full width, with Mika beside it. */
+.feature-text {
+  grid-column: 1 / -1;
+  background: var(--leaf-soft);
+  border-radius: 18px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 18px;
+  align-items: center;
+}
+
+.feature-text svg {
+  grid-row: span 2;
+}
+
+.topics-line {
+  margin: 20px 0 0;
+}
+
+.sample {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.sample .wordcard img {
+  display: block;
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin: 0 0 12px;
+}
+
+.sample-passage {
+  border: 3px solid var(--stone);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.trust {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.trust li {
+  border-left: 5px solid var(--grass);
+  padding: 4px 0 4px 16px;
+}
+
+.price {
+  text-align: center;
+}
+
+.price-big {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 46px;
+  color: var(--leaf);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.price-big span {
+  font-size: 22px;
+}
+
+.price-then {
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.price ul {
+  display: inline-block;
+  text-align: left;
+  margin: 0;
+  padding-left: 22px;
+}
+
+.price-join {
+  margin: 20px 0 0;
+}
+
+.faq details {
+  border-bottom: 2px solid var(--stone);
+  padding: 12px 0;
+}
+
+.faq summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--leaf);
+}
+
+.faq details p {
+  margin: 8px 0 0;
+}
+
+.landing-end {
+  text-align: center;
+}
+
+.landing-end svg {
+  display: block;
+  margin: 0 auto 8px;
+}
+
+@media (max-width: 760px) {
+  .feature-text svg {
+    width: 64px;
+    height: auto;
+  }
+
+  .landing-hero,
+  .features,
+  .sample,
+  .steps,
+  .trust {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-hero h1 {
+    font-size: 32px;
+  }
+
+  .price-big {
+    font-size: 38px;
+  }
+}

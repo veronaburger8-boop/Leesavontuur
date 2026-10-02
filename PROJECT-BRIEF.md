@@ -305,14 +305,14 @@ Each phase should end with something the owner can try out.
 - **"About reading" articles** are in Phase 6. Six starter articles (3 Afrikaans, 3 English) were drafted with Claude's help as Drafts; the owner rewrites and publishes them.
 - **Eye-movement games** (built early, at the owner's request): ✨ Vang die vuurvliegie / Catch the firefly (smooth following), 🔍 Soek-en-vind / Find it (scanning; letters, then words from the child's lessons) and 🦘 Spring-woorde / Jumping words (quick jumps). No camera is used. Difficulty adapts per child and game (steps 1–20); time played appears in the parent report; games never count towards lesson scores. All games are reached from one games page.
 - **AI drafting** uses the Claude API (Claude Opus 5.5) with the owner's own Anthropic account; the key is stored only in Vercel as `ANTHROPIC_API_KEY`. Each run writes up to 5 lessons, saves each one as a Draft as soon as it is written, and shows the estimated cost. Until the key is added, the button says "Not set up yet".
+- **Word-card pictures:** black-and-white line drawings made with AI (Nano Banana Pro on Higgsfield, paid with the owner's credits), one per Level 1–2 word card, based on each card's picture idea. They are stored in the database, shrunk for phones, and the owner reviews each batch on Admin → Pictures before saving. Level 1 is done (80 pictures).
+- **Welcome page:** visitors who are not signed in see a welcome page that advertises the program: Mika, "Join the pilot", how it works, screenshots of the real site (made with a pretend family), a peek at one real published Level 1 word card and passage, why parents can trust it, the price (free during the pilot, then R99 per family per month), questions and answers. Signed-in parents see the short home page. The wording is in `src/lib/landing-text.ts`.
 
 **Open questions for the owner**
 
 - Final **name, mascot and look** of the site.
-- **Pictures** for the Level 1–2 word cards: illustrated, photos, or generated? Who supplies them?
 - Would **audio** help (for example hearing a word card read aloud), now or later?
 - Who will check the privacy policy and POPIA compliance?
-- **Domain name** and email address for the site.
 
 ## 12. "About reading" articles
 

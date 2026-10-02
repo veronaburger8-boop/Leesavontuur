@@ -1374,3 +1374,10 @@ button.big {
   color: var(--ink);
   opacity: 1;
 }
+
+/* Footer links stay readable when they land on the grass. */
+.site-footer a {
+  background: var(--sky);
+  padding: 2px 6px;
+  border-radius: 6px;
+}

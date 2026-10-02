@@ -17,7 +17,7 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 
 ## C. Check
 
-- [ ] **6. POPIA and privacy**: privacy policy read by someone qualified; register the Information Officer with the Information Regulator; check the Supabase data region (Project Settings) and mention it in the privacy policy if outside South Africa; Terms of use (Claude can draft a first version for a professional to check).
+- [ ] **6. POPIA and privacy**: the site's part is drafted. The privacy policy (version 2026-10-draft) now lists everything the site stores, the service providers (Supabase and Resend in Ireland, Vercel), the transfer abroad, cookies, retention and the right to complain to the Information Regulator; new Terms of use (af/en) at /terms cover the pilot, R99/month, cancelling and the Consumer Protection Act. Still to do (owner): register as Information Officer with the Information Regulator (eServices on inforegulator.org.za); have both drafts checked by someone qualified, then remove the "Draft" notes.
 - [x] **7. Security settings**: done. "Confirm email" on in Supabase; two-step login (authenticator app) on Supabase, GitHub, Vercel and Resend; recovery codes stored offline. registerdomain.co.za has no two-step login: use a strong unique password and keep Registrar Lock on.
 - [ ] **8. Testing with real children** (checklist in the README).
 

@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 
 /** Version of the privacy policy that parents accept when they sign up. Change it when the policy changes. */
-export const PRIVACY_VERSION = "2026-09-draft";
+export const PRIVACY_VERSION = "2026-10-draft";
 
 /** The site's address, for links in emails. */
 export async function siteUrl(): Promise<string> {

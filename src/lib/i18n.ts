@@ -42,12 +42,13 @@ const text = {
   noAccount: { af: "Nog nie 'n rekening nie?", en: "No account yet?" },
   haveAccount: { af: "Het jy reeds 'n rekening?", en: "Already have an account?" },
   acceptPrivacy: {
-    af: "Ek het die privaatheidsbeleid gelees en aanvaar dit.",
-    en: "I have read and accept the privacy policy.",
+    af: "Ek het die privaatheidsbeleid en gebruiksvoorwaardes gelees en aanvaar dit.",
+    en: "I have read and accept the privacy policy and terms of use.",
   },
   loginFailed: { af: "Die e-posadres of wagwoord is verkeerd.", en: "The email address or password is wrong." },
   signupFailed: { af: "Kon nie die rekening skep nie:", en: "Could not create the account:" },
-  mustAcceptPrivacy: { af: "Aanvaar asseblief die privaatheidsbeleid.", en: "Please accept the privacy policy." },
+  mustAcceptPrivacy: { af: "Aanvaar asseblief die privaatheidsbeleid en gebruiksvoorwaardes.", en: "Please accept the privacy policy and terms of use." },
+  termsOfUse: { af: "Gebruiksvoorwaardes", en: "Terms of use" },
   passwordTooShort: { af: "Die wagwoord moet minstens 8 karakters hê.", en: "The password must have at least 8 characters." },
   tooManyRequests: {
     af: "Ons het so pas vir jou 'n e-pos gestuur. Kyk in jou inkassie (en die gemorspos). As niks opdaag nie, wag 'n minuut en probeer weer.",

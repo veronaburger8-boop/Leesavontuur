@@ -24,7 +24,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <footer className="site-footer">
           <Link href="/articles">{t("aboutReading")}</Link>
-          <a href="/privacy">{t("privacyPolicy")}</a>
+          <Link href="/privacy">{t("privacyPolicy")}</Link>
+          <Link href="/terms">{t("termsOfUse")}</Link>
         </footer>
         <div className="grass" aria-hidden="true" />
       </body>

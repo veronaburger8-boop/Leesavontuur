@@ -50,6 +50,10 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
                 <Link href="/privacy" target="_blank">
                   {t("privacyPolicy")}
                 </Link>
+                {" · "}
+                <Link href="/terms" target="_blank">
+                  {t("termsOfUse")}
+                </Link>
               </span>
             </label>
             <div>

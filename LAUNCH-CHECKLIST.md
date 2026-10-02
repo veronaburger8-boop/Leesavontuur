@@ -18,7 +18,7 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 ## C. Check
 
 - [ ] **6. POPIA and privacy**: privacy policy read by someone qualified; register the Information Officer with the Information Regulator; check the Supabase data region (Project Settings) and mention it in the privacy policy if outside South Africa; Terms of use (Claude can draft a first version for a professional to check).
-- [ ] **7. Security settings**: "Confirm email" switched on in Supabase; strong unique passwords and two-step login for Supabase, Vercel, GitHub and the admin account.
+- [x] **7. Security settings**: done. "Confirm email" on in Supabase; two-step login (authenticator app) on Supabase, GitHub, Vercel and Resend; recovery codes stored offline. registerdomain.co.za has no two-step login: use a strong unique password and keep Registrar Lock on.
 - [ ] **8. Testing with real children** (checklist in the README).
 
 ## D. Content

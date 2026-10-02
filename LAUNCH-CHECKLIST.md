@@ -23,6 +23,6 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 
 ## D. Content
 
-- [ ] **9.** Fix and publish the 4 lessons in review.
+- [x] **9.** The 4 lessons with shortened options were fixed by the owner in the site's editor. Note: `content/lessons.json` still has the old options, so never re-import it with "replace" switched on.
 - [ ] **10.** Rewrite and publish the "Oor lees" articles.
 - [ ] **11.** Pictures for the Level 1–2 word cards: illustrated, photos or generated, and who makes them?

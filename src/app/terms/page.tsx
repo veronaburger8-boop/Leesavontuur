@@ -4,9 +4,8 @@ import { PRIVACY_VERSION } from "@/lib/site";
 
 export const metadata = { title: "Terms of use" };
 
-// DRAFT – to be checked by someone qualified (Consumer Protection Act, POPIA,
-// ECT Act) before paid subscriptions start. Prices and periods come from the
-// owner's decisions in PROJECT-BRIEF.md.
+// Checked by the owner (October 2026). Prices and periods come from the
+// owner's decisions in PROJECT-BRIEF.md: change PRIVACY_VERSION when this changes.
 
 const EMAIL = "leesavontuur194@gmail.com";
 const mail = <a href={`mailto:${EMAIL}`}>{EMAIL}</a>;
@@ -14,7 +13,6 @@ const mail = <a href={`mailto:${EMAIL}`}>{EMAIL}</a>;
 const af = (
   <>
     <h1>Gebruiksvoorwaardes</h1>
-    <p className="message info">Konsep – hierdie voorwaardes moet nog deur iemand met regskennis nagegaan word.</p>
 
     <h2>Oor Leesavontuur</h2>
     <p>
@@ -28,12 +26,15 @@ const af = (
       wagwoord en ouer-PIN geheim; jy is verantwoordelik vir wat met jou rekening gedoen word.
     </p>
 
-    <h2>Die gratis proeftydperk en intekening</h2>
+    <h2>Die loodsprojek, die gratis les en intekening</h2>
     <ul>
-      <li>Tydens die loodsfase (proefprojek) is Leesavontuur gratis vir genooide gesinne.</li>
       <li>
-        Daarna kos Leesavontuur <strong>R99 per gesin per maand</strong>. Ons sal jou minstens 14 dae vooraf laat weet voordat enige betaling begin, en jy
-        betaal niks tensy jy self &apos;n intekening begin.
+        Tydens die loodsprojek is Leesavontuur gratis vir genooide gesinne. Ons sal hierdie gesinne minstens 14 dae vooraf laat weet wanneer die loodsprojek
+        eindig.
+      </li>
+      <li>Daarna kan elke nuwe gesin Leesavontuur gratis probeer: <strong>een gratis les per kind</strong>.</li>
+      <li>
+        Om aan te hou, kos Leesavontuur <strong>R99 per gesin per maand</strong>. Jy betaal niks tensy jy self &apos;n intekening begin.
       </li>
       <li>Jy kan jou intekening enige tyd kanselleer; dit loop dan aan die einde van die betaalde maand af. Daar is geen kansellasiefooi nie.</li>
       <li>As ons die prys verander, laat weet ons jou minstens 30 dae vooraf.</li>
@@ -77,7 +78,6 @@ const af = (
 const en = (
   <>
     <h1>Terms of use</h1>
-    <p className="message info">Draft – these terms still have to be checked by someone with legal knowledge.</p>
 
     <h2>About Leesavontuur</h2>
     <p>
@@ -91,12 +91,12 @@ const en = (
       password and parent PIN secret; you are responsible for what is done with your account.
     </p>
 
-    <h2>The free pilot and subscription</h2>
+    <h2>The pilot, the free lesson and subscription</h2>
     <ul>
-      <li>During the pilot, Leesavontuur is free for invited families.</li>
+      <li>During the pilot, Leesavontuur is free for invited families. We will tell these families at least 14 days in advance when the pilot ends.</li>
+      <li>After that, every new family can try Leesavontuur for free: <strong>one free lesson per child</strong>.</li>
       <li>
-        After that, Leesavontuur costs <strong>R99 per family per month</strong>. We will tell you at least 14 days before any payment starts, and you pay
-        nothing unless you start a subscription yourself.
+        To carry on, Leesavontuur costs <strong>R99 per family per month</strong>. You pay nothing unless you start a subscription yourself.
       </li>
       <li>You can cancel your subscription at any time; it then ends at the end of the paid month. There is no cancellation fee.</li>
       <li>If we change the price, we will tell you at least 30 days in advance.</li>

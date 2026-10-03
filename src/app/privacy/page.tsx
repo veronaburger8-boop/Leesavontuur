@@ -4,9 +4,9 @@ import { PRIVACY_VERSION } from "@/lib/site";
 
 export const metadata = { title: "Privacy policy" };
 
-// DRAFT – must be checked by someone qualified in POPIA before launch
-// (brief, section 10). It describes what the site actually stores: keep it in
-// step with the database when features change, and change PRIVACY_VERSION.
+// Checked by the owner (October 2026). It describes what the site actually
+// stores: keep it in step with the database when features change, and change
+// PRIVACY_VERSION.
 
 const EMAIL = "leesavontuur194@gmail.com";
 const mail = <a href={`mailto:${EMAIL}`}>{EMAIL}</a>;
@@ -14,7 +14,6 @@ const mail = <a href={`mailto:${EMAIL}`}>{EMAIL}</a>;
 const af = (
   <>
     <h1>Privaatheidsbeleid</h1>
-    <p className="message info">Konsep – hierdie beleid moet nog deur iemand met kennis van POPIA nagegaan word.</p>
 
     <h2>Wie ons is</h2>
     <p>
@@ -119,7 +118,6 @@ const af = (
 const en = (
   <>
     <h1>Privacy policy</h1>
-    <p className="message info">Draft – this policy still has to be checked by someone qualified in POPIA.</p>
 
     <h2>Who we are</h2>
     <p>

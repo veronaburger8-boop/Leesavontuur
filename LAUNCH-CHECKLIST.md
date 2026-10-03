@@ -6,7 +6,7 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 
 ## A. Decide first
 
-- [x] **1. Pricing**: decided. A free pilot of about two weeks with invited families, then R99 per family per month (option B). Still to do before charging: an online payment provider account (e.g. PayFast), the subscription part of the site, and the paid hosting plans (4).
+- [x] **1. Pricing**: decided. A free pilot with invited families (14 days' notice before it ends); after that, one free lesson per child for new families, then R99 per family per month (option B). Still to do before charging: an online payment provider account (e.g. PayFast), the subscription part of the site, and the paid hosting plans (4).
 - [x] **2. Final name**: decided. The name stays "Leesavontuur".
 
 ## B. Sign up or buy (costs money)
@@ -17,7 +17,7 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 
 ## C. Check
 
-- [ ] **6. POPIA and privacy**: the site's part is drafted. The privacy policy (version 2026-10-draft) now lists everything the site stores, the service providers (Supabase and Resend in Ireland, Vercel), the transfer abroad, cookies, retention and the right to complain to the Information Regulator; new Terms of use (af/en) at /terms cover the pilot, R99/month, cancelling and the Consumer Protection Act. Still to do (owner): register as Information Officer with the Information Regulator (eServices on inforegulator.org.za); have both drafts checked by someone qualified, then remove the "Draft" notes.
+- [ ] **6. POPIA and privacy**: the owner checked the privacy policy and terms; the "Draft" notes were removed (version 2026-10-03). The privacy policy now lists everything the site stores, the service providers (Supabase and Resend in Ireland, Vercel), the transfer abroad, cookies, retention and the right to complain to the Information Regulator; new Terms of use (af/en) at /terms cover the pilot, R99/month, cancelling and the Consumer Protection Act. Still to do (owner): register as Information Officer with the Information Regulator (eServices on inforegulator.org.za). Add how payments are handled to the privacy policy when charging starts.
 - [x] **7. Security settings**: done. "Confirm email" on in Supabase; two-step login (authenticator app) on Supabase, GitHub, Vercel and Resend; recovery codes stored offline. registerdomain.co.za has no two-step login: use a strong unique password and keep Registrar Lock on.
 - [ ] **8. Testing with real children** (checklist in the README).
 

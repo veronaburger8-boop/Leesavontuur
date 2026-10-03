@@ -65,7 +65,7 @@ const af = {
   priceThen: "Daarna R99 per gesin per maand",
   pricePoints: [
     "Tot twee kinders per gesin",
-    "Ons laat jou minstens 14 dae vooraf weet voordat enige betaling begin",
+    "Ná die loodsprojek: probeer eers een gratis les per kind",
     "Jy betaal niks tensy jy self 'n intekening begin",
     "Kanselleer enige tyd",
   ],
@@ -90,7 +90,7 @@ const af = {
     },
     {
       q: "Wat gebeur ná die loodsprojek?",
-      a: "Ons laat jou minstens 14 dae vooraf weet. As jy wil aanhou, begin jy self 'n intekening van R99 per maand. Indien nie, betaal jy niks.",
+      a: "Gesinne in die loodsprojek hoor minstens 14 dae vooraf wanneer dit eindig. Nuwe gesinne kry daarna een gratis les per kind om Leesavontuur te probeer. Om aan te hou, begin jy self 'n intekening van R99 per gesin per maand. Indien nie, betaal jy niks.",
     },
   ],
 
@@ -160,7 +160,7 @@ const en: typeof af = {
   priceThen: "Then R99 per family per month",
   pricePoints: [
     "Up to two children per family",
-    "We tell you at least 14 days before any payment starts",
+    "After the pilot: try one free lesson per child first",
     "You pay nothing unless you start a subscription yourself",
     "Cancel any time",
   ],
@@ -185,7 +185,7 @@ const en: typeof af = {
     },
     {
       q: "What happens after the pilot?",
-      a: "We tell you at least 14 days in advance. If you want to carry on, you start a subscription of R99 per month yourself. If not, you pay nothing.",
+      a: "Pilot families hear at least 14 days in advance when it ends. After that, new families get one free lesson per child to try Leesavontuur. To carry on, you start a subscription of R99 per family per month yourself. If not, you pay nothing.",
     },
   ],
 

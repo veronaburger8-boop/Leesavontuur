@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { EYE_TEXT, GAME_ICONS } from "@/lib/games/eye-text";
 import { requireAccount } from "@/lib/auth";
 import { getLocale } from "@/lib/i18n";
+import { Locked } from "@/components/locked";
+import { learnerMayContinue } from "@/lib/subscription";
 
 export const metadata = { title: "Speletjies · Games" };
 
@@ -22,6 +24,12 @@ export default async function GamesPage({ params }: PageProps<"/learn/[learnerId
   const { supabase } = await requireAccount(`/learn/${learnerId}/games`);
   const [{ data: learner }, locale] = await Promise.all([supabase.from("learners").select("id").eq("id", learnerId).maybeSingle(), getLocale()]);
   if (!learner) notFound();
+  if (!(await learnerMayContinue(supabase, learnerId)))
+    return (
+      <main>
+        <Locked languages={["af", "en"]} back={`/learn/${learnerId}`} />
+      </main>
+    );
   return (
     <main>
       <section className="panel" style={{ textAlign: "center" }}>

@@ -6,7 +6,7 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 
 ## A. Decide first
 
-- [x] **1. Pricing**: decided. A free pilot with invited families (14 days' notice before it ends); after that, one free lesson per child for new families, then R99 per family per month (option B). Still to do before charging: an online payment provider account (e.g. PayFast), the subscription part of the site, and the paid hosting plans (4).
+- [x] **1. Pricing**: decided. A free pilot with invited families (14 days' notice before it ends); after that, one free lesson per child for new families, then R99 per family per month (option B). Still to do before charging: the owner's PayFast account (verified, with recurring billing) and its details in Vercel, then the paid hosting plans (4). The subscription part of the site is built and works in PayFast's practice mode (README, "Payments"); the owner runs `20261005080000_subscriptions.sql` first.
 - [x] **2. Final name**: decided. The name stays "Leesavontuur".
 
 ## B. Sign up or buy (costs money)

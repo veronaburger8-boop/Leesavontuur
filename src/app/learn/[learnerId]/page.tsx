@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { requireAccount } from "@/lib/auth";
 import type { Language } from "@/lib/content/types";
 import { getLearner, getOpenRequest } from "@/lib/lesson/next";
+import { Locked } from "@/components/locked";
+import { learnerMayContinue } from "@/lib/subscription";
 
 export const metadata = { title: "Lees" };
 
@@ -33,6 +35,7 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
   const languages: Language[] = ["af", "en"];
   const learners = await Promise.all(languages.map((l) => getLearner(supabase, learnerId, l)));
   if (!learners[0] || !learners[1]) notFound();
+  const mayContinue = await learnerMayContinue(supabase, learnerId);
 
   const cards = await Promise.all(
     languages.map(async (language, i) => {
@@ -63,42 +66,47 @@ export default async function LearnerHome({ params }: PageProps<"/learn/[learner
   return (
     <main>
       <section className="panel" style={{ textAlign: "center" }}>
-        <Meerkat size={90} className="child-mascot" />
+        <Meerkat size={90} pose={mayContinue ? undefined : "cheer"} className="child-mascot" />
         <h1>{learners[0].name}</h1>
-        <div className="card games-banner" style={{ marginTop: 18 }}>
-          <h2>🎲 Speletjies · Games</h2>
-          <p className="sub" style={{ margin: "0 0 10px" }}>
-            🎈 Galgie · ✨ Vuurvliegie · 🔍 Soek-en-vind · 🦘 Spring-woorde
-          </p>
-          <Link className="button primary" href={`/learn/${learnerId}/games`}>
-            Speel · Play
-          </Link>
-        </div>
-        <div className="cards" style={{ marginTop: 18 }}>
-          {cards.map(({ language, learner, request, declined, done, total }) => {
-            const t = text[language];
-            return (
-              <Link key={language} href={`/learn/${learnerId}/${language}`} className="card" lang={language} style={{ textDecoration: "none" }}>
-                <h2>{language === "af" ? "Afrikaans" : "English"}</h2>
-                <p className="sub">
-                  {t.level} {learner.level}
-                </p>
-                <div className="path" aria-label={t.progress(done, total)}>
-                  {Array.from({ length: total }, (_, i) => (
-                    <div key={i} className={`stone${i < done ? " done" : i === done ? " now" : ""}`} aria-hidden="true">
-                      {i + 1}
-                    </div>
-                  ))}
-                  <div className="path-label">{t.progress(done, total)}</div>
-                </div>
-                {request?.status === "pending" && <p className="message info">{t.waiting(request.toLevel)}</p>}
-                {request?.status === "approved" && <p className="message ok">{t.challenge(request.toLevel)}</p>}
-                {declined && !request && <p className="message info">{t.declined(learner.level)}</p>}
-                <span className="button primary">{t.start}</span>
-              </Link>
-            );
-          })}
-        </div>
+        {!mayContinue && <Locked languages={["af", "en"]} mascot={false} />}
+        {mayContinue && (
+          <>
+          <div className="card games-banner" style={{ marginTop: 18 }}>
+            <h2>🎲 Speletjies · Games</h2>
+            <p className="sub" style={{ margin: "0 0 10px" }}>
+              🎈 Galgie · ✨ Vuurvliegie · 🔍 Soek-en-vind · 🦘 Spring-woorde
+            </p>
+            <Link className="button primary" href={`/learn/${learnerId}/games`}>
+              Speel · Play
+            </Link>
+          </div>
+          <div className="cards" style={{ marginTop: 18 }}>
+            {cards.map(({ language, learner, request, declined, done, total }) => {
+              const t = text[language];
+              return (
+                <Link key={language} href={`/learn/${learnerId}/${language}`} className="card" lang={language} style={{ textDecoration: "none" }}>
+                  <h2>{language === "af" ? "Afrikaans" : "English"}</h2>
+                  <p className="sub">
+                    {t.level} {learner.level}
+                  </p>
+                  <div className="path" aria-label={t.progress(done, total)}>
+                    {Array.from({ length: total }, (_, i) => (
+                      <div key={i} className={`stone${i < done ? " done" : i === done ? " now" : ""}`} aria-hidden="true">
+                        {i + 1}
+                      </div>
+                    ))}
+                    <div className="path-label">{t.progress(done, total)}</div>
+                  </div>
+                  {request?.status === "pending" && <p className="message info">{t.waiting(request.toLevel)}</p>}
+                  {request?.status === "approved" && <p className="message ok">{t.challenge(request.toLevel)}</p>}
+                  {declined && !request && <p className="message info">{t.declined(learner.level)}</p>}
+                  <span className="button primary">{t.start}</span>
+                </Link>
+              );
+            })}
+          </div>
+          </>
+        )}
         <p style={{ marginTop: 18 }}>
           <Link className="button" href={`/learn/${learnerId}/topics`}>
             ⭐ My onderwerpe · My topics

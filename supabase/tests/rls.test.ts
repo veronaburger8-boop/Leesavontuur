@@ -370,6 +370,75 @@ describe.skipIf(!url)("database access rules", () => {
     expect(await as(ids.admin, async (q) => (await q("delete from public.pictures where id = $1", [id])).rowCount, true)).toBe(1);
   });
 
+  it("gives one free lesson per child once charging is on; pilot and paid-up families carry on", async () => {
+    const fam = "00000000-0000-0000-0000-0000000000c1";
+    await db.query("insert into auth.users (id, email, raw_user_meta_data) values ($1, 'fam@example.com', '{}')", [fam]);
+    await db.query("insert into public.content_items (id, type, language, level, topic, status, title, data) values ('pay-item', 'lesson', 'af', 1, 'animals', 'published', 'Pay', '{}')");
+    const child = await as(fam, async (q) => (await q("select public.create_learner('Lerato', 2::smallint, 1::smallint, 1::smallint) as id")).rows[0].id, true);
+    const lesson = (who: string, id = "pay-item") =>
+      as(
+        who,
+        (q) => q("select public.record_lesson_result($1, $2, 80, false, 80::smallint, 80::smallint, 80::smallint, 80::smallint, null, 60, false)", [child, id]),
+        true,
+      );
+    const may = async (who: string) => (await as(who, async (q) => (await q("select public.learner_may_continue($1) as ok", [child])).rows[0].ok)) as boolean;
+    const game = (who: string) => as(who, (q) => q("insert into public.game_sessions (learner_id, game, language, level, seconds) values ($1, 'galgie', 'af', 1, 30)", [child]), true);
+
+    // Charging off (the pilot): everything is free.
+    await lesson(fam);
+    await lesson(fam);
+    expect(await may(fam)).toBe(true);
+
+    // Charging on: this child has used the free lesson.
+    await db.query("update public.app_settings set value = 1 where key = 'billing_on'");
+    try {
+      expect(await may(fam)).toBe(false);
+      await expect(lesson(fam)).rejects.toThrow(/subscription_needed/);
+      await expect(game(fam)).rejects.toThrow(/row-level security/);
+      // Never answers for someone else's child.
+      expect(await may(ids.parentA)).toBe(false);
+
+      // A new child still gets one free lesson, then must stop.
+      const second = await as(fam, async (q) => (await q("select public.create_learner('Thabo', 1::smallint, 1::smallint, 1::smallint) as id")).rows[0].id, true);
+      const saveFor = (id: string) =>
+        as(fam, (q) => q("select public.record_lesson_result($1, 'pay-item', 80, false, 80::smallint, 80::smallint, 80::smallint, 80::smallint, null, 60, false)", [id]), true);
+      await saveFor(second);
+      await expect(saveFor(second)).rejects.toThrow(/subscription_needed/);
+
+      // Parents can't give themselves access.
+      await expect(as(fam, (q) => q("insert into public.subscriptions (parent_id, pilot) values ($1, true)", [fam]))).rejects.toThrow(/permission denied/);
+
+      // A pilot family carries on.
+      await db.query("insert into public.subscriptions (parent_id, pilot) values ($1, true)", [fam]);
+      expect(await may(fam)).toBe(true);
+      await lesson(fam);
+      await game(fam);
+
+      // A paid-up family carries on; when the paid time runs out, it stops.
+      await db.query("update public.subscriptions set pilot = false, status = 'active', paid_until = now() + interval '1 month' where parent_id = $1", [fam]);
+      expect(await may(fam)).toBe(true);
+      const mine = await as(fam, async (q) => (await q("select billing_on, has_access, status from public.my_access()")).rows[0]);
+      expect(mine).toEqual({ billing_on: true, has_access: true, status: "active" });
+      await db.query("update public.subscriptions set status = 'cancelled', paid_until = now() - interval '1 day' where parent_id = $1", [fam]);
+      expect(await may(fam)).toBe(false);
+
+      // Each parent sees only their own subscription; staff see all; nobody else sees payment events.
+      expect(await as(ids.parentA, async (q) => (await q("select * from public.subscriptions")).rows)).toHaveLength(0);
+      expect(await as(fam, async (q) => (await q("select * from public.subscriptions")).rows)).toHaveLength(1);
+      expect(await as(ids.admin, async (q) => (await q("select * from public.subscriptions")).rows)).toHaveLength(1);
+      await db.query("insert into public.payment_events (parent_id, payment_status) values ($1, 'COMPLETE')", [fam]);
+      expect(await as(fam, async (q) => (await q("select * from public.payment_events")).rows)).toHaveLength(0);
+      expect(await as(ids.admin, async (q) => (await q("select * from public.payment_events")).rows)).toHaveLength(1);
+      await expect(as(null, (q) => q("select * from public.subscriptions"))).rejects.toThrow(/permission denied/);
+    } finally {
+      await db.query("update public.app_settings set value = 0 where key = 'billing_on'");
+    }
+    // Deleting the account removes the subscription and payment records too.
+    await db.query("delete from auth.users where id = $1", [fam]);
+    expect((await db.query("select count(*)::int as n from public.subscriptions")).rows[0].n).toBe(0);
+    expect((await db.query("select count(*)::int as n from public.payment_events")).rows[0].n).toBe(0);
+  });
+
   it("deletes a family's children when the account is deleted", async () => {
     await db.query("delete from auth.users where id = $1", [ids.parentA]);
     const { rows } = await db.query("select count(*)::int as n from public.learners where parent_id = $1", [ids.parentA]);

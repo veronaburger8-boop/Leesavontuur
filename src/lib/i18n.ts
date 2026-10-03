@@ -282,6 +282,51 @@ const text = {
   },
   confirmDeleteAccount: { af: "Ek verstaan. Verwyder my rekening permanent.", en: "I understand. Delete my account permanently." },
   accountDeleted: { af: "Jou rekening is verwyder.", en: "Your account has been deleted." },
+
+  subscription: { af: "Intekening", en: "Subscription" },
+  subPilotOpen: {
+    af: "Tydens die loodsprojek is alles gratis. Ons laat jou minstens 14 dae vooraf weet voordat dit eindig.",
+    en: "During the pilot everything is free. We'll tell you at least 14 days before it ends.",
+  },
+  subPilotFamily: { af: "Julle is 'n loodsprojek-gesin: alles is vir julle gratis.", en: "You're a pilot family: everything is free for you." },
+  subNone: {
+    af: "Elke kind kry een gratis les. Om verder te lees en te speel, teken in vir R99 per gesin per maand.",
+    en: "Every child gets one free lesson. To keep reading and playing, subscribe for R99 per family per month.",
+  },
+  subActive: { af: "Jou intekening is aktief. Die volgende betaling is omstreeks {date}.", en: "Your subscription is active. The next payment is around {date}." },
+  subCancelledUntil: { af: "Jou intekening is gekanselleer. Julle kan alles gebruik tot {date}.", en: "Your subscription is cancelled. You can use everything until {date}." },
+  subEnded: { af: "Jou intekening het geëindig.", en: "Your subscription has ended." },
+  subPending: { af: "Ons wag nog vir PayFast se bevestiging. Dit kan 'n paar minute neem.", en: "We're still waiting for PayFast to confirm. This can take a few minutes." },
+  subFailed: {
+    af: "Die laaste betaling het nie deurgegaan nie. PayFast probeer weer; kyk asseblief jou kaart- of bankbesonderhede.",
+    en: "The last payment didn't go through. PayFast will try again; please check your card or bank details.",
+  },
+  subscribeButton: { af: "Teken in: R99 per maand", en: "Subscribe: R99 per month" },
+  subSecure: {
+    af: "Jy betaal op PayFast se veilige bladsy. Ons sien of bewaar nooit jou kaartbesonderhede nie. Kanselleer enige tyd.",
+    en: "You pay on PayFast's secure page. We never see or keep your card details. Cancel any time.",
+  },
+  subCancelButton: { af: "Kanselleer intekening", en: "Cancel subscription" },
+  subCancelConfirm: { af: "Ek wil my intekening kanselleer.", en: "I want to cancel my subscription." },
+  subCancelHint: {
+    af: "Ná kansellasie word niks meer afgetrek nie, en julle kan alles gebruik tot aan die einde van die betaalde maand.",
+    en: "After cancelling nothing more is taken, and you can use everything until the end of the paid month.",
+  },
+  subThanks: { af: "Dankie! Sodra PayFast die betaling bevestig, is jou intekening aktief.", en: "Thank you! As soon as PayFast confirms the payment, your subscription is active." },
+  subStopped: { af: "Die betaling is nie voltooi nie. Niks is afgetrek nie.", en: "The payment wasn't completed. Nothing was taken." },
+  subCancelled: { af: "Jou intekening is gekanselleer.", en: "Your subscription has been cancelled." },
+  subCancelFailed: {
+    af: "Ons kon nie die intekening by PayFast kanselleer nie. Probeer asseblief weer, of skryf aan ons.",
+    en: "We couldn't cancel the subscription at PayFast. Please try again, or write to us.",
+  },
+  subGoToPayFast: { af: "Gaan na PayFast", en: "Go to PayFast" },
+  subRedirecting: { af: "Ons stuur jou nou na PayFast se veilige betaalbladsy …", en: "Taking you to PayFast's secure payment page …" },
+  subPractice: {
+    af: "Oefenmodus: PayFast se toetsbladsy word gebruik, en geen regte geld word afgetrek nie.",
+    en: "Practice mode: PayFast's test page is used, and no real money is taken.",
+  },
+  subItem: { af: "Leesavontuur: maandelikse intekening", en: "Leesavontuur: monthly subscription" },
+  subManage: { af: "Intekening", en: "Subscription" },
 } as const;
 
 export type TextKey = keyof typeof text;

@@ -13,6 +13,9 @@ import { type EditorForm, fromForm, makeId } from "@/lib/content/editor";
 import { checkItem } from "@/lib/content/parse-source";
 import { contentItemSchema, validateContentFile } from "@/lib/content/validate";
 
+/** Settings that belong to the Families page (charging), not the general Settings page. */
+const BILLING_KEYS = ["billing_on", "free_lessons"];
+
 const str = (v: FormDataEntryValue | null) => (typeof v === "string" ? v.trim() : "");
 
 /** Publish, send back to draft, mark for review or retire an item. Every change is logged by the database. */
@@ -128,7 +131,8 @@ export async function importContent(_prev: ImportState, formData: FormData): Pro
 /** Saves the thresholds (admin only; the database refuses anyone else). */
 export async function saveSettings(formData: FormData) {
   const { supabase } = await requireStaff();
-  const { data } = await supabase.from("app_settings").select("key");
+  // Charging is switched on the Families page only.
+  const { data } = await supabase.from("app_settings").select("key").not("key", "in", `(${BILLING_KEYS.join(",")})`);
   for (const { key } of data ?? []) {
     const raw = str(formData.get(key));
     const value = Number(raw);

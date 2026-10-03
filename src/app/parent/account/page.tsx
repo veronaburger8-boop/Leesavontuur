@@ -1,14 +1,17 @@
+import Link from "next/link";
 import { setLocale } from "@/app/actions";
 import { Message } from "@/components/message";
 import { requireAccount } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
+import { getMyAccess } from "@/lib/subscription";
 import { deleteAccount, savePin } from "../actions";
+import { subscriptionStatus } from "../subscription/status";
 
 export const metadata = { title: "My account" };
 
 export default async function AccountPage({ searchParams }: PageProps<"/parent/account">) {
   const { user, supabase } = await requireAccount("/parent/account");
-  const [{ error, pin }, locale, { data: hasPin }] = await Promise.all([searchParams, getLocale(), supabase.rpc("has_parent_pin")]);
+  const [{ error, pin }, locale, { data: hasPin }, access] = await Promise.all([searchParams, getLocale(), supabase.rpc("has_parent_pin"), getMyAccess(supabase)]);
   const t = translator(locale);
   return (
     <main>
@@ -26,6 +29,13 @@ export default async function AccountPage({ searchParams }: PageProps<"/parent/a
           </select>
           <button type="submit">{t("save")}</button>
         </form>
+      </section>
+      <section className="panel">
+        <h2>{t("subscription")}</h2>
+        <p>{subscriptionStatus(access, t, locale)}</p>
+        <Link className="button" href="/parent/subscription">
+          {t("subManage")}
+        </Link>
       </section>
       <section className="panel">
         <h2>{t("pinHeading")}</h2>

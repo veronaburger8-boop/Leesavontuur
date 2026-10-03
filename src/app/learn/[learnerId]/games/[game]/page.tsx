@@ -5,6 +5,8 @@ import type { Language, Lesson } from "@/lib/content/types";
 import { EYE_GAMES, type EyeGame } from "@/lib/games/eyes";
 import { galgieWords } from "@/lib/games/galgie";
 import { getLearner } from "@/lib/lesson/next";
+import { Locked } from "@/components/locked";
+import { learnerMayContinue } from "@/lib/subscription";
 import { saveEyeGame } from "../../../actions";
 
 export const metadata = { title: "Speletjies · Games" };
@@ -17,6 +19,12 @@ export default async function EyeGamePage({ params, searchParams }: PageProps<"/
   const { supabase } = await requireAccount(`/learn/${learnerId}/games/${game}`);
   const learner = await getLearner(supabase, learnerId, language);
   if (!learner) notFound();
+  if (!(await learnerMayContinue(supabase, learnerId)))
+    return (
+      <main>
+        <Locked languages={[language]} back={`/learn/${learnerId}`} />
+      </main>
+    );
   const [{ data: lessons }, { data: progress }] = await Promise.all([
     supabase.from("content_items").select("data").eq("type", "lesson").eq("language", language).eq("level", learner.level).eq("status", "published"),
     supabase.from("game_progress").select("step").eq("learner_id", learnerId).eq("game", game).maybeSingle(),

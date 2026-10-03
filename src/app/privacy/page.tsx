@@ -37,14 +37,18 @@ const af = (
       <li>jou e-posadres, &apos;n wagwoord (versleutel) en, as jy wil, jou naam;</li>
       <li>jou taalkeuse en, as jy een kies, &apos;n ouer-PIN (versleutel);</li>
       <li>wanneer jy die privaatheidsbeleid aanvaar het, en watter weergawe;</li>
-      <li>onderwerpe wat jy versoek, en kennisgewings aan jou.</li>
+      <li>onderwerpe wat jy versoek, en kennisgewings aan jou;</li>
+      <li>
+        as jy inteken: jou intekening se stand (byvoorbeeld aktief of gekanselleer), tot wanneer dit betaal is, PayFast se verwysingsnommers en die bedrag
+        en datum van elke betaling. Ons sien of bewaar nooit jou kaart- of bankbesonderhede nie.
+      </li>
     </ul>
 
     <h2>Waarom ons dit gebruik</h2>
     <p>
       Net om die leesprogram aan te bied: om die regte les op die regte vlak te kies, die oogoefening by jou kind se spoed aan te pas, vir jou verslae te wys,
-      jou aan te meld en vir jou noodsaaklike e-posse te stuur (soos om jou e-posadres te bevestig of jou wagwoord te herstel). Ons gebruik dit nie vir
-      advertensies of bemarking nie.
+      jou aan te meld, jou intekening te bestuur en vir jou noodsaaklike e-posse te stuur (soos om jou e-posadres te bevestig of jou wagwoord te
+      herstel). Ons gebruik dit nie vir advertensies of bemarking nie.
     </p>
 
     <h2>Toestemming vir kinders</h2>
@@ -64,6 +68,10 @@ const af = (
       </li>
       <li>
         <strong>Resend</strong> – stuur die e-posse van die webwerf, vanaf Ierland (Europese Unie).
+      </li>
+      <li>
+        <strong>PayFast</strong> (Suid-Afrika) – hanteer intekening-betalings op sy eie veilige bladsy. Jy gee jou betaalbesonderhede direk aan PayFast,
+        volgens PayFast se eie privaatheidsbeleid.
       </li>
     </ul>
     <p>
@@ -109,8 +117,7 @@ const af = (
 
     <h2>Veranderinge</h2>
     <p>
-      As ons hierdie beleid verander, plaas ons die nuwe weergawe hier. Wanneer betaalde intekeninge begin, sal ons hierdie beleid aanvul met hoe betalings
-      hanteer word. Sien ook ons <Link href="/terms">gebruiksvoorwaardes</Link>.
+      As ons hierdie beleid verander, plaas ons die nuwe weergawe hier. Sien ook ons <Link href="/terms">gebruiksvoorwaardes</Link>.
     </p>
   </>
 );
@@ -141,14 +148,18 @@ const en = (
       <li>your email address, a password (encrypted) and, if you like, your name;</li>
       <li>your language choice and, if you choose one, a parent PIN (encrypted);</li>
       <li>when you accepted the privacy policy, and which version;</li>
-      <li>topics you request, and notifications to you.</li>
+      <li>topics you request, and notifications to you;</li>
+      <li>
+        if you subscribe: your subscription&apos;s status (for example active or cancelled), until when it is paid, PayFast&apos;s reference numbers and the
+        amount and date of each payment. We never see or keep your card or bank details.
+      </li>
     </ul>
 
     <h2>Why we use it</h2>
     <p>
       Only to provide the reading program: to choose the right lesson at the right level, match the eye exercise to your child&apos;s speed, show you
-      reports, log you in and send you essential emails (such as confirming your email address or resetting your password). We don&apos;t use it for
-      advertising or marketing.
+      reports, log you in, manage your subscription and send you essential emails (such as confirming your email address or resetting your password).
+      We don&apos;t use it for advertising or marketing.
     </p>
 
     <h2>Consent for children</h2>
@@ -168,6 +179,10 @@ const en = (
       </li>
       <li>
         <strong>Resend</strong> – sends the website&apos;s emails, from Ireland (European Union).
+      </li>
+      <li>
+        <strong>PayFast</strong> (South Africa) – handles subscription payments on its own secure page. You give your payment details directly to PayFast,
+        under PayFast&apos;s own privacy policy.
       </li>
     </ul>
     <p>
@@ -213,7 +228,7 @@ const en = (
 
     <h2>Changes</h2>
     <p>
-      If we change this policy, we post the new version here. When paid subscriptions start, we will add how payments are handled. See also our{" "}
+      If we change this policy, we post the new version here. See also our{" "}
       <Link href="/terms">terms of use</Link>.
     </p>
   </>

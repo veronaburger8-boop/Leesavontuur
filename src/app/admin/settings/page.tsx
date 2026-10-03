@@ -8,7 +8,7 @@ export default async function SettingsPage({ searchParams }: PageProps<"/admin/s
   const { supabase, profile } = await requireStaff();
   const [{ saved, error }, { data }] = await Promise.all([
     searchParams,
-    supabase.from("app_settings").select("key, value, description").order("key"),
+    supabase.from("app_settings").select("key, value, description").not("key", "in", "(billing_on,free_lessons)").order("key"),
   ]);
   const canEdit = profile.role === "admin";
   return (

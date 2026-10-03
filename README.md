@@ -28,6 +28,7 @@ You need a **Supabase** account (database and logins) and a **Vercel** account (
    - `SUPABASE_SECRET_KEY`: the secret key (**never** share this one)
    - `NEXT_PUBLIC_SITE_URL`: your website address
    - `ANTHROPIC_API_KEY` (optional, for "Draft with AI"): an API key from your Anthropic account (console.anthropic.com). **Never** share this one either.
+   - `PAYFAST_MODE`, `PAYFAST_MERCHANT_ID`, `PAYFAST_MERCHANT_KEY`, `PAYFAST_PASSPHRASE` (only when payments go live; see "Payments" below). Secret.
 5. **Deploy**, then sign up on the site with your own email address.
 6. **Make yourself admin:** in Supabase **SQL Editor**, run (with your email address):
    ```sql
@@ -130,6 +131,17 @@ Supabase's built-in email is fine for testing but only sends a few emails an hou
 3. **Import a pictures file** (made with the image generator): choose the file, untick any picture that isn't right, and press **Save**. The site downloads each picture, makes it small for phones, and puts it on the word card.
 4. Or **upload** a picture for one card from your computer, or **Remove picture**.
 5. Pictures show on the word cards straight away, also in published lessons. Re-importing `lessons.json` keeps the pictures.
+
+## Payments (PayFast)
+
+How it works: while **charging is off** (the pilot) everything is free. When the owner switches charging on (Admin → **Families**), every child gets **one free lesson**; after that the family needs a subscription of **R99 per family per month**, paid on PayFast's own secure page. Pilot families (marked on the Families page) stay free. The rule is enforced by the database: a lesson can't be saved, and a game can't be logged, without access. Placement tests are always free.
+
+1. **Update the database first:** in Supabase **SQL Editor**, run `supabase/migrations/20261005080000_subscriptions.sql` once.
+2. **Practice mode (sandbox):** nothing to set up. The Subscription page says "Practice mode", and PayFast's test page is used: no real money is taken. To try it: Admin → Families → tick the box and **Switch charging on**; do one lesson with a child (or use a child who has); the child then sees "Ask Mom or Dad to subscribe". In the parent area: **My account → Subscription → Subscribe**. On PayFast's sandbox page, pay with the test details it shows. Back on the site, the subscription shows as active within a minute. Try **Cancel subscription** too. Afterwards, **Switch charging off** again until the pilot ends.
+3. **Going live** (when your PayFast account is verified and recurring billing is on): in Vercel → Settings → Environment Variables add, all as **Secret**: `PAYFAST_MODE` = `live`, `PAYFAST_MERCHANT_ID`, `PAYFAST_MERCHANT_KEY` and `PAYFAST_PASSPHRASE` (the passphrase you set in PayFast → Settings → Developer settings). Redeploy. The Families page then says "live".
+4. **Before switching charging on for real:** tell the pilot families at least 14 days before (terms of use), and mark the families who stay free as **Pilot** on the Families page.
+
+The site never sees card details. PayFast tells the site about each payment (its "ITN" notifications to `/api/payfast/notify`); the site checks the signature **and** asks PayFast to confirm before trusting one. The Families page lists every family's subscription and the latest payments.
 
 ### Testing with real children (checklist)
 

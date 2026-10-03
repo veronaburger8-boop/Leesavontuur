@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { requireParent } from "@/lib/auth";
+import { cancelAtPayFast, payfastConfig } from "@/lib/payfast";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Language } from "@/lib/content/types";
 import { getResults } from "@/lib/lesson/next";
@@ -95,7 +96,11 @@ export async function deleteLearner(formData: FormData) {
 export async function deleteAccount(formData: FormData) {
   const { supabase, user } = await requireParent("/parent/account");
   if (formData.get("confirm") !== "yes") redirect("/parent/account?error=confirm");
-  const { error } = await createAdminClient().auth.admin.deleteUser(user.id);
+  const admin = createAdminClient();
+  // Stop the monthly debit at PayFast first; if that fails, keep the account so nothing is lost.
+  const { data: sub } = await admin.from("subscriptions").select("payfast_token, status").eq("parent_id", user.id).maybeSingle();
+  if (sub?.payfast_token && sub.status !== "cancelled" && !(await cancelAtPayFast(sub.payfast_token, payfastConfig()))) redirect("/parent/account?error=cancel");
+  const { error } = await admin.auth.admin.deleteUser(user.id);
   if (error) redirect("/parent/account?error=failed");
   // The account no longer exists, so only clear this browser's session.
   await supabase.auth.signOut({ scope: "local" });

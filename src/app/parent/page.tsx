@@ -4,6 +4,7 @@ import { requireAccount } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
 import { belowRecommendedGrade, levelSuggestion, type ResultScores } from "@/lib/levels";
 import { getSettings } from "@/lib/lesson/next";
+import { getMyAccess } from "@/lib/subscription";
 import { decideRequest, dismissNotification, ignoreSuggestion, setLevel } from "./actions";
 import { AVAILABLE_LEVELS, listLearners, levelIn, MAX_CHILDREN } from "./data";
 import { listTopicRequests, TopicRequests } from "./topic-requests";
@@ -18,7 +19,7 @@ interface FamilyResult extends ResultScores {
 
 export default async function ParentHome({ searchParams }: PageProps<"/parent">) {
   const { supabase, profile, user } = await requireAccount("/parent");
-  const [sp, locale, learners, settings, { data: results }, { data: requests }, { data: notes }, topicRequests] = await Promise.all([
+  const [sp, locale, learners, settings, { data: results }, { data: requests }, { data: notes }, topicRequests, access] = await Promise.all([
     searchParams,
     getLocale(),
     listLearners(supabase),
@@ -31,6 +32,7 @@ export default async function ParentHome({ searchParams }: PageProps<"/parent">)
     supabase.from("level_requests").select("id, learner_id, language, to_level, status").in("status", ["pending", "approved"]),
     supabase.from("notifications").select("id, learner_id, kind, language, level, topic_request_id").is("read_at", null).order("created_at", { ascending: false }),
     listTopicRequests(supabase, user.id),
+    getMyAccess(supabase),
   ]);
   const t = translator(locale);
   const all = (results ?? []) as FamilyResult[];
@@ -50,6 +52,12 @@ export default async function ParentHome({ searchParams }: PageProps<"/parent">)
         </h1>
         <Message kind="ok">{sp.added || sp.removed ? t("saved") : sp.levelSet ? t("levelSet") : null}</Message>
         <Message kind="error">{sp.error ? t("somethingWrong") : null}</Message>
+        {access.billing_on && !access.has_access && (
+          <div className="message info">
+            {access.status === "failed" ? t("subFailed") : t("subNone")}{" "}
+            <Link href="/parent/subscription">{t("subscribeButton")}</Link>
+          </div>
+        )}
 
         {hasNotices && (
           <div style={{ marginBottom: 18 }}>

@@ -30,6 +30,9 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
         <Link className="button small" href="/admin/articles">
           Articles
         </Link>
+        <Link className="button small" href="/admin/families">
+          Families
+        </Link>
         <Link className="button small" href="/admin/settings">
           Settings
         </Link>

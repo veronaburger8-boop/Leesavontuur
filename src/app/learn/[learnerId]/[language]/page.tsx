@@ -4,6 +4,8 @@ import { LessonPlayer } from "@/components/lesson/lesson-player";
 import { requireAccount } from "@/lib/auth";
 import type { Language } from "@/lib/content/types";
 import { getLearner, nextLesson } from "@/lib/lesson/next";
+import { Locked } from "@/components/locked";
+import { learnerMayContinue } from "@/lib/subscription";
 import { answerLevelPrompt, saveLessonResult } from "../../actions";
 
 export const metadata = { title: "Les" };
@@ -32,6 +34,12 @@ export default async function LessonPage({ params, searchParams }: PageProps<"/l
   const { supabase } = await requireAccount(`/learn/${learnerId}/${language}`);
   const learner = await getLearner(supabase, learnerId, language);
   if (!learner) notFound();
+  if (!(await learnerMayContinue(supabase, learnerId)))
+    return (
+      <main>
+        <Locked languages={[language]} back={`/learn/${learnerId}`} />
+      </main>
+    );
   const next = await nextLesson(supabase, learner, language, again === "1");
   const t = text[language];
   const home = `/learn/${learnerId}`;

@@ -5,6 +5,8 @@ import { requireAccount } from "@/lib/auth";
 import type { Language, Lesson } from "@/lib/content/types";
 import { galgieWords, shuffled } from "@/lib/games/galgie";
 import { getLearner } from "@/lib/lesson/next";
+import { Locked } from "@/components/locked";
+import { learnerMayContinue } from "@/lib/subscription";
 import { saveGameRound } from "../../actions";
 
 export const metadata = { title: "Galgie" };
@@ -16,6 +18,12 @@ export default async function GalgiePage({ params, searchParams }: PageProps<"/l
   const { supabase } = await requireAccount(`/learn/${learnerId}/galgie`);
   const learner = await getLearner(supabase, learnerId, language);
   if (!learner) notFound();
+  if (!(await learnerMayContinue(supabase, learnerId)))
+    return (
+      <main>
+        <Locked languages={[language]} back={`/learn/${learnerId}`} />
+      </main>
+    );
   const { data } = await supabase
     .from("content_items")
     .select("data")

@@ -99,7 +99,7 @@ class DraftError extends Error {
 function explain(e: unknown): string {
   if (e instanceof DraftError) return e.message;
   if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError)
-    return "The Anthropic API key was not accepted. Check ANTHROPIC_API_KEY in Vercel.";
+    return "The Anthropic API key was not accepted. It may have expired (keys last 30 days): create a new key in the Claude Console (API keys), replace ANTHROPIC_API_KEY in Vercel with it, and redeploy.";
   if (e instanceof Anthropic.RateLimitError) return "Too many requests at once. Please wait a minute and try again.";
   if (e instanceof Anthropic.BadRequestError && /credit/i.test(e.message)) return "The Anthropic account has run out of credit. Add credit in the Anthropic Console.";
   if (e instanceof Anthropic.APIError) return `The Claude API returned an error (${e.status ?? "no status"}). Please try again later.`;

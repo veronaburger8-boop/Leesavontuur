@@ -10,6 +10,37 @@ const af = {
   join: "Sluit aan by die loodsprojek",
   logIn: "Ek het reeds 'n rekening",
   heroShotAlt: "'n Kind se tuisblad op Leesavontuur, met Mika die meerkat, die speletjies, en die lesse in Afrikaans en Engels.",
+  mikaHello: "Hallo! Ek is Mika.",
+  stats: [
+    { n: "100", label: "lesse" },
+    { n: "2", label: "tale" },
+    { n: "5", label: "vlakke" },
+    { n: "4", label: "speletjies" },
+  ],
+  phoneAlt: "Skermkiekies van Leesavontuur wat om die beurt wys: 'n kind se tuisblad, 'n leesles, Galgie en die leesspoed-grafiek.",
+
+  tryTitle: "Probeer self",
+  tryIntro: "Speel sommer hier, sonder 'n rekening.",
+  tabCards: "Woordkaarte",
+  tabFirefly: "Vang die vuurvliegie",
+  tabSpeed: "Hoe vinnig lees jy?",
+  cardOf: (i: number, n: number) => `${i} van ${n}`,
+  prevCard: "◀ Vorige",
+  nextCard: "Volgende ▶",
+  fireflyIntro: "Volg die vuurvliegie met jou oë. Wanneer dit goud word, tik dit vinnig!",
+  fireflyResult: (hits: number, tries: number) => `Jy het ${hits} uit ${tries} vuurvliegies gevang!`,
+  play: "Speel",
+  playAgain: "Speel weer",
+  speedIntro: (title: string, words: number) => `Lees die leesstuk “${title}” (${words} woorde) teen jou eie pas. Druk “Klaar” wanneer jy klaar is.`,
+  speedStart: "Begin lees",
+  speedDone: "Klaar",
+  speedSeconds: (s: number) => `${s} sekondes`,
+  speedResult: (wpm: number) => `${wpm} woorde per minuut`,
+  speedTooFast: "Dit was baie vinnig! Het jy regtig elke woord gelees?",
+  speedNote: "In Leesavontuur word die oogoefening by hierdie spoed aangepas, en die verslag wys hoe dit elke week groei.",
+  speedAgain: "Probeer weer",
+  tryJoin: "Hou van wat jy sien? Sluit aan by die loodsprojek",
+
 
   howTitle: "Hoe werk dit?",
   steps: [
@@ -47,8 +78,6 @@ const af = {
   ],
   topics: "Kinders kies hul gunsteling-onderwerpe: diere, die natuur, sport, die ruimte, kos, avontuur, my liggaam en hoe dinge werk.",
 
-  sampleTitle: "Kom loer in 'n les",
-  sampleIntro: (title: string) => `'n Woordkaart en die begin van die leesstuk “${title}” (Vlak 1).`,
   otherLanguage: "Engels",
   eg: "Bv.",
 
@@ -105,6 +134,37 @@ const en: typeof af = {
   join: "Join the pilot",
   logIn: "I already have an account",
   heroShotAlt: "A child's home screen on Leesavontuur, with Mika the meerkat, the games, and the lessons in Afrikaans and English.",
+  mikaHello: "Hello! I'm Mika.",
+  stats: [
+    { n: "100", label: "lessons" },
+    { n: "2", label: "languages" },
+    { n: "5", label: "levels" },
+    { n: "4", label: "games" },
+  ],
+  phoneAlt: "Screenshots of Leesavontuur shown in turn: a child's home screen, a reading lesson, Hangman and the reading-speed chart.",
+
+  tryTitle: "Try it yourself",
+  tryIntro: "Play right here, without an account.",
+  tabCards: "Word cards",
+  tabFirefly: "Catch the firefly",
+  tabSpeed: "How fast do you read?",
+  cardOf: (i: number, n: number) => `${i} of ${n}`,
+  prevCard: "◀ Back",
+  nextCard: "Next ▶",
+  fireflyIntro: "Follow the firefly with your eyes. When it turns gold, tap it quickly!",
+  fireflyResult: (hits: number, tries: number) => `You caught ${hits} of ${tries} fireflies!`,
+  play: "Play",
+  playAgain: "Play again",
+  speedIntro: (title: string, words: number) => `Read the passage “${title}” (${words} words) at your own pace. Press “Finished” when you're done.`,
+  speedStart: "Start reading",
+  speedDone: "Finished",
+  speedSeconds: (s: number) => `${s} seconds`,
+  speedResult: (wpm: number) => `${wpm} words per minute`,
+  speedTooFast: "That was very fast! Did you really read every word?",
+  speedNote: "In Leesavontuur the eye exercise is matched to this speed, and the report shows how it grows every week.",
+  speedAgain: "Try again",
+  tryJoin: "Like what you see? Join the pilot",
+
 
   howTitle: "How does it work?",
   steps: [
@@ -142,8 +202,6 @@ const en: typeof af = {
   ],
   topics: "Children choose their favourite topics: animals, nature, sport, space, food, adventure, my body and how things work.",
 
-  sampleTitle: "Take a peek inside a lesson",
-  sampleIntro: (title: string) => `A word card and the start of the passage “${title}” (Level 1).`,
   otherLanguage: "Afrikaans",
   eg: "e.g.",
 

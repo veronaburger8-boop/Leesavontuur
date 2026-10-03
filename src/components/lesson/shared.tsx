@@ -1,6 +1,7 @@
 "use client";
 
 import { type RefObject, useCallback, useEffect, useRef } from "react";
+import { Meerkat } from "@/components/art/meerkat";
 import type { Language } from "@/lib/content/types";
 import { band } from "@/lib/lesson/logic";
 import { encourage, type LessonText, SPECIAL_LETTERS } from "@/lib/lesson/text";
@@ -55,6 +56,30 @@ export function SpecialLetters({ target, t, disabled }: { target: RefObject<HTML
   );
 }
 
+const CONFETTI_COLOURS = ["#f4be3a", "#e8574a", "#4c9a5b", "#3f8fd2", "#c9965f"];
+
+/** A short burst of confetti (pure CSS; nothing moves with "reduce motion"). */
+export function Confetti() {
+  return (
+    <div className="confetti" aria-hidden="true">
+      {Array.from({ length: 24 }, (_, i) => (
+        <span
+          key={i}
+          style={
+            {
+              "--x": `${((i * 37) % 100) - 50}vw`,
+              "--y": `${-(30 + ((i * 53) % 40))}vh`,
+              "--r": `${(i * 97) % 360}deg`,
+              "--d": `${(i % 6) * 0.05}s`,
+              background: CONFETTI_COLOURS[i % CONFETTI_COLOURS.length],
+            } as React.CSSProperties
+          }
+        />
+      ))}
+    </div>
+  );
+}
+
 /** The encouraging message between steps, with a small celebration at 100%. */
 export function Cheer({
   pct,
@@ -74,6 +99,8 @@ export function Cheer({
   const full = pct === 100;
   return (
     <section className={`panel celebrate${full ? " full" : ""}`}>
+      {full && <Confetti />}
+      <Meerkat size={80} pose={pct >= 60 ? "cheer" : undefined} className="celebrate-mika" />
       {full && (
         <div className="stars" aria-hidden="true">
           <span>⭐</span>

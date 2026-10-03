@@ -1114,10 +1114,10 @@ input.answer {
 }
 
 .balloon .pop {
-  animation: pop 0.35s ease-out both;
+  animation: balloon-pop 0.35s ease-out both;
 }
 
-@keyframes pop {
+@keyframes balloon-pop {
   from {
     transform: scale(0.4);
     opacity: 1;
@@ -1484,16 +1484,6 @@ button.big {
   font-size: 20px;
 }
 
-.landing-hero {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 28px;
-  align-items: center;
-}
-
-.landing-hero h1 {
-  font-size: 40px;
-}
 
 /* Screenshots of the real site sit in a soft frame. */
 .shot {
@@ -1574,26 +1564,6 @@ button.big {
   margin: 20px 0 0;
 }
 
-.sample {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 22px;
-  align-items: start;
-}
-
-.sample .wordcard img {
-  display: block;
-  width: 180px;
-  height: 180px;
-  object-fit: contain;
-  margin: 0 0 12px;
-}
-
-.sample-passage {
-  border: 3px solid var(--stone);
-  border-radius: 18px;
-  padding: 22px;
-}
 
 .trust {
   list-style: none;
@@ -1672,11 +1642,429 @@ button.big {
     height: auto;
   }
 
-  .landing-hero,
   .features,
-  .sample,
   .steps,
   .trust {
+    grid-template-columns: 1fr;
+  }
+
+  .price-big {
+    font-size: 38px;
+  }
+}
+
+/* ---------------------------------------------------------------- welcome page: garden scene */
+
+:root {
+  --scene-top: #a9daf5;
+  --cloud: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --scene-top: #0a1620;
+    --cloud: rgb(255 255 255 / 0.12);
+  }
+}
+
+:root[data-theme="dark"] {
+  --scene-top: #0a1620;
+  --cloud: rgb(255 255 255 / 0.12);
+}
+
+.landing-scene {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  background: linear-gradient(180deg, var(--scene-top), var(--sky) 85%);
+  padding: 44px 36px 84px;
+  margin-bottom: 18px;
+}
+
+.scene-sky span {
+  position: absolute;
+  display: block;
+}
+
+.sun {
+  top: 26px;
+  right: 40px;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 0 0 12px rgb(244 190 58 / 0.25), 0 0 0 26px rgb(244 190 58 / 0.12);
+  animation: glow 5s ease-in-out infinite;
+}
+
+@keyframes glow {
+  50% {
+    box-shadow: 0 0 0 16px rgb(244 190 58 / 0.3), 0 0 0 34px rgb(244 190 58 / 0.1);
+  }
+}
+
+.cloud {
+  width: 120px;
+  height: 38px;
+  border-radius: 40px;
+  background: var(--cloud);
+  animation: drift 40s linear infinite;
+}
+
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.cloud::before {
+  width: 54px;
+  height: 54px;
+  left: 18px;
+  top: -26px;
+}
+
+.cloud::after {
+  width: 40px;
+  height: 40px;
+  left: 60px;
+  top: -16px;
+}
+
+.cloud.c1 {
+  top: 40px;
+  left: 4%;
+}
+
+.cloud.c2 {
+  top: 120px;
+  left: 46%;
+  transform: scale(0.7);
+  animation-duration: 55s;
+  animation-delay: -20s;
+}
+
+@keyframes drift {
+  0% {
+    translate: -40px 0;
+  }
+  50% {
+    translate: 60px 0;
+  }
+  100% {
+    translate: -40px 0;
+  }
+}
+
+.float-balloon {
+  width: 26px;
+  height: 32px;
+  border-radius: 50% 50% 46% 46%;
+  animation: float 6s ease-in-out infinite;
+  opacity: 0.85;
+}
+
+.float-balloon::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 32px;
+  width: 1.5px;
+  height: 30px;
+  background: var(--muted);
+}
+
+.float-balloon.b1 {
+  background: #e8574a;
+  left: 47%;
+  bottom: 78px;
+}
+
+.float-balloon.b2 {
+  background: var(--sun);
+  left: 51%;
+  bottom: 104px;
+  animation-delay: -2s;
+}
+
+.float-balloon.b3 {
+  background: var(--grass);
+  left: 55%;
+  bottom: 70px;
+  animation-delay: -4s;
+}
+
+@keyframes float {
+  50% {
+    translate: 0 -16px;
+  }
+}
+
+.scene-grass {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 56px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='64'%3E%3Cpath d='M0 64 L8 26 L14 64 Z M12 64 L22 12 L30 64 Z M28 64 L36 30 L42 64 Z M40 64 L50 18 L58 64 Z' fill='%234C9A5B'/%3E%3C/svg%3E")
+    repeat-x bottom/52px 56px;
+}
+
+.landing-hero {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 36px;
+  align-items: center;
+}
+
+.landing-hero h1 {
+  font-size: 44px;
+}
+
+.landing-hero-shot {
+  position: relative;
+  padding-bottom: 40px;
+}
+
+/* A browser window in which screens of the site take turns. */
+.browser {
+  background: var(--paper);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgb(29 43 54 / 0.18);
+  overflow: hidden;
+  transform: rotate(1.5deg);
+}
+
+.browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--stone);
+}
+
+.browser-bar span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--paper);
+  opacity: 0.8;
+}
+
+.browser-bar em {
+  font-style: normal;
+  font-size: 13px;
+  color: var(--ink);
+  margin-left: 10px;
+}
+
+.browser-screens {
+  position: relative;
+  aspect-ratio: 900 / 580;
+  background: #fff;
+}
+
+.browser-screens img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: top;
+  opacity: 0;
+  animation: screens 16s infinite;
+}
+
+.browser-screens img:first-child {
+  opacity: 1;
+}
+
+.browser-screens img:nth-child(2) {
+  animation-delay: -12s;
+}
+.browser-screens img:nth-child(3) {
+  animation-delay: -8s;
+}
+.browser-screens img:nth-child(4) {
+  animation-delay: -4s;
+}
+
+@keyframes screens {
+  0%,
+  22% {
+    opacity: 1;
+  }
+  25%,
+  97% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Mika peeks out below the bottom-right corner of the browser window. */
+.hero-mika {
+  position: absolute;
+  z-index: 2;
+  right: -18px;
+  bottom: -50px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.bubble {
+  position: relative;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--stone);
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-weight: 700;
+  font-size: 15px;
+  margin: 0 70px 2px 0;
+  white-space: nowrap;
+  animation: pop 0.6s 0.6s ease-out both;
+}
+
+.mika-arm {
+  transform-box: view-box;
+  transform-origin: 78px 84px;
+  animation: wave 2.6s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%,
+  60%,
+  100% {
+    rotate: 0deg;
+  }
+  15%,
+  45% {
+    rotate: 16deg;
+  }
+  30% {
+    rotate: -8deg;
+  }
+}
+
+.stats {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.stats li {
+  background: var(--paper);
+  border-radius: 18px;
+  padding: 16px;
+  text-align: center;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.stats strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 42px;
+  line-height: 1;
+  color: var(--leaf);
+}
+
+/* Sections slide in as they scroll into view (see components/reveal.tsx). */
+.reveal {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-ready .reveal:not(.in) {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+/* ---------- Try it yourself */
+
+.try-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.try-panel {
+  min-height: 380px;
+}
+
+.try-card {
+  animation: slide-in 0.35s ease-out;
+}
+
+.try-card img {
+  display: block;
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin: 0 0 12px;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+}
+
+.try-result {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.try-big {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--leaf);
+  animation: pop 0.6s ease-out;
+}
+
+.try-passage {
+  max-height: 46vh;
+  overflow-y: auto;
+}
+
+.try-join {
+  text-align: center;
+  margin: 22px 0 0;
+}
+
+.mika-bounce {
+  animation: bounce 2.4s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -8px;
+  }
+}
+
+@media (max-width: 760px) {
+  .landing-scene {
+    padding: 28px 18px 80px;
+    border-radius: 22px;
+  }
+
+  .landing-hero {
     grid-template-columns: 1fr;
   }
 
@@ -1684,7 +2072,134 @@ button.big {
     font-size: 32px;
   }
 
-  .price-big {
-    font-size: 38px;
+  .landing-hero-shot {
+    padding-bottom: 70px;
   }
+
+  .hero-mika {
+    right: -4px;
+    bottom: -40px;
+  }
+
+  .hero-mika svg {
+    width: 76px;
+    height: auto;
+  }
+
+  .cloud {
+    display: none !important;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sun {
+    width: 50px;
+    height: 50px;
+    right: 18px;
+    top: 14px;
+  }
+
+  .float-balloon {
+    display: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------- buttons respond to a touch */
+
+.button,
+button:not(.firefly) {
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.button:hover,
+button:not(.firefly):not([disabled]):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgb(29 43 54 / 0.12);
+}
+
+.button:active,
+button:not(.firefly):not([disabled]):active {
+  transform: scale(0.96);
+  box-shadow: none;
+}
+
+/* ---------------------------------------------------------------- small delights for children */
+
+.celebrate-mika {
+  display: block;
+  margin: 0 auto 4px;
+  animation: bounce 2.4s ease-in-out infinite;
+}
+
+.celebrate {
+  position: relative;
+}
+
+/* Confetti bursts out from the middle and falls away. */
+.confetti {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.confetti span {
+  position: absolute;
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: confetti 1.6s var(--d) cubic-bezier(0.2, 0.7, 0.4, 1) both;
+}
+
+@keyframes confetti {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  45% {
+    opacity: 1;
+    transform: translate(calc(var(--x) * 0.6), var(--y)) rotate(var(--r));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), 40vh) rotate(calc(var(--r) * 3));
+  }
+}
+
+/* Progress stones: the current one breathes, finished ones fill with a pop. */
+.stone.now {
+  animation: stone-now 2.2s ease-in-out infinite;
+}
+
+.stone.done {
+  animation: stone-done 0.5s ease-out;
+}
+
+@keyframes stone-now {
+  50% {
+    box-shadow: 0 0 0 6px rgb(244 190 58 / 0.35);
+  }
+}
+
+@keyframes stone-done {
+  0% {
+    scale: 0.7;
+  }
+  70% {
+    scale: 1.15;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+/* Confetti and drifting clouds never cause sideways scrolling. */
+body {
+  overflow-x: clip;
 }

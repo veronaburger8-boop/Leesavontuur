@@ -9,7 +9,8 @@ import { lessonText, STEP_NAMES } from "@/lib/lesson/text";
 import { EyeExercise, EyeSkipped } from "./eye-exercise";
 import { GrammarStep } from "./grammar";
 import { MultipleChoice } from "./multiple-choice";
-import { Cheer } from "./shared";
+import { Meerkat } from "@/components/art/meerkat";
+import { Cheer, Confetti } from "./shared";
 import type { DisplayStyle } from "@/lib/lesson/next";
 import { Spelling } from "./spelling";
 import { type ReadingResult, TimedReading } from "./timed-reading";
@@ -268,6 +269,7 @@ function Report({
   const cell = (v?: number) => (v === undefined ? "–" : `${v}%`);
   return (
     <section className="panel">
+      <Meerkat size={80} pose="cheer" className="celebrate-mika" />
       <h2>
         {t.report}
         {learnerName ? `, ${learnerName}` : ""}
@@ -310,6 +312,7 @@ function Report({
       )}
       {outcome?.challenge && (
         <div className={`celebrate${outcome.challenge.passed ? " full" : ""}`} style={{ marginTop: 18 }}>
+          {outcome.challenge.passed && <Confetti />}
           {outcome.challenge.passed && (
             <div className="stars" aria-hidden="true">
               <span>⭐</span>

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Meerkat } from "@/components/art/meerkat";
+import { LandingTry } from "@/components/landing-try";
+import { Reveal } from "@/components/reveal";
 import type { Locale } from "@/lib/i18n";
 import { landingText } from "@/lib/landing-text";
 import type { LessonSample } from "@/lib/landing-sample";
@@ -12,31 +14,71 @@ function Shot({ name, alt, locale, priority }: { name: string; alt: string; loca
   );
 }
 
+/** The screens that take turns in the hero's browser frame (cross-fading in CSS). */
+const HERO_SHOTS = ["child-home", "reading", "galgie", "chart"];
+
 /** The welcome page for visitors who aren't signed in. */
 export function Landing({ locale, sample }: { locale: Locale; sample: LessonSample | null }) {
   const t = landingText(locale);
   return (
     <main className="wide landing">
-      <section className="panel landing-hero">
-        <div className="landing-hero-text">
-          <p className="pill">{t.pill}</p>
-          <h1>{t.title}</h1>
-          <p className="lead">{t.lead}</p>
-          <div className="row">
-            <Link className="button primary big" href="/signup">
-              {t.join}
-            </Link>
-            <Link className="button" href="/login">
-              {t.logIn}
-            </Link>
+      <Reveal />
+      <section className="landing-scene">
+        <div className="scene-sky" aria-hidden="true">
+          <span className="sun" />
+          <span className="cloud c1" />
+          <span className="cloud c2" />
+          <span className="float-balloon b1" />
+          <span className="float-balloon b2" />
+          <span className="float-balloon b3" />
+        </div>
+        <div className="landing-hero">
+          <div className="landing-hero-text">
+            <p className="pill">{t.pill}</p>
+            <h1>{t.title}</h1>
+            <p className="lead">{t.lead}</p>
+            <div className="row">
+              <Link className="button primary big" href="/signup">
+                {t.join}
+              </Link>
+              <Link className="button" href="/login">
+                {t.logIn}
+              </Link>
+            </div>
+          </div>
+          <div className="landing-hero-shot">
+            <div className="browser" role="img" aria-label={t.phoneAlt}>
+              <div className="browser-bar" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+                <em>leesavontuur.co.za</em>
+              </div>
+              <div className="browser-screens" aria-hidden="true">
+                {HERO_SHOTS.map((name, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={name} src={`/landing/${name}-${locale}.webp`} alt="" loading={i === 0 ? "eager" : "lazy"} decoding="async" />
+                ))}
+              </div>
+            </div>
+            <div className="hero-mika">
+              <p className="bubble">{t.mikaHello}</p>
+              <Meerkat size={104} pose="wave" />
+            </div>
           </div>
         </div>
-        <div className="landing-hero-shot">
-          <Shot name="child-home" alt={t.heroShotAlt} locale={locale} priority />
-        </div>
+        <div className="scene-grass" aria-hidden="true" />
       </section>
 
-      <section className="panel" aria-labelledby="how">
+      <ul className="stats reveal">
+        {t.stats.map((x) => (
+          <li key={x.label}>
+            <strong>{x.n}</strong> {x.label}
+          </li>
+        ))}
+      </ul>
+
+      <section className="panel reveal" aria-labelledby="how">
         <h2 id="how">{t.howTitle}</h2>
         <ol className="steps">
           {t.steps.map((s, i) => (
@@ -51,7 +93,13 @@ export function Landing({ locale, sample }: { locale: Locale; sample: LessonSamp
         </ol>
       </section>
 
-      <section className="panel" aria-labelledby="inside">
+      <section className="panel reveal" aria-labelledby="try">
+        <h2 id="try">{t.tryTitle}</h2>
+        <p className="sub">{t.tryIntro}</p>
+        <LandingTry locale={locale} sample={sample} />
+      </section>
+
+      <section className="panel reveal" aria-labelledby="inside">
         <h2 id="inside">{t.insideTitle}</h2>
         <div className="features">
           {t.features.map((f) => (
@@ -65,47 +113,7 @@ export function Landing({ locale, sample }: { locale: Locale; sample: LessonSamp
         <p className="sub topics-line">{t.topics}</p>
       </section>
 
-      {sample && (
-        <section className="panel" aria-labelledby="sample">
-          <h2 id="sample">{t.sampleTitle}</h2>
-          <p className="sub">{t.sampleIntro(sample.title)}</p>
-          <div className="sample">
-            <div className="wordcard">
-              <div className="card-word">{sample.card.word}</div>
-              {sample.card.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={sample.card.image} alt={sample.card.imageNote ?? ""} width={180} height={180} loading="lazy" />
-              )}
-              {sample.card.definitions.map((d) => (
-                <p key={d} className="reading-sm">
-                  {d}
-                </p>
-              ))}
-              {sample.card.example && (
-                <p className="reading-sm">
-                  <em>{t.eg}</em> {sample.card.example}
-                </p>
-              )}
-              <p className="translation">
-                {t.otherLanguage}: “{sample.card.translation}”
-              </p>
-            </div>
-            <div className="sample-passage" lang={locale === "en" ? "en" : "af"}>
-              <h3>{sample.title}</h3>
-              {sample.lines.map((l, i) => (
-                <p key={i} className="reading-sm">
-                  {l}
-                </p>
-              ))}
-              <p className="reading-sm" aria-hidden="true">
-                …
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section className="panel" aria-labelledby="parents">
+      <section className="panel reveal" aria-labelledby="parents">
         <h2 id="parents">{t.parentsTitle}</h2>
         <ul className="trust">
           {t.parents.map((p) => (
@@ -117,7 +125,7 @@ export function Landing({ locale, sample }: { locale: Locale; sample: LessonSamp
         </ul>
       </section>
 
-      <section className="panel price" aria-labelledby="price">
+      <section className="panel price reveal" aria-labelledby="price">
         <h2 id="price">{t.priceTitle}</h2>
         <p className="price-big">
           {t.priceFree} <span>{t.priceFreeText}</span>
@@ -135,7 +143,7 @@ export function Landing({ locale, sample }: { locale: Locale; sample: LessonSamp
         </p>
       </section>
 
-      <section className="panel" aria-labelledby="faq">
+      <section className="panel reveal" aria-labelledby="faq">
         <h2 id="faq">{t.faqTitle}</h2>
         <div className="faq">
           {t.faq.map((f) => (
@@ -147,8 +155,8 @@ export function Landing({ locale, sample }: { locale: Locale; sample: LessonSamp
         </div>
       </section>
 
-      <section className="panel landing-end">
-        <Meerkat size={110} />
+      <section className="panel landing-end reveal">
+        <Meerkat size={110} pose="cheer" className="mika-bounce" />
         <h2>{t.endTitle}</h2>
         <p>{t.endText}</p>
         <Link className="button primary big" href="/signup">

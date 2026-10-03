@@ -1,7 +1,20 @@
 // Mika the meerkat (erdmannetjie), Leesavontuur's own mascot: standing on
 // look-out with an open book. Original artwork, drawn as simple shapes.
 
-export function Meerkat({ size = 120, title, reading = true, className }: { size?: number; title?: string; reading?: boolean; className?: string }) {
+export function Meerkat({
+  size = 120,
+  title,
+  reading = true,
+  pose,
+  className,
+}: {
+  size?: number;
+  title?: string;
+  reading?: boolean;
+  /** "wave": one paw waving hello; "cheer": both paws in the air. Overrides `reading`. */
+  pose?: "wave" | "cheer";
+  className?: string;
+}) {
   return (
     <svg
       viewBox="0 0 120 160"
@@ -36,7 +49,24 @@ export function Meerkat({ size = 120, title, reading = true, className }: { size
       <circle cx="72" cy="43" r="1.8" fill="#1d2b36" />
       <ellipse cx="61" cy="56" rx="5" ry="3.5" fill="#3b2a1e" />
       <path d="M55 63 Q61 68 67 63" fill="none" stroke="#3b2a1e" strokeWidth="2" strokeLinecap="round" />
-      {reading ? (
+      {pose === "wave" ? (
+        <>
+          {/* one paw resting, the other waving hello (the arm swings in CSS) */}
+          <ellipse cx="46" cy="96" rx="6" ry="8" fill="#9c6b3c" />
+          <g className="mika-arm">
+            <path d="M78 84 C88 74 94 64 97 54" fill="none" stroke="#c9965f" strokeWidth="9" strokeLinecap="round" />
+            <ellipse cx="98" cy="48" rx="7" ry="8" fill="#9c6b3c" />
+          </g>
+        </>
+      ) : pose === "cheer" ? (
+        <>
+          {/* both paws in the air */}
+          <path d="M44 84 C34 74 28 64 25 54" fill="none" stroke="#c9965f" strokeWidth="9" strokeLinecap="round" />
+          <ellipse cx="24" cy="48" rx="7" ry="8" fill="#9c6b3c" />
+          <path d="M78 84 C88 74 94 64 97 54" fill="none" stroke="#c9965f" strokeWidth="9" strokeLinecap="round" />
+          <ellipse cx="98" cy="48" rx="7" ry="8" fill="#9c6b3c" />
+        </>
+      ) : reading ? (
         <>
           {/* open book held in both paws */}
           <path d="M34 92 L60 98 L60 124 L34 118 Z" fill="#ffffff" stroke="#2e6b3f" strokeWidth="3" strokeLinejoin="round" />

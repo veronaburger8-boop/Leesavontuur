@@ -6,7 +6,7 @@ Suggested order: 1 → 2 → 3 → 5 → 4 → 6 → 7, with 8–11 alongside.
 
 ## A. Decide first
 
-- [x] **1. Pricing**: decided. A free pilot with invited families (14 days' notice before it ends); after that, one free lesson per child for new families, then R99 per family per month (option B). Still to do before charging: the owner's PayFast account (verified, with recurring billing) and its details in Vercel, then the paid hosting plans (4). The subscription part of the site is built and works in PayFast's practice mode (README, "Payments"); the owner runs `20261005080000_subscriptions.sql` first.
+- [x] **1. Pricing**: decided. A free pilot with invited families (14 days' notice before it ends); after that, one free lesson per child for new families, then R99 per family per month (option B). Payments: **bank transfer (EFT) works now** (owner runs `20261020080000_eft_payments.sql`, fills in banking details on Admin → Families, and marks payments with "+1 month"). Card payments: PayFast connection built (practice mode), waiting for PayFast's approval; the owner also applies to Paystack as an alternative. Still to do before charging: the paid hosting plans (4).
 - [x] **2. Final name**: decided. The name stays "Leesavontuur".
 
 ## B. Sign up or buy (costs money)

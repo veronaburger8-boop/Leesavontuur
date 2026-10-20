@@ -1,8 +1,6 @@
 import { cents, confirmWithPayFast, notificationSignatureValid, parseNotification, payfastConfig, PRICE_RAND } from "@/lib/payfast";
+import { extendPaidUntil } from "@/lib/paid-until";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-/** A paid month lasts this long: a month plus a few days' grace for the next debit to arrive. */
-const GRACE_DAYS = 3;
 
 /**
  * PayFast's notifications (ITN) about a subscription: the first payment, each
@@ -43,12 +41,7 @@ export async function POST(request: Request) {
   if (status === "COMPLETE") {
     // Only the full R99 counts.
     if (amount !== PRICE_RAND * 100) return new Response("Wrong amount", { status: 200 });
-    // A new month starts from today, or from the end of time already paid for
-    // (so subscribing again after cancelling loses no days); grace is added once.
-    const paidEnd = sub.paid_until ? new Date(new Date(sub.paid_until).getTime() - GRACE_DAYS * 86_400_000) : now;
-    const until = new Date(Math.max(now.getTime(), paidEnd.getTime()));
-    until.setMonth(until.getMonth() + 1);
-    until.setDate(until.getDate() + GRACE_DAYS);
+    const until = extendPaidUntil(sub.paid_until, now);
     Object.assign(update, { status: "active", paid_until: until.toISOString(), started_at: sub.started_at ?? now.toISOString(), cancelled_at: null });
   } else if (status === "CANCELLED") {
     Object.assign(update, { status: "cancelled", cancelled_at: now.toISOString() });

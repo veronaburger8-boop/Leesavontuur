@@ -1,21 +1,27 @@
 import { Message } from "@/components/message";
 import { requireAccount } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
-import { payfastConfig } from "@/lib/payfast";
-import { getMyAccess } from "@/lib/subscription";
+import { dueDate, eftReference } from "@/lib/paid-until";
+import { payfastConfig, PRICE_RAND } from "@/lib/payfast";
+import { getMyAccess, getPaymentOptions } from "@/lib/subscription";
 import { beginCheckout, cancelSubscription } from "./actions";
 import { paidUp, subscriptionStatus } from "./status";
 
 export const metadata = { title: "Subscription" };
 
-/** The family's subscription: status, subscribe (through PayFast) and cancel. */
+/** The family's subscription: status, how to pay (bank transfer and/or card through PayFast) and cancel. */
 export default async function SubscriptionPage({ searchParams }: PageProps<"/parent/subscription">) {
-  const { supabase } = await requireAccount("/parent/subscription");
-  const [sp, locale, access] = await Promise.all([searchParams, getLocale(), getMyAccess(supabase)]);
+  const { supabase, user } = await requireAccount("/parent/subscription");
+  const [sp, locale, access, options] = await Promise.all([searchParams, getLocale(), getMyAccess(supabase), getPaymentOptions(supabase)]);
   const t = translator(locale);
+  const date = (d: Date) => d.toLocaleDateString(locale === "af" ? "af-ZA" : "en-ZA", { day: "numeric", month: "long", year: "numeric", timeZone: "Africa/Johannesburg" });
   const status = subscriptionStatus(access, t, locale);
-  const canSubscribe = access.status !== "active" || !paidUp(access);
-  const canCancel = access.status === "active" || access.status === "failed";
+  const isPaidUp = paidUp(access);
+  const canSubscribeByCard = options.card && !(access.card && access.status === "active" && isPaidUp);
+  const canCancel = access.card && (access.status === "active" || access.status === "failed");
+  // Bank details are only needed once charging is on (during the pilot everything is free).
+  const showEft = access.billing_on && !access.pilot && !(access.card && access.status === "active");
+  const reference = eftReference(user.id);
 
   return (
     <main>
@@ -25,16 +31,56 @@ export default async function SubscriptionPage({ searchParams }: PageProps<"/par
         <Message kind="info">{sp.stopped ? t("subStopped") : null}</Message>
         <Message kind="error">{sp.error === "cancel" ? t("subCancelFailed") : sp.error ? t("somethingWrong") : null}</Message>
         <p className="lead">{status}</p>
-        {!payfastConfig().live && <p className="message info">{t("subPractice")}</p>}
-        {!access.pilot && canSubscribe && (
+      </section>
+
+      {showEft && (
+        <section className="panel">
+          <h2>{t("eftTitle")}</h2>
+          {options.eft ? (
+            <>
+              <p>{t("eftIntro")}</p>
+              <dl className="eft-details">
+                <dt>{t("eftBank")}</dt>
+                <dd>{options.eft.bank}</dd>
+                <dt>{t("eftAccountName")}</dt>
+                <dd>{options.eft.account_name}</dd>
+                <dt>{t("eftAccountNumber")}</dt>
+                <dd>{options.eft.account_number}</dd>
+                <dt>{t("eftBranch")}</dt>
+                <dd>{options.eft.branch_code}</dd>
+                {options.eft.account_type && (
+                  <>
+                    <dt>{t("eftAccountType")}</dt>
+                    <dd>{options.eft.account_type}</dd>
+                  </>
+                )}
+                <dt>{t("eftAmount")}</dt>
+                <dd>R{PRICE_RAND}</dd>
+                <dt>{t("eftReference")}</dt>
+                <dd className="eft-reference">{reference}</dd>
+              </dl>
+              {isPaidUp && access.paid_until && !access.card && <p>{t("eftNextBy", { date: date(dueDate(access.paid_until)) })}</p>}
+              <p className="sub">{t("eftStop")}</p>
+            </>
+          ) : (
+            !options.card && <p>{t("eftNotReady")}</p>
+          )}
+        </section>
+      )}
+
+      {!access.pilot && canSubscribeByCard && (
+        <section className="panel">
+          {showEft && options.eft && <h2>{t("orPayByCard")}</h2>}
+          {!payfastConfig().live && <p className="message info">{t("subPractice")}</p>}
           <form action={beginCheckout}>
             <p className="sub">{t("subSecure")}</p>
             <button className="primary big" type="submit">
               {t("subscribeButton")}
             </button>
           </form>
-        )}
-      </section>
+        </section>
+      )}
+
       {!access.pilot && canCancel && (
         <section className="panel">
           <h2>{t("subCancelButton")}</h2>

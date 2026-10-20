@@ -14,7 +14,7 @@ import { checkItem } from "@/lib/content/parse-source";
 import { contentItemSchema, validateContentFile } from "@/lib/content/validate";
 
 /** Settings that belong to the Families page (charging), not the general Settings page. */
-const BILLING_KEYS = ["billing_on", "free_lessons"];
+const BILLING_KEYS = ["billing_on", "free_lessons", "card_payments"];
 
 const str = (v: FormDataEntryValue | null) => (typeof v === "string" ? v.trim() : "");
 

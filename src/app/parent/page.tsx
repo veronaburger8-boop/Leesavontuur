@@ -4,7 +4,15 @@ import { requireAccount } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
 import { belowRecommendedGrade, levelSuggestion, type ResultScores } from "@/lib/levels";
 import { getSettings } from "@/lib/lesson/next";
+import { dueDate, eftReference } from "@/lib/paid-until";
 import { getMyAccess } from "@/lib/subscription";
+
+/** True when the paid time ends within the next 5 days (time to remind an EFT family). */
+function soonDue(paidUntil: string | null): boolean {
+  if (!paidUntil) return false;
+  const left = new Date(paidUntil).getTime() - Date.now();
+  return left > 0 && left < 5 * 86_400_000;
+}
 import { decideRequest, dismissNotification, ignoreSuggestion, setLevel } from "./actions";
 import { AVAILABLE_LEVELS, listLearners, levelIn, MAX_CHILDREN } from "./data";
 import { listTopicRequests, TopicRequests } from "./topic-requests";
@@ -52,6 +60,12 @@ export default async function ParentHome({ searchParams }: PageProps<"/parent">)
         </h1>
         <Message kind="ok">{sp.added || sp.removed ? t("saved") : sp.levelSet ? t("levelSet") : null}</Message>
         <Message kind="error">{sp.error ? t("somethingWrong") : null}</Message>
+        {access.billing_on && !access.pilot && !access.card && soonDue(access.paid_until) && (
+          <div className="message info">
+            {t("eftReminder", { date: date(dueDate(access.paid_until!).toISOString()), reference: eftReference(user.id) })}{" "}
+            <Link href="/parent/subscription">{t("subManage")}</Link>
+          </div>
+        )}
         {access.billing_on && !access.has_access && (
           <div className="message info">
             {access.status === "failed" ? t("subFailed") : t("subNone")}{" "}

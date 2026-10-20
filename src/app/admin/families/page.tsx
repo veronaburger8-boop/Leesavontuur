@@ -1,7 +1,8 @@
 import { requireStaff } from "@/lib/auth";
 import { payfastConfig } from "@/lib/payfast";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { setBilling, setPilot } from "./actions";
+import { eftReference } from "@/lib/paid-until";
+import { markEftPaid, saveEftDetails, setBilling, setCardPayments, setPaidUntil, setPilot } from "./actions";
 
 export const metadata = { title: "Families" };
 
@@ -30,14 +31,18 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
       </section>
     );
   const admin = createAdminClient();
-  const [{ data: setting }, { data: parents }, { data: users }, { data: learners }, { data: subs }, { data: events }] = await Promise.all([
+  const [{ data: setting }, { data: parents }, { data: users }, { data: learners }, { data: subs }, { data: events }, { data: cardSetting }, { data: eft }] = await Promise.all([
     admin.from("app_settings").select("value").eq("key", "billing_on").single(),
     admin.from("profiles").select("id, display_name, role, created_at").order("created_at", { ascending: false }),
     admin.auth.admin.listUsers({ perPage: 1000 }),
     admin.from("learners").select("parent_id"),
     admin.from("subscriptions").select("parent_id, status, pilot, paid_until"),
     admin.from("payment_events").select("parent_id, payment_status, amount_cents, received_at").order("received_at", { ascending: false }).limit(20),
+    admin.from("app_settings").select("value").eq("key", "card_payments").maybeSingle(),
+    admin.from("eft_details").select("bank, account_name, account_number, branch_code, account_type").eq("id", 1).maybeSingle(),
   ]);
+  const cardOn = Number(cardSetting?.value) === 1;
+  const isoDay = (s: string | null) => (s ? new Date(s).toLocaleDateString("en-CA", { timeZone: "Africa/Johannesburg" }) : "");
   const billingOn = Number(setting?.value) === 1;
   const email = new Map((users?.users ?? []).map((u) => [u.id, u.email ?? ""]));
   const children = (id: string) => (learners ?? []).filter((l) => l.parent_id === id).length;
@@ -90,6 +95,44 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
         )}
       </section>
 
+      <section className="panel" id="eft">
+        <h2>How parents pay</h2>
+        <h3>Bank transfer (EFT)</h3>
+        <p className="sub">
+          Parents see these details on their Subscription page, with their own reference. When an R99 payment arrives in your bank account, find the family by its
+          reference below and click <strong>+1 month</strong>.
+        </p>
+        <form action={saveEftDetails} className="form" style={{ maxWidth: 560 }}>
+          {(
+            [
+              ["bank", "Bank", eft?.bank],
+              ["account_name", "Account holder", eft?.account_name],
+              ["account_number", "Account number", eft?.account_number],
+              ["branch_code", "Branch code", eft?.branch_code],
+              ["account_type", "Account type (e.g. Cheque)", eft?.account_type],
+            ] as const
+          ).map(([name, label, value]) => (
+            <div key={name} className="field">
+              <label htmlFor={`eft-${name}`}>{label}</label>
+              <input id={`eft-${name}`} name={name} type="text" defaultValue={value ?? ""} autoComplete="off" />
+            </div>
+          ))}
+          <div>
+            <button className="primary" type="submit">
+              Save banking details
+            </button>
+          </div>
+        </form>
+        <h3 style={{ marginTop: 22 }}>Card (PayFast)</h3>
+        <p className={`message ${cardOn ? "ok" : "info"}`}>
+          {cardOn ? "Parents can also pay by card (monthly debit through PayFast)." : "Card payments are hidden from parents (switch on once PayFast has approved you)."}
+        </p>
+        <form action={setCardPayments}>
+          <input type="hidden" name="on" value={cardOn ? "0" : "1"} />
+          <button type="submit">{cardOn ? "Hide card payments" : "Show card payments"}</button>
+        </form>
+      </section>
+
       <section className="panel">
         <h2>All families</h2>
         <div className="table-wrap">
@@ -102,6 +145,8 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
                 <th>Subscription</th>
                 <th>Paid until</th>
                 <th>Pilot family</th>
+                <th>EFT reference</th>
+                <th>EFT payment</th>
               </tr>
             </thead>
             <tbody>
@@ -127,6 +172,27 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
                         <input type="hidden" name="pilot" value={s?.pilot ? "0" : "1"} />
                         <button className={`small${s?.pilot ? " primary" : ""}`} type="submit" aria-label={`${s?.pilot ? "Remove pilot" : "Make pilot family"}: ${email.get(p.id)}`}>
                           {s?.pilot ? "✓ Pilot" : "Make pilot"}
+                        </button>
+                      </form>
+                    </td>
+                    <td>
+                      <strong>{eftReference(p.id)}</strong>
+                    </td>
+                    <td>
+                      <form action={markEftPaid}>
+                        <input type="hidden" name="parent" value={p.id} />
+                        <button className="small primary" type="submit" aria-label={`+1 month (EFT received): ${email.get(p.id)}`}>
+                          +1 month
+                        </button>
+                      </form>
+                      <form action={setPaidUntil} className="row" style={{ marginTop: 6, gap: 6 }}>
+                        <input type="hidden" name="parent" value={p.id} />
+                        <label className="sr-only" htmlFor={`until-${p.id}`}>
+                          Paid until: {email.get(p.id)}
+                        </label>
+                        <input id={`until-${p.id}`} type="date" name="until" defaultValue={isoDay(s?.paid_until ?? null)} style={{ width: "auto", padding: "4px 6px", fontSize: 14 }} />
+                        <button className="small" type="submit" aria-label={`Set paid-until date: ${email.get(p.id)}`}>
+                          Set
                         </button>
                       </form>
                     </td>

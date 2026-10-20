@@ -2203,3 +2203,43 @@ button:not(.firefly):not([disabled]):active {
 body {
   overflow-x: clip;
 }
+
+/* ---------------------------------------------------------------- paying by bank transfer (EFT) */
+
+.eft-details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 18px;
+  margin: 0 0 16px;
+  padding: 16px 20px;
+  border: 3px solid var(--sun);
+  border-radius: 18px;
+}
+
+.eft-details dt {
+  color: var(--muted);
+}
+
+.eft-details dd {
+  margin: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.eft-reference {
+  font-family: var(--display);
+  font-size: 24px;
+  color: var(--leaf);
+  letter-spacing: 1px;
+}
+
+@media (max-width: 520px) {
+  .eft-details {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .eft-details dd {
+    margin-bottom: 8px;
+  }
+}

@@ -439,6 +439,16 @@ describe.skipIf(!url)("database access rules", () => {
     expect((await db.query("select count(*)::int as n from public.payment_events")).rows[0].n).toBe(0);
   });
 
+  it("lets parents read the EFT banking details; only the admin changes them", async () => {
+    await as(ids.admin, (q) => q("update public.eft_details set bank = 'FNB', account_number = '123' where id = 1"), true);
+    expect(await as(ids.parentB, async (q) => (await q("select bank, account_number from public.eft_details")).rows)).toEqual([{ bank: "FNB", account_number: "123" }]);
+    const changed = await as(ids.parentB, async (q) => (await q("update public.eft_details set account_number = '999' where id = 1")).rowCount, true);
+    expect(changed).toBe(0);
+    await expect(as(ids.parentB, (q) => q("insert into public.eft_details (id) values (1)"))).rejects.toThrow(/permission denied/);
+    await expect(as(null, (q) => q("select * from public.eft_details"))).rejects.toThrow(/permission denied/);
+    expect((await db.query("select account_number from public.eft_details")).rows[0].account_number).toBe("123");
+  });
+
   it("deletes a family's children when the account is deleted", async () => {
     await db.query("delete from auth.users where id = $1", [ids.parentA]);
     const { rows } = await db.query("select count(*)::int as n from public.learners where parent_id = $1", [ids.parentA]);

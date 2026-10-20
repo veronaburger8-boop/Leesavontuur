@@ -327,6 +327,33 @@ const text = {
   },
   subItem: { af: "Leesavontuur: maandelikse intekening", en: "Leesavontuur: monthly subscription" },
   subManage: { af: "Intekening", en: "Subscription" },
+  subPaidUntil: { af: "Julle intekening is betaal tot {date}.", en: "Your subscription is paid until {date}." },
+  eftTitle: { af: "Betaal per EFT (bankoorbetaling)", en: "Pay by EFT (bank transfer)" },
+  eftIntro: {
+    af: "Betaal R99 per maand in die rekening hieronder, met jou eie verwysing. Sodra ons die betaling sien (gewoonlik binne 2 werksdae), is julle vir 'n maand betaal.",
+    en: "Pay R99 per month into the account below, with your own reference. As soon as we see the payment (usually within 2 working days), you're paid for a month.",
+  },
+  eftBank: { af: "Bank", en: "Bank" },
+  eftAccountName: { af: "Rekeninghouer", en: "Account holder" },
+  eftAccountNumber: { af: "Rekeningnommer", en: "Account number" },
+  eftBranch: { af: "Takkode", en: "Branch code" },
+  eftAccountType: { af: "Rekeningtipe", en: "Account type" },
+  eftAmount: { af: "Bedrag", en: "Amount" },
+  eftReference: { af: "Jou verwysing (baie belangrik)", en: "Your reference (very important)" },
+  eftNextBy: { af: "Betaal die volgende R99 voor {date}.", en: "Pay the next R99 before {date}." },
+  eftStop: {
+    af: "Om te stop, betaal net nie die volgende maand nie. Daar is geen kontrak of kansellasiefooi nie.",
+    en: "To stop, simply don't pay the next month. There's no contract or cancellation fee.",
+  },
+  eftNotReady: {
+    af: "Betaalbesonderhede word binnekort hier gewys. Skryf intussen aan ons as jy wil inteken.",
+    en: "Payment details will be shown here soon. Meanwhile, write to us if you'd like to subscribe.",
+  },
+  orPayByCard: { af: "Of betaal maandeliks per kaart", en: "Or pay monthly by card" },
+  eftReminder: {
+    af: "Julle intekening loop op {date} af. Onthou om R99 te betaal met jou verwysing {reference}.",
+    en: "Your subscription runs out on {date}. Remember to pay R99 with your reference {reference}.",
+  },
 } as const;
 
 export type TextKey = keyof typeof text;

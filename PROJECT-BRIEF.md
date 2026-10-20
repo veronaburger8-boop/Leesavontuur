@@ -311,6 +311,8 @@ Each phase should end with something the owner can try out.
 
 - **Payments (built October 2026, practice mode until the owner's PayFast account is ready):** PayFast monthly subscription of R99 per family. Charging is switched on and off by the admin (Admin → Families); while off, everything is free. When on: one free lesson per child (placement tests always free), then a subscription is needed for lessons and games; pilot families marked by the admin stay free. The database enforces the rule. Card details never reach the site; PayFast's notifications are checked by signature and confirmed with PayFast. A cancelled subscription keeps access until the end of the paid month; deleting an account cancels the PayFast subscription first. The site keeps only the subscription status, dates, PayFast references and each payment's amount and date (listed in the privacy policy and in the parent's data download).
 
+- **Paying by EFT (October 2026), while PayFast approval is pending:** parents pay R99 per month by bank transfer with their own reference (made from their account); the owner marks each payment on Admin → Families ("+1 month"), which extends the family's paid-until date; a reminder shows on the parent home 5 days before it ends; to stop, a family just doesn't pay. The owner's banking details are kept in the database (entered on the Families page), not in the code. Card payments (PayFast) are shown to parents only when the owner switches them on. The owner will also apply to Paystack; whichever card provider approves first gets connected.
+
 **Open questions for the owner**
 
 - Final **name, mascot and look** of the site.

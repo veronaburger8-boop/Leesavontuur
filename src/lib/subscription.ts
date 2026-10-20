@@ -10,7 +10,7 @@ export interface MyAccess {
   status: SubscriptionStatus;
   paid_until: string | null;
   free_lessons: number;
-  /** True when the family pays by card through PayFast (a monthly debit); false for bank transfers (EFT). */
+  /** True when the family pays by card (Paystack or PayFast, charged monthly); false for bank transfers (EFT). */
   card: boolean;
 }
 
@@ -18,10 +18,10 @@ export interface MyAccess {
 export async function getMyAccess(supabase: SupabaseClient): Promise<MyAccess> {
   const [{ data }, { data: sub }] = await Promise.all([
     supabase.rpc("my_access").single<Omit<MyAccess, "card">>(),
-    supabase.from("subscriptions").select("payfast_token").maybeSingle(),
+    supabase.from("subscriptions").select("provider, payfast_token, paystack_subscription").maybeSingle(),
   ]);
   const base = data ?? { billing_on: false, has_access: true, pilot: false, status: "none" as const, paid_until: null, free_lessons: 1 };
-  return { ...base, card: Boolean(sub?.payfast_token) };
+  return { ...base, card: Boolean(sub?.provider || sub?.payfast_token || sub?.paystack_subscription) };
 }
 
 /** May this child do another lesson or play? (Free lesson, pilot, or a paid-up subscription.) */

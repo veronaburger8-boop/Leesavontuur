@@ -2,14 +2,15 @@ import { Message } from "@/components/message";
 import { requireAccount } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
 import { dueDate, eftReference } from "@/lib/paid-until";
-import { payfastConfig, PRICE_RAND } from "@/lib/payfast";
+import { cardProvider } from "@/lib/card-provider";
+import { PRICE_RAND } from "@/lib/payfast";
 import { getMyAccess, getPaymentOptions } from "@/lib/subscription";
 import { beginCheckout, cancelSubscription } from "./actions";
 import { paidUp, subscriptionStatus } from "./status";
 
 export const metadata = { title: "Subscription" };
 
-/** The family's subscription: status, how to pay (bank transfer and/or card through PayFast) and cancel. */
+/** The family's subscription: status, how to pay (bank transfer and/or card through Paystack or PayFast) and cancel. */
 export default async function SubscriptionPage({ searchParams }: PageProps<"/parent/subscription">) {
   const { supabase, user } = await requireAccount("/parent/subscription");
   const [sp, locale, access, options] = await Promise.all([searchParams, getLocale(), getMyAccess(supabase), getPaymentOptions(supabase)]);
@@ -22,6 +23,7 @@ export default async function SubscriptionPage({ searchParams }: PageProps<"/par
   // Bank details are only needed once charging is on (during the pilot everything is free).
   const showEft = access.billing_on && !access.pilot && !(access.card && access.status === "active");
   const reference = eftReference(user.id);
+  const provider = cardProvider();
 
   return (
     <main>
@@ -71,9 +73,9 @@ export default async function SubscriptionPage({ searchParams }: PageProps<"/par
       {!access.pilot && canSubscribeByCard && (
         <section className="panel">
           {showEft && options.eft && <h2>{t("orPayByCard")}</h2>}
-          {!payfastConfig().live && <p className="message info">{t("subPractice")}</p>}
+          {!provider.live && <p className="message info">{t("subPractice", { provider: provider.name })}</p>}
           <form action={beginCheckout}>
-            <p className="sub">{t("subSecure")}</p>
+            <p className="sub">{t("subSecure", { provider: provider.name })}</p>
             <button className="primary big" type="submit">
               {t("subscribeButton")}
             </button>

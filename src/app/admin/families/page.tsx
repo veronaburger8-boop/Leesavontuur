@@ -1,5 +1,5 @@
 import { requireStaff } from "@/lib/auth";
-import { payfastConfig } from "@/lib/payfast";
+import { cardProvider } from "@/lib/card-provider";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { eftReference } from "@/lib/paid-until";
 import { markEftPaid, saveEftDetails, setBilling, setCardPayments, setPaidUntil, setPilot } from "./actions";
@@ -47,7 +47,8 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
   const email = new Map((users?.users ?? []).map((u) => [u.id, u.email ?? ""]));
   const children = (id: string) => (learners ?? []).filter((l) => l.parent_id === id).length;
   const subOf = new Map(((subs ?? []) as Sub[]).map((s) => [s.parent_id, s]));
-  const live = payfastConfig().live;
+  const provider = cardProvider();
+  const live = provider.live;
   const families = parents ?? [];
   const paying = families.filter((p) => {
     const s = subOf.get(p.id);
@@ -64,7 +65,7 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
           {families.length} families · {paying} paying · {families.filter((p) => subOf.get(p.id)?.pilot).length} pilot families
         </p>
         <p className={`message ${live ? "ok" : "info"}`}>
-          PayFast: {live ? "live (real payments)" : "practice mode (sandbox): no real money is taken. Switch to live in Vercel when your PayFast account is ready."}
+          Card payments go through {provider.name}: {live ? "live (real payments)." : `practice mode (test payments): no real money is taken. Put the live key in Vercel when your ${provider.name} account is approved.`}
         </p>
         <h2>Charging</h2>
         {billingOn ? (
@@ -123,9 +124,9 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
             </button>
           </div>
         </form>
-        <h3 style={{ marginTop: 22 }}>Card (PayFast)</h3>
+        <h3 style={{ marginTop: 22 }}>Card ({provider.name})</h3>
         <p className={`message ${cardOn ? "ok" : "info"}`}>
-          {cardOn ? "Parents can also pay by card (monthly debit through PayFast)." : "Card payments are hidden from parents (switch on once PayFast has approved you)."}
+          {cardOn ? `Parents can pay by card (charged monthly through ${provider.name}).` : `Card payments are hidden from parents (switch on to test, or once ${provider.name} has approved you).`}
         </p>
         <form action={setCardPayments}>
           <input type="hidden" name="on" value={cardOn ? "0" : "1"} />

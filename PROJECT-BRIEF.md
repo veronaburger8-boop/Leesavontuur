@@ -313,6 +313,8 @@ Each phase should end with something the owner can try out.
 
 - **Paying by EFT (October 2026), while PayFast approval is pending:** parents pay R99 per month by bank transfer with their own reference (made from their account); the owner marks each payment on Admin → Families ("+1 month"), which extends the family's paid-until date; a reminder shows on the parent home 5 days before it ends; to stop, a family just doesn't pay. The owner's banking details are kept in the database (entered on the Families page), not in the code. Card payments (PayFast) are shown to parents only when the owner switches them on. The owner will also apply to Paystack; whichever card provider approves first gets connected.
 
+- **Card payments through Paystack (October 2026):** the owner chose automatic monthly card charges (not EFT, which needs parents to pay by hand each month). Paystack takes the card once on its own page and charges R99 every month; the site keeps only Paystack's customer and subscription codes, and the parent's email is sent to Paystack for receipts (in the privacy policy). Paystack's signed webhooks keep each family's paid-until date up to date; cancelling or deleting the account stops the charges at Paystack. PayFast remains as a fallback when no Paystack key is set; EFT stays available but optional.
+
 **Open questions for the owner**
 
 - Final **name, mascot and look** of the site.

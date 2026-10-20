@@ -39,8 +39,8 @@ const af = (
       <li>wanneer jy die privaatheidsbeleid aanvaar het, en watter weergawe;</li>
       <li>onderwerpe wat jy versoek, en kennisgewings aan jou;</li>
       <li>
-        as jy inteken: jou intekening se stand (byvoorbeeld aktief of gekanselleer), tot wanneer dit betaal is, PayFast se verwysingsnommers en die bedrag
-        en datum van elke betaling. Ons sien of bewaar nooit jou kaart- of bankbesonderhede nie.
+        as jy inteken: jou intekening se stand (byvoorbeeld aktief of gekanselleer), tot wanneer dit betaal is, die betaalmaatskappy se verwysingsnommers
+        en die bedrag en datum van elke betaling. Ons sien of bewaar nooit jou kaart- of bankbesonderhede nie.
       </li>
     </ul>
 
@@ -70,8 +70,9 @@ const af = (
         <strong>Resend</strong> – stuur die e-posse van die webwerf, vanaf Ierland (Europese Unie).
       </li>
       <li>
-        <strong>PayFast</strong> (Suid-Afrika) – hanteer intekening-betalings op sy eie veilige bladsy. Jy gee jou betaalbesonderhede direk aan PayFast,
-        volgens PayFast se eie privaatheidsbeleid.
+        <strong>Paystack</strong> (deel van Stripe) en <strong>PayFast</strong> (Suid-Afrika) – hanteer intekening-betalings per kaart op hul eie veilige
+        bladsye. Jy gee jou kaartbesonderhede direk aan hulle, volgens hul eie privaatheidsbeleid. Ons stuur net jou e-posadres, sodat hulle vir jou
+        kwitansies kan stuur; Paystack kan inligting buite Suid-Afrika verwerk.
       </li>
     </ul>
     <p>
@@ -150,8 +151,8 @@ const en = (
       <li>when you accepted the privacy policy, and which version;</li>
       <li>topics you request, and notifications to you;</li>
       <li>
-        if you subscribe: your subscription&apos;s status (for example active or cancelled), until when it is paid, PayFast&apos;s reference numbers and the
-        amount and date of each payment. We never see or keep your card or bank details.
+        if you subscribe: your subscription&apos;s status (for example active or cancelled), until when it is paid, the payment company&apos;s reference
+        numbers and the amount and date of each payment. We never see or keep your card or bank details.
       </li>
     </ul>
 
@@ -181,8 +182,9 @@ const en = (
         <strong>Resend</strong> – sends the website&apos;s emails, from Ireland (European Union).
       </li>
       <li>
-        <strong>PayFast</strong> (South Africa) – handles subscription payments on its own secure page. You give your payment details directly to PayFast,
-        under PayFast&apos;s own privacy policy.
+        <strong>Paystack</strong> (part of Stripe) and <strong>PayFast</strong> (South Africa) – handle card subscription payments on their own secure pages.
+        You give your card details directly to them, under their own privacy policies. We only send your email address, so they can send you receipts;
+        Paystack may process information outside South Africa.
       </li>
     </ul>
     <p>

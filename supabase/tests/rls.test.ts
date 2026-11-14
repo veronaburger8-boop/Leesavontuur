@@ -323,7 +323,11 @@ describe.skipIf(!url)("database access rules", () => {
 
   it("shows visitors published articles only; only staff write articles", async () => {
     const drafts = (await db.query("select count(*)::int as n from public.articles where status = 'draft'")).rows[0].n;
-    expect(drafts).toBe(6);
+    expect(drafts).toBe(12);
+    // The later articles keep Afrikaans exactly (ê, ë, ô and 'n).
+    const bilingual = (await db.query("select title, body from public.articles where slug = 'tweetalig-lees-afrikaans-en-engels'")).rows[0];
+    expect(bilingual.title).toBe("Tweetalig grootword: lees in Afrikaans én Engels");
+    expect(bilingual.body).toContain("ê, ë, ô en 'n");
     expect(await as(null, async (q) => (await q("select * from public.articles")).rows)).toHaveLength(0);
     await as(ids.admin, (q) => q("update public.articles set status = 'published' where slug = 'tips-for-parents'"), true);
     const visible = await as(null, async (q) => (await q("select slug, published_at from public.articles")).rows);

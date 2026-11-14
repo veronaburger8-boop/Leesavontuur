@@ -4,7 +4,7 @@ import { requireAccount, safeNext } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
 import { unlockWithPassword, unlockWithPin } from "./actions";
 
-export const metadata = { title: "Parent area" };
+export const metadata = { title: "Parent area", robots: { index: false, follow: false } };
 
 /** Opens the parent area again after a child has used the device. */
 export default async function UnlockPage({ searchParams }: PageProps<"/unlock">) {

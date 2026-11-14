@@ -25,4 +25,11 @@ describe("welcome page wording", () => {
     expect(en).toContain("How does payment work?");
     expect(en).not.toContain("pilot");
   });
+
+  it("tells search engines about the site and its questions", () => {
+    const af = html("af", true);
+    expect(af).toContain('type="application/ld+json"');
+    expect(af).toContain('"@type":"FAQPage"');
+    expect(af).toContain("Hoe werk betaling?");
+  });
 });

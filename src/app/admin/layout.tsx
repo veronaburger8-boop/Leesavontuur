@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { requireStaff } from "@/lib/auth";
 
+// Private areas are kept out of search engines.
+export const metadata = { robots: { index: false, follow: false } };
+
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   await requireStaff();
   return (

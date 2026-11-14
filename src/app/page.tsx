@@ -7,6 +7,7 @@ import { getLocale, translator } from "@/lib/i18n";
 import { isLaunched, lessonSample } from "@/lib/landing-sample";
 
 export const metadata = {
+  alternates: { canonical: "/" },
   description:
     "Leesavontuur: kort daaglikse leeslesse en oogspeletjies in Afrikaans en Engels vir Suid-Afrikaanse kinders. Short daily reading lessons and eye games in Afrikaans and English.",
 };

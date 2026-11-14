@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Meerkat } from "@/components/art/meerkat";
+import { JsonLd, ORGANIZATION, SITE_URL } from "@/components/json-ld";
 import { LandingTry } from "@/components/landing-try";
 import { Reveal } from "@/components/reveal";
 import type { Locale } from "@/lib/i18n";
@@ -23,6 +24,20 @@ export function Landing({ locale, sample, launched = false }: { locale: Locale; 
   return (
     <main className="wide landing">
       <Reveal />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@graph": [
+            ORGANIZATION,
+            { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: "Leesavontuur", inLanguage: ["af", "en"], publisher: { "@id": ORGANIZATION["@id"] } },
+            {
+              "@type": "FAQPage",
+              inLanguage: locale,
+              mainEntity: t.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+            },
+          ],
+        }}
+      />
       <section className="landing-scene">
         <div className="scene-sky" aria-hidden="true">
           <span className="sun" />

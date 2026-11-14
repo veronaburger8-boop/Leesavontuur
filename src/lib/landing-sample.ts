@@ -45,3 +45,13 @@ export async function lessonSample(language: Language): Promise<LessonSample | n
     return null;
   }
 }
+
+/** True once the owner has switched charging on (the pilot is over): the welcome page then shows the launch wording. */
+export async function isLaunched(): Promise<boolean> {
+  try {
+    const { data } = await createAdminClient().from("app_settings").select("value").eq("key", "billing_on").maybeSingle();
+    return Number(data?.value) === 1;
+  } catch {
+    return false;
+  }
+}

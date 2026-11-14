@@ -18,8 +18,8 @@ function Shot({ name, alt, locale, priority }: { name: string; alt: string; loca
 const HERO_SHOTS = ["child-home", "reading", "galgie", "chart"];
 
 /** The welcome page for visitors who aren't signed in. */
-export function Landing({ locale, sample }: { locale: Locale; sample: LessonSample | null }) {
-  const t = landingText(locale);
+export function Landing({ locale, sample, launched = false }: { locale: Locale; sample: LessonSample | null; launched?: boolean }) {
+  const t = landingText(locale, launched);
   return (
     <main className="wide landing">
       <Reveal />
@@ -96,7 +96,7 @@ export function Landing({ locale, sample }: { locale: Locale; sample: LessonSamp
       <section className="panel reveal" aria-labelledby="try">
         <h2 id="try">{t.tryTitle}</h2>
         <p className="sub">{t.tryIntro}</p>
-        <LandingTry locale={locale} sample={sample} />
+        <LandingTry locale={locale} sample={sample} launched={launched} />
       </section>
 
       <section className="panel reveal" aria-labelledby="inside">

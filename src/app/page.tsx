@@ -4,7 +4,7 @@ import { Landing } from "@/components/landing";
 import { Message } from "@/components/message";
 import { getSession } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
-import { lessonSample } from "@/lib/landing-sample";
+import { isLaunched, lessonSample } from "@/lib/landing-sample";
 
 export const metadata = {
   description:
@@ -16,7 +16,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const t = translator(locale);
   if (!session) {
     // First-time visitors get the welcome page.
-    const sample = await lessonSample(locale);
+    const [sample, launched] = await Promise.all([lessonSample(locale), isLaunched()]);
     return (
       <>
         {deleted && (
@@ -24,7 +24,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
             <Message kind="ok">{t("accountDeleted")}</Message>
           </div>
         )}
-        <Landing locale={locale} sample={sample} />
+        <Landing locale={locale} sample={sample} launched={launched} />
       </>
     );
   }

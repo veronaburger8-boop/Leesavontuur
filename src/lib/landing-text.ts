@@ -251,6 +251,56 @@ const en: typeof af = {
   endText: "Create a free account and start today.",
 };
 
-export function landingText(locale: Locale) {
-  return locale === "en" ? en : af;
+// After the pilot (charging switched on in Admin → Families), the page invites
+// everyone: the first lesson is free, then R99 a month by card.
+const launchAf: Partial<typeof af> = {
+  pill: "Eerste les gratis",
+  join: "Begin gratis",
+  tryJoin: "Hou van wat jy sien? Begin gratis",
+  priceFree: "R99",
+  priceFreeText: "per gesin per maand",
+  priceThen: "Elke kind se eerste les is gratis",
+  pricePoints: [
+    "Tot twee kinders per gesin",
+    "Geen kaart nodig om die eerste les te probeer",
+    "Jou kaart word maandeliks outomaties gedebiteer, veilig deur Paystack",
+    "Kanselleer enige tyd, sonder kansellasiefooi",
+  ],
+  endText: "Skep 'n gratis rekening en probeer die eerste les vandag.",
+};
+
+const launchEn: Partial<typeof af> = {
+  pill: "First lesson free",
+  join: "Start free",
+  tryJoin: "Like what you see? Start free",
+  priceFree: "R99",
+  priceFreeText: "per family per month",
+  priceThen: "Every child's first lesson is free",
+  pricePoints: [
+    "Up to two children per family",
+    "No card needed to try the first lesson",
+    "Your card is charged automatically every month, securely through Paystack",
+    "Cancel any time, with no cancellation fee",
+  ],
+  endText: "Create a free account and try the first lesson today.",
+};
+
+const PAYMENT_QUESTION = {
+  af: {
+    q: "Hoe werk betaling?",
+    a: "Elke kind se eerste les is gratis, en jy het nie 'n kaart nodig om te begin nie. Om aan te hou, teken jy in vir R99 per gesin per maand: jy gee jou kaart een keer op Paystack se veilige bladsy, en dit word elke maand outomaties gedebiteer. Kanselleer enige tyd; julle kan alles gebruik tot aan die einde van die betaalde maand.",
+  },
+  en: {
+    q: "How does payment work?",
+    a: "Every child's first lesson is free, and you don't need a card to start. To carry on, you subscribe for R99 per family per month: you enter your card once on Paystack's secure page, and it is charged automatically every month. Cancel any time; you can use everything until the end of the paid month.",
+  },
+};
+
+/** The welcome page's words: the pilot wording, or (once charging is on) the launch wording. */
+export function landingText(locale: Locale, launched = false) {
+  const base = locale === "en" ? en : af;
+  if (!launched) return base;
+  // The last question was about the pilot; after launch it explains payment.
+  const faq = [...base.faq.slice(0, -1), PAYMENT_QUESTION[locale === "en" ? "en" : "af"]];
+  return { ...base, ...(locale === "en" ? launchEn : launchAf), faq };
 }

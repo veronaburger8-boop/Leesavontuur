@@ -11,8 +11,8 @@ import type { LessonSample } from "@/lib/landing-sample";
 type Tab = "cards" | "firefly" | "speed";
 
 /** "Try it yourself" on the welcome page: nothing here is saved anywhere. */
-export function LandingTry({ locale, sample }: { locale: Locale; sample: LessonSample | null }) {
-  const t = landingText(locale);
+export function LandingTry({ locale, sample, launched = false }: { locale: Locale; sample: LessonSample | null; launched?: boolean }) {
+  const t = landingText(locale, launched);
   const tabs: { id: Tab; label: string }[] = [
     ...(sample?.cards.length ? [{ id: "cards" as const, label: t.tabCards }] : []),
     { id: "firefly", label: t.tabFirefly },

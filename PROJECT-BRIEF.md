@@ -315,6 +315,8 @@ Each phase should end with something the owner can try out.
 
 - **Card payments through Paystack (October 2026):** the owner chose automatic monthly card charges (not EFT, which needs parents to pay by hand each month). Paystack takes the card once on its own page and charges R99 every month; the site keeps only Paystack's customer and subscription codes, and the parent's email is sent to Paystack for receipts (in the privacy policy). Paystack's signed webhooks keep each family's paid-until date up to date; cancelling or deleting the account stops the charges at Paystack. PayFast remains as a fallback when no Paystack key is set; EFT stays available but optional.
 
+- **Welcome page after the pilot:** the page switches by itself when the owner turns charging on: "Eerste les gratis / First lesson free", "Begin gratis / Start free", R99 per family per month by card through Paystack, and a "How does payment work?" question instead of the pilot one.
+
 **Open questions for the owner**
 
 - Final **name, mascot and look** of the site.

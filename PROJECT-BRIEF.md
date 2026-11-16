@@ -317,6 +317,8 @@ Each phase should end with something the owner can try out.
 
 - **Welcome page after the pilot:** the page switches by itself when the owner turns charging on: "Eerste les gratis / First lesson free", "Begin gratis / Start free", R99 per family per month by card through Paystack, and a "How does payment work?" question instead of the pilot one.
 
+- **Automatic card payments only (November 2026):** the owner wants every family on an automatic monthly deduction until the parent cancels. While card payments are switched on, parents see only the Paystack card subscription; bank transfer (EFT) shows only if card payments are switched off.
+
 **Open questions for the owner**
 
 - Final **name, mascot and look** of the site.

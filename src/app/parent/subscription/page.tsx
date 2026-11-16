@@ -20,8 +20,10 @@ export default async function SubscriptionPage({ searchParams }: PageProps<"/par
   const isPaidUp = paidUp(access);
   const canSubscribeByCard = options.card && !(access.card && access.status === "active" && isPaidUp);
   const canCancel = access.card && (access.status === "active" || access.status === "failed");
-  // Bank details are only needed once charging is on (during the pilot everything is free).
-  const showEft = access.billing_on && !access.pilot && !(access.card && access.status === "active");
+  // Paying by bank transfer is only a fallback: while card payments are on, parents
+  // see just the automatic monthly card payment (the owner's choice). Bank details
+  // are only needed once charging is on (during the pilot everything is free).
+  const showEft = !options.card && access.billing_on && !access.pilot && !(access.card && access.status === "active");
   const reference = eftReference(user.id);
   const provider = cardProvider();
 

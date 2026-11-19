@@ -2243,3 +2243,18 @@ body {
     margin-bottom: 8px;
   }
 }
+
+/* ---------------------------------------------------------------- installable app */
+
+.install-app {
+  margin: 14px 0 0;
+}
+
+.share-icon {
+  display: inline-block;
+  border: 2px solid currentColor;
+  border-radius: 6px;
+  padding: 0 5px;
+  font-size: 14px;
+  line-height: 1.4;
+}

@@ -5,7 +5,8 @@ import "@fontsource/atkinson-hyperlegible/700.css";
 import "@fontsource/baloo-2/600.css";
 import "@fontsource/baloo-2/800.css";
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { ServiceWorker } from "@/components/install-app";
 import { SiteHeader } from "@/components/site-header";
 import { getLocale, translator } from "@/lib/i18n";
 
@@ -29,6 +30,15 @@ export const metadata: Metadata = {
     alternateLocale: ["en_ZA"],
   },
   twitter: { card: "summary_large_image" },
+  // Installed on an iPhone or iPad, it opens full screen like an app.
+  appleWebApp: { capable: true, title: "Leesavontuur", statusBarStyle: "default" },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#d6ecf8" },
+    { media: "(prefers-color-scheme: dark)", color: "#10202b" },
+  ],
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -37,6 +47,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang={locale}>
       <body>
+        <ServiceWorker />
         <SiteHeader />
         {children}
         <footer className="site-footer">

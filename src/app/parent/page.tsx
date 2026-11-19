@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { InstallApp } from "@/components/install-app";
 import { Message } from "@/components/message";
 import { requireAccount } from "@/lib/auth";
 import { getLocale, translator } from "@/lib/i18n";
@@ -60,6 +61,7 @@ export default async function ParentHome({ searchParams }: PageProps<"/parent">)
         </h1>
         <Message kind="ok">{sp.added || sp.removed ? t("saved") : sp.levelSet ? t("levelSet") : null}</Message>
         <Message kind="error">{sp.error ? t("somethingWrong") : null}</Message>
+        <InstallApp locale={locale} />
         {access.billing_on && !access.pilot && !access.card && soonDue(access.paid_until) && (
           <div className="message info">
             {t("eftReminder", { date: date(dueDate(access.paid_until!).toISOString()), reference: eftReference(user.id) })}{" "}

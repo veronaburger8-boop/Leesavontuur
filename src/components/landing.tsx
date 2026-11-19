@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Meerkat } from "@/components/art/meerkat";
 import { JsonLd, ORGANIZATION, SITE_URL } from "@/components/json-ld";
+import { InstallApp } from "@/components/install-app";
 import { LandingTry } from "@/components/landing-try";
 import { Reveal } from "@/components/reveal";
 import type { Locale } from "@/lib/i18n";
@@ -60,6 +61,7 @@ export function Landing({ locale, sample, launched = false }: { locale: Locale; 
                 {t.logIn}
               </Link>
             </div>
+            <InstallApp locale={locale} />
           </div>
           <div className="landing-hero-shot">
             <div className="browser" role="img" aria-label={t.phoneAlt}>

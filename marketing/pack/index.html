@@ -72,7 +72,7 @@ figcaption { font-size: .9rem; color: var(--muted); }
   <header style="display:grid;gap:10px">
     <span class="tag">Facebook · Instagram · Google</span>
     <h1>Leesavontuur se bemarkingspak</h1>
-    <p class="lead">10 klaar-gemaakte plasings met prente en onderskrifte, 'n Facebook-voorblad, 'n plan vir wanneer om te plaas, en stappe om Google van Leesavontuur te laat weet.</p>
+    <p class="lead">10 klaar-gemaakte plasings met prente en onderskrifte, 'n Facebook-voorblad, 'n plan vir wanneer om te plaas, 5 video-draaiboeke, en stappe om Google van Leesavontuur te laat weet.</p>
     <p class="when">Hoe om dit te gebruik: hou die prent op jou foon ingedruk om dit te stoor, en tik op <b>Kopieer</b> vir die onderskrif. Elke onderskrif het ook 'n Engelse weergawe.</p>
   </header>
 
@@ -129,7 +129,26 @@ Eerste les gratis ⬇️</div>
   <h2>3. Die 10 plasings</h2>
   <div id="posts" style="display:grid;gap:18px"></div>
 
-  <h2>4. Laat Google van Leesavontuur weet</h2>
+  <h2>4. Video's wat jy self maak</h2>
+  <section class="box">
+    <p>Vyf kort video's vir Facebook Reels, Instagram Reels en TikTok. Jy het net jou foon nodig. Elke draaiboek wys wat die kyker sien (🎥), wat jy sê (🗣️) en die teks op die skerm (🔤). Jy hoef dit nie woord vir woord te sê nie: dit klink die beste as jy dit in jou eie woorde vertel.</p>
+    <details>
+      <summary>Wenke vir verfilming (lees dit eers)</summary>
+      <ol class="steps">
+        <li><b>Hou die foon regop</b> (staande, 9:16), op ooghoogte. 'n Stapel boeke of 'n goedkoop foonstaander werk goed.</li>
+        <li><b>Sit met jou gesig na 'n venster</b> vir mooi, sagte lig. Nie met die venster agter jou nie.</li>
+        <li><b>Die eerste 2 sekondes tel die meeste.</b> Begin dadelik met die eerste sin, sonder "Hallo almal".</li>
+        <li><b>Sit onderskrifte op.</b> Baie mense kyk sonder klank. Instagram en TikTok het 'n <b>Captions</b>-knoppie wanneer jy redigeer. Kyk dat Afrikaans woorde reg gespel is. Die gratis app <b>CapCut</b> kan dit ook doen.</li>
+        <li><b>Skermopname op 'n iPhone:</b> trek die Control Centre van regs bo af en tik op die rondjie-knoppie ⏺. Sien jy dit nie, voeg dit by in Settings → Control Centre. Skakel eers <b>Do Not Disturb</b> aan sodat boodskappe nie op die video wys nie.</li>
+        <li><b>Gebruik 'n toetsrekening</b> met 'n versinde kindernaam vir skermopnames, nooit 'n regte gesin se rekening nie.</li>
+        <li><b>Kinders op video:</b> wys net hande, of 'n kind van agter, sonder naam, skooldrag of skoolnaam. Ook met jou eie kinders. Ander mense se kinders net met die ouers se skriftelike toestemming.</li>
+        <li><b>Musiek:</b> kies sagte musiek uit die app se eie biblioteek (dan is dit wettig), en sit dit sag sodat jou stem duidelik bly.</li>
+      </ol>
+    </details>
+  </section>
+  <div id="videos" style="display:grid;gap:18px"></div>
+
+  <h2>5. Laat Google van Leesavontuur weet</h2>
   <section class="box">
     <p>Google Search Console is gratis. Dit help Google om jou webwerf en artikels gouer te vind, en wys jou waarna mense soek. Dit vat so 15 minute.</p>
     <ol class="steps">
@@ -360,6 +379,69 @@ posts.forEach((p, i) => {
   el.querySelector(`#af-${i}`).textContent = p.af + "\n\n" + TAGS_AF;
   el.querySelector(`#en-${i}`).textContent = p.en + "\n\n" + TAGS_EN;
   list.appendChild(el);
+});
+
+// Video scripts: [shot, say, on-screen text]
+const videos = [
+  { title: "Video 1: Hoekom ek Leesavontuur gemaak het", len: "30–45 sekondes · jy praat met die kamera", scenes: [
+    ["Jy, van naby, op ooghoogte.", "As jou kind sukkel om te lees, of net nie lus het nie, dan is hierdie vir jou.", "Sukkel jou kind met lees?"],
+    ["Steeds jy.", "Ek is [jou naam], en ek het Leesavontuur gemaak. [Vertel hier in een of twee sinne, in jou eie woorde, hoekom jy dit gemaak het.]", "Ek het Leesavontuur gemaak"],
+    ["Skermopname: blaai stadig deur die webwerf se tuisblad op jou foon.", "Dis 'n leesprogram in Afrikaans en Engels vir Suid-Afrikaanse kinders. Elke dag 'n kort les van so 15 minute, op jou kind se eie vlak.", "Afrikaans + Engels · 15 min per dag"],
+    ["Skermopname: 'n woordkaart met 'n prent, dan Galgie met die ballonne.", "Met woordkaarte met prente, speletjies wat die oë oefen, en verslae sodat jy kan sien hoe jou kind groei.", "Woordkaarte · speletjies · verslae"],
+    ["Terug na jou, glimlag.", "Elke kind se eerste les is gratis. Die skakel is in my bio.", "Eerste les gratis 👉 leesavontuur.co.za"],
+  ]},
+  { title: "Video 2: Kyk hoe 'n les werk", len: "45–60 sekondes · skermopname met jou stem daaroor", scenes: [
+    ["Skermopname: 'n toetskind se tuisblad met Mika.", "Kom ek wys jou hoe 'n Leesavontuur-les werk.", "Binne-in 'n les 📖"],
+    ["Blaai deur die woordkaarte.", "Eers woordkaarte, met prente, sodat jou kind die moeilike woorde ken voor hy begin lees.", "1. Woordkaarte"],
+    ["Die oogoefening.", "Dan 'n kort oogoefening wat die oë oefen om glad oor die reël te beweeg.", "2. Oogoefening"],
+    ["Getimede lees: die leesstuk in groot letters.", "Dan lees jou kind die leesstuk, en Leesavontuur meet die leesspoed.", "3. Getimede lees"],
+    ["Begripsvrae, dan vinnig deur die laaste stappe.", "Daarna begripsvrae, woordherkenning, grammatika en woordeskat.", "4–7. Begrip, woorde, grammatika"],
+    ["Die ouerverslag met die grafiek.", "En jy sien elke les se leesspoed en punte in jou verslag.", "Sien hoe jou kind groei 📈"],
+    ["Terug na die tuisblad.", "Probeer die eerste les gratis. Skakel in my bio.", "leesavontuur.co.za"],
+  ]},
+  { title: "Video 3: Hoe vinnig lees jy?", len: "20–30 sekondes · skermopname, 'n uitdaging", scenes: [
+    ["Jy met die foon in die hand, of net die skerm.", "Weet jy hoeveel woorde per minuut jou kind lees? Toets dit gratis, sonder 'n rekening.", "Hoe vinnig lees jou kind? ⏱️"],
+    ["Skermopname: op die webwerf se tuisblad, scroll na \"Probeer self\" en tik \"Hoe vinnig lees jy?\".", "Gaan na leesavontuur.co.za, scroll af na \"Probeer self\" en tik op \"Hoe vinnig lees jy?\".", "Probeer self 👇"],
+    ["Tik \"Begin lees\", lees die leesstuk, tik \"Klaar\".", "Jou kind lees die kort leesstuk en tik op Klaar.", ""],
+    ["Die uitslag: woorde per minuut.", "En daar is dit! Hoeveel het julle gekry? Skryf dit in die kommentaar.", "Skryf jou telling hieronder 👇"],
+  ]},
+  { title: "Video 4: Leeswenk, 15 minute per dag", len: "30–40 sekondes · jy praat met die kamera", scenes: [
+    ["Jy, met 'n kinderboek in die hand.", "Jou kind hoef nie elke dag 'n uur te lees nie. Vyftien minute is genoeg, as jy dit elke dag doen.", "Net 15 minute per dag"],
+    ["Hou een vinger op.", "Vyf minute lees jy vir jou kind voor, iets wat hy geniet.", "5 min: jy lees voor"],
+    ["Twee vingers.", "Vyf minute lees jou kind self, iets wat hy al ken of wat net 'n bietjie moeilik is.", "5 min: jou kind lees"],
+    ["Drie vingers.", "En vyf minute gesels julle. Wat was die lekkerste deel? Was daar 'n nuwe woord?", "5 min: gesels"],
+    ["Jy, glimlag.", "Doen dit elke dag op dieselfde tyd, soos voor slaaptyd. Meer wenke in die artikel op ons webwerf.", "Meer wenke 👉 leesavontuur.co.za"],
+  ]},
+  { title: "Video 5: Een aand by ons", len: "15–20 sekondes · geen praat nie, net musiek en teks", scenes: [
+    ["Die foon of tablet op 'n tafel met 'n koppie tee. 'n Kind se hande tik op Mika op die tuisskerm.", "", "Ons leestyd elke aand 📚"],
+    ["Van oor die skouer: 'n woordkaart met 'n prent (geen gesig nie).", "", "Woordkaarte met prente"],
+    ["Hande wat 'n ballon in Galgie laat bly.", "", "Speel en leer 🎈"],
+    ["Die tablet word toegemaak, 'n duim op.", "", "15 minute, klaar! Eerste les gratis 👉 leesavontuur.co.za"],
+  ]},
+];
+const vlist = document.getElementById("videos");
+videos.forEach((v, i) => {
+  const el = document.createElement("article");
+  el.className = "box";
+  el.innerHTML = `<h3></h3><p class="when"></p><ol class="steps"></ol>
+    <div class="caption" id="say-${i}" hidden></div>
+    <div class="row"><button type="button" class="primary" data-copy="say-${i}">Kopieer wat ek sê</button></div>`;
+  el.querySelector("h3").textContent = v.title;
+  el.querySelector(".when").textContent = v.len;
+  const ol = el.querySelector("ol");
+  v.scenes.forEach(([shot, say, text]) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<div>🎥 <span></span></div>${say ? `<div>🗣️ <b></b></div>` : ""}${text ? `<div>🔤 <i></i></div>` : ""}`;
+    li.querySelector("span").textContent = shot;
+    if (say) li.querySelector("b").textContent = `“${say}”`;
+    if (text) li.querySelector("i").textContent = text;
+    ol.appendChild(li);
+  });
+  const said = v.scenes.map((s) => s[1]).filter(Boolean);
+  const box = el.querySelector(`#say-${i}`);
+  box.textContent = said.length ? said.join("\n\n") : v.scenes.map((s) => s[2]).filter(Boolean).join("\n");
+  el.querySelector("button").textContent = said.length ? "Kopieer wat ek sê" : "Kopieer die teks op skerm";
+  vlist.appendChild(el);
 });
 
 document.addEventListener("click", (e) => {

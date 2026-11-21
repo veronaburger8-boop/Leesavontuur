@@ -120,6 +120,25 @@ const pg = await browser.newPage({ viewport: { width: 1640, height: 624 } });
 await show(pg, cover);
 await pg.evaluate(() => document.fonts.ready);
 await pg.screenshot({ path: `${out}/facebook-cover.png` });
+// End card for the videos (9:16), shown for the last 2–3 seconds.
+const endCard = `<!doctype html><html lang="af"><head><meta charset="utf-8"><style>${css}
+body { width: 1080px; height: 1920px; }
+.grass { height: 260px; }
+.end { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 380px; z-index: 1; }
+.end .brand { font-size: 64px; } .end .brand img { width: 96px; height: 96px; border-radius: 22px; }
+.end h1 { font-size: 104px; margin-top: 60px; }
+.end .offer { align-self: center; margin-top: 50px; font-size: 46px; } .end .offer b { font-size: 64px; }
+.mika { right: 50%; transform: translateX(50%); bottom: 170px; }
+.url { left: 0; right: 0; text-align: center; bottom: 90px; font-size: 64px; }
+</style></head><body><div class="sun"></div><div class="cloud" style="top:120px;left:120px;width:240px"></div>
+<div class="end"><div class="brand"><img src="file://${root}/public/icons/icon-192.png">Leesavontuur</div>
+<h1>Lees elke dag 'n bietjie</h1><div class="offer"><b>Eerste les gratis</b>Daarna R99 per gesin per maand</div></div>
+<div class="mika">${mika("wave").replace(/width="300" height="400"/, 'width="460" height="613"')}</div>
+<div class="grass"></div><div class="url">www.leesavontuur.co.za</div></body></html>`;
+const ec = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
+await show(ec, endCard);
+await ec.evaluate(() => document.fonts.ready);
+await ec.screenshot({ path: `${out}/video-eindkaart.png` });
 await browser.close();
 console.log("done");
 

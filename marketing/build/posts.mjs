@@ -80,4 +80,18 @@ export const posts = [
     mika: "book",
     tip: true,
   },
+  {
+    id: "11-nuut",
+    badge: "Altyd iets nuuts",
+    title: "Elke les, 'n nuwe leesstuk",
+    list: ["100 verskillende leesstukke", "Begripsvrae oor elke leesstuk", "Spelling en woordherkenning", "Grammatika en woordeskat"],
+    mika: "book",
+  },
+  {
+    id: "12-spaar",
+    badge: "Spaar geld",
+    title: "Geen duur leesboeke nodig nie",
+    list: ["100 leesstukke ingesluit", "In Afrikaans én Engels", "Op jou kind se eie vlak", "R99 per gesin per maand"],
+    mika: "cheer",
+  },
 ];

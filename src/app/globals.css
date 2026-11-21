@@ -2247,14 +2247,114 @@ body {
 /* ---------------------------------------------------------------- installable app */
 
 .install-app {
-  margin: 14px 0 0;
+  margin: 18px 0 0;
+  padding: 16px 18px;
+  border: 3px solid var(--sun);
+  border-radius: 18px;
+  background: var(--sun-soft);
+  color: var(--ink);
+  text-align: left;
+  max-width: 560px;
 }
 
-.share-icon {
-  display: inline-block;
-  border: 2px solid currentColor;
-  border-radius: 6px;
-  padding: 0 5px;
-  font-size: 14px;
-  line-height: 1.4;
+.install-title {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+
+.install-lead {
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+
+.install-done {
+  margin: 0;
+  font-weight: 700;
+}
+
+.install-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.install-buttons .link-button {
+  background: none;
+  border: none;
+  padding: 6px 2px;
+  color: var(--muted);
+  text-decoration: underline;
+  font-size: 0.95rem;
+}
+
+.install-warning {
+  background: var(--paper);
+  border-left: 5px solid var(--error);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 0 0 12px;
+}
+
+.install-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.install-steps li {
+  display: grid;
+  grid-template-columns: 34px 34px 1fr;
+  gap: 10px;
+  align-items: start;
+  background: var(--paper);
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.install-number {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--leaf);
+  color: var(--paper);
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-size: 1.2rem;
+}
+
+.install-icon {
+  color: #0a7aff;
+}
+
+.install-mika {
+  border-radius: 8px;
+}
+
+.install-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 420px) {
+  .install-steps li {
+    grid-template-columns: 30px 1fr;
+  }
+  .install-steps .install-icon {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .install-steps .install-text {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
 }

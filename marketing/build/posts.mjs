@@ -1,0 +1,83 @@
+// The Facebook / Instagram pictures (1080 × 1350, which suits both).
+// Wording only uses facts that are true on the website: no invented reviews or numbers.
+export const posts = [
+  {
+    id: "01-hier",
+    badge: "Nuut!",
+    title: "Lees elke dag 'n bietjie, en kyk hoe jou kind groei",
+    text: "Leesavontuur is 'n leesprogram in Afrikaans en Engels vir Suid-Afrikaanse kinders.",
+    mika: "wave",
+    offer: true,
+  },
+  {
+    id: "02-hoe",
+    badge: "Hoe werk dit?",
+    title: "Drie maklike stappe",
+    steps: [
+      ["Skep 'n rekening", "Net jou kind se voornaam is nodig."],
+      ["Kies 'n vlak", "Of laat 'n kort plasingstoets help kies."],
+      ["Lees elke dag", "Ongeveer 15 minute per les."],
+    ],
+    mika: "book",
+  },
+  {
+    id: "03-les",
+    badge: "Binne-in 'n les",
+    title: "Elke les in sewe stappe",
+    text: "Woordkaarte, 'n oogoefening, getimede lees, begrip, woordherkenning, grammatika en woordeskat.",
+    shot: "reading-af.webp",
+  },
+  {
+    id: "04-speletjies",
+    badge: "Speel en leer",
+    title: "Speletjies wat die oë oefen",
+    text: "Galgie met ballonne, Vang die vuurvliegie, Soek-en-vind en Spring-woorde.",
+    shot: "galgie-af.webp",
+  },
+  {
+    id: "05-verslae",
+    badge: "Vir ouers",
+    title: "Sien hoe jou kind se leesspoed groei",
+    text: "Elke les se leesspoed en punte, met 'n grafiek wat jy kan druk.",
+    shot: "chart-af.webp",
+    note: "Voorbeeld van 'n verslag",
+  },
+  {
+    id: "06-tale",
+    badge: "Afrikaans én Engels",
+    title: "Twee tale, elk op sy eie vlak",
+    text: "Jou kind kan byvoorbeeld op Vlak 3 in Afrikaans en Vlak 1 in Engels wees.",
+    stats: [["100", "lesse"], ["2", "tale"], ["5", "vlakke"], ["4", "speletjies"]],
+    mika: "book",
+  },
+  {
+    id: "07-veilig",
+    badge: "Veilig en privaat",
+    title: "Gemaak met ouers in gedagte",
+    list: ["Geen advertensies nie", "Geen opsporing nie", "Net 'n voornaam vir jou kind", "Ouerarea met 'n PIN gesluit"],
+    mika: "book",
+  },
+  {
+    id: "08-prys",
+    badge: "Prys",
+    title: "R99 per gesin per maand",
+    list: ["Elke kind se eerste les is gratis", "Tot twee kinders per gesin", "Geen kaart nodig om te probeer", "Kanselleer enige tyd"],
+    mika: "cheer",
+  },
+  {
+    id: "09-roetine",
+    badge: "Leeswenk",
+    title: "15 minute per dag maak 'n groot verskil",
+    text: "Kort en gereeld werk beter as lank en af en toe.",
+    mika: "book",
+    tip: true,
+  },
+  {
+    id: "10-sukkel",
+    badge: "Leeswenk",
+    title: "Sukkel jou kind met lees?",
+    text: "Tekens om raak te sien, en wat jy by die huis kan doen.",
+    mika: "book",
+    tip: true,
+  },
+];

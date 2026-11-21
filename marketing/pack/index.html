@@ -1,0 +1,376 @@
+<title>Leesavontuur Marketing Pack</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
+<style>
+/* Layout: one calm column you scroll on a phone; each post is a card with its picture, caption and copy buttons. */
+:root {
+  --sky: #d6ecf8;
+  --paper: #ffffff;
+  --ink: #1d2b36;
+  --muted: #56687a;
+  --leaf: #2e6b3f;
+  --leaf-soft: #e2f0e3;
+  --sun: #f4be3a;
+  --sun-soft: #fff3cf;
+  --line: #c8d4dc;
+  --display: "Baloo 2", "Trebuchet MS", Verdana, sans-serif;
+  --body: "Atkinson Hyperlegible", Verdana, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sky: #10202b; --paper: #182a36; --ink: #eaf2f7; --muted: #a3b6c3; --leaf: #76c68b;
+    --leaf-soft: #1e3a2a; --sun: #f4be3a; --sun-soft: #3a3217; --line: #3a5565; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --sky: #10202b; --paper: #182a36; --ink: #eaf2f7; --muted: #a3b6c3; --leaf: #76c68b;
+  --leaf-soft: #1e3a2a; --sun: #f4be3a; --sun-soft: #3a3217; --line: #3a5565; color-scheme: dark;
+}
+body { background: var(--sky); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.55; }
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 60px; display: grid; gap: 22px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: 2.3rem; font-weight: 800; color: var(--leaf); }
+h2 { font-size: 1.6rem; font-weight: 800; margin-top: 18px; }
+h3 { font-size: 1.25rem; font-weight: 600; }
+p { margin: 0; }
+.lead { font-size: 1.1rem; }
+.box { background: var(--paper); border-radius: 18px; padding: 18px 20px; display: grid; gap: 12px; min-width: 0; }
+.warn { background: var(--sun-soft); border: 3px solid var(--sun); }
+ol.steps { margin: 0; padding-left: 1.4em; display: grid; gap: 10px; }
+ol.steps li { padding-left: 4px; }
+code, .mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .92em; background: var(--leaf-soft); border-radius: 6px; padding: 1px 6px; overflow-wrap: anywhere; }
+.tag { display: inline-block; font-family: var(--display); font-weight: 600; background: var(--leaf-soft); color: var(--leaf); border-radius: 20px; padding: 2px 12px; font-size: .95rem; }
+.post { background: var(--paper); border-radius: 18px; overflow: hidden; display: grid; grid-template-columns: 240px 1fr; min-width: 0; }
+.post img { width: 100%; height: 100%; object-fit: cover; display: block; background: var(--sky); }
+.post .body { padding: 16px 18px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.caption { white-space: pre-wrap; background: var(--sky); border-radius: 12px; padding: 12px 14px; font-size: .97rem; overflow-wrap: anywhere; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button, .btn { font: inherit; font-family: var(--display); font-weight: 600; border: 2px solid var(--leaf); color: var(--leaf); background: var(--paper); border-radius: 12px; padding: 6px 14px; cursor: pointer; text-decoration: none; }
+button.primary, .btn.primary { background: var(--leaf); color: var(--paper); }
+button:focus-visible, .btn:focus-visible, summary:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+details summary { cursor: pointer; color: var(--muted); font-weight: 700; }
+details[open] summary { margin-bottom: 8px; }
+.when { color: var(--muted); font-size: .95rem; }
+table { border-collapse: collapse; width: 100%; font-size: .97rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--display); font-weight: 600; }
+.scroll { overflow-x: auto; }
+.assets { display: grid; grid-template-columns: 1fr 2fr; gap: 14px; align-items: start; }
+.assets figure { margin: 0; display: grid; gap: 6px; }
+.assets img { border-radius: 12px; }
+figcaption { font-size: .9rem; color: var(--muted); }
+@media (max-width: 600px) {
+  .post { grid-template-columns: 1fr; }
+  .assets { grid-template-columns: 1fr; }
+  h1 { font-size: 1.9rem; }
+}
+</style>
+
+<main class="wrap">
+  <header style="display:grid;gap:10px">
+    <span class="tag">Facebook · Instagram · Google</span>
+    <h1>Leesavontuur se bemarkingspak</h1>
+    <p class="lead">10 klaar-gemaakte plasings met prente en onderskrifte, 'n Facebook-voorblad, 'n plan vir wanneer om te plaas, en stappe om Google van Leesavontuur te laat weet.</p>
+    <p class="when">Hoe om dit te gebruik: hou die prent op jou foon ingedruk om dit te stoor, en tik op <b>Kopieer</b> vir die onderskrif. Elke onderskrif het ook 'n Engelse weergawe.</p>
+  </header>
+
+  <section class="box warn">
+    <h3>Voor jy die eerste plasing deel</h3>
+    <ol class="steps">
+      <li><b>Skakel betaling aan</b> by Admin → Families, sodat die webwerf ook "Eerste les gratis, dan R99 per maand" sê. Die plasings beloof dit.</li>
+      <li><b>Loodsgesinne:</b> los hul "Loodsprojek"-merkie aan sodat hulle gratis bly, en gee hulle minstens 14 dae kennis voor hulle moet begin betaal (so belowe die webwerf).</li>
+      <li><b>Toets self</b> een keer op jou foon: skep 'n nuwe rekening met 'n ander e-posadres en kyk dat die eerste les gratis werk.</li>
+    </ol>
+  </section>
+
+  <h2>1. Stel jou bladsye op</h2>
+  <section class="box">
+    <div class="assets">
+      <figure><img src="posts/profile-picture.png" alt="Mika die meerkat met 'n oop boek op 'n blou agtergrond" width="512" height="512"><figcaption>Profielprent (Facebook en Instagram)</figcaption></figure>
+      <figure><img src="posts/facebook-cover.png" alt="Facebook-voorblad: Lees elke dag 'n bietjie, met Mika wat waai" width="1640" height="624"><figcaption>Facebook-voorblad</figcaption></figure>
+    </div>
+    <ol class="steps">
+      <li><b>Facebook-bladsy:</b> op Facebook, tik op die menu (☰) → <b>Pages</b> → <b>Create</b>. Naam: <b>Leesavontuur</b>. Kategorie: <b>Education</b>. Laai die profielprent en voorblad hierbo op.</li>
+      <li><b>Bladsy-beskrywing</b> (kopieer):
+        <div class="caption" id="bio-fb">Leesprogram in Afrikaans en Engels vir Suid-Afrikaanse kinders. Kort daaglikse lesse, oogspeletjies en verslae vir ouers. Elke kind se eerste les is gratis. 📚 www.leesavontuur.co.za</div>
+        <div class="row" style="margin-top:8px"><button type="button" data-copy="bio-fb">Kopieer</button></div>
+      </li>
+      <li><b>Webwerf-knoppie:</b> voeg die knoppie <b>Sign up</b> by en laat dit na <span class="mono">https://www.leesavontuur.co.za</span> wys.</li>
+      <li><b>Instagram:</b> maak 'n <b>Business</b>-rekening met die naam <span class="mono">leesavontuur</span> en koppel dit aan die Facebook-bladsy (Instagram → Settings → Accounts Centre). Dan kan jy op albei gelyk plaas.</li>
+      <li><b>Instagram-bio</b> (kopieer), en sit <span class="mono">www.leesavontuur.co.za</span> in die <b>Website</b>-blokkie:
+        <div class="caption" id="bio-ig">📚 Lees elke dag 'n bietjie
+Afrikaans + Engels vir SA kinders
+Eerste les gratis ⬇️</div>
+        <div class="row" style="margin-top:8px"><button type="button" data-copy="bio-ig">Kopieer</button></div>
+      </li>
+    </ol>
+  </section>
+
+  <h2>2. Wanneer om te plaas</h2>
+  <section class="box">
+    <p>Drie keer per week, saans tussen <b>19:00 en 20:30</b>, wanneer ouers ná slapenstyd op hul fone is. Dit vat so 3½ weke.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Week</th><th>Maandag</th><th>Woensdag</th><th>Saterdag</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>1. Leesavontuur is hier</td><td>2. Hoe werk dit?</td><td>3. Binne-in 'n les</td></tr>
+          <tr><td>2</td><td>9. Leeswenk: 15 minute</td><td>4. Speletjies</td><td>8. Prys</td></tr>
+          <tr><td>3</td><td>5. Verslae vir ouers</td><td>10. Leeswenk: sukkel met lees</td><td>6. Twee tale</td></tr>
+          <tr><td>4</td><td>7. Veilig en privaat</td><td colspan="2">Daarna: deel weer jou gunsteling, of vra my vir nuwe plasings.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><b>Gratis manier om meer ouers te bereik:</b> deel plasing 1 in plaaslike Facebook-groepe vir ma's, ouers, tuisskolers of jou dorp. Lees eers elke groep se reëls, of vra die admin, want baie groepe laat net op sekere dae advertensies toe.</p>
+    <p><b>Kommentaar:</b> antwoord elke vraag binne 'n dag. Dit help Facebook om jou plasings aan meer mense te wys.</p>
+  </section>
+
+  <h2>3. Die 10 plasings</h2>
+  <div id="posts" style="display:grid;gap:18px"></div>
+
+  <h2>4. Laat Google van Leesavontuur weet</h2>
+  <section class="box">
+    <p>Google Search Console is gratis. Dit help Google om jou webwerf en artikels gouer te vind, en wys jou waarna mense soek. Dit vat so 15 minute.</p>
+    <ol class="steps">
+      <li>Gaan na <a href="https://search.google.com/search-console" target="_blank" rel="noopener">search.google.com/search-console</a> en meld aan met Leesavontuur se Gmail-adres.</li>
+      <li>Tik op <b>Add property</b>. Kies die linkerkantste blokkie, <b>Domain</b>, tik <span class="mono">leesavontuur.co.za</span> in (sonder www) en tik <b>Continue</b>.</li>
+      <li>Google wys 'n lang kode wat begin met <span class="mono">google-site-verification=</span>. Tik op <b>Copy</b>. Los die bladsy oop.</li>
+      <li>Maak in 'n nuwe oortjie <b>Vercel</b> oop → bo-aan <b>Domains</b> (op jou span se bladsy, nie in die projek nie) → <b>leesavontuur.co.za</b>.</li>
+      <li>Onder <b>DNS Records</b>: Type = <b>TXT</b>, Name = leeg laat (of <span class="mono">@</span>), Value = plak die kode. Tik <b>Add</b>.</li>
+      <li>Gaan terug na Google en tik <b>Verify</b>. Werk dit nie dadelik nie, probeer weer oor 'n uur. Dit kan tot 'n dag vat.</li>
+      <li>Wanneer dit sê <b>Ownership verified</b>: tik links op <b>Sitemaps</b>, tik <span class="mono">https://www.leesavontuur.co.za/sitemap.xml</span> in en tik <b>Submit</b>. Die sitemap is die lys van al jou openbare bladsye en artikels. Dit werk homself by wanneer jy 'n nuwe artikel publiseer.</li>
+      <li>Vir 'n nuwe artikel: plak die adres in die soekbalk heel bo (<b>URL inspection</b>) en tik <b>Request indexing</b>. Google laat net 'n paar per dag toe.</li>
+    </ol>
+    <p class="when">Sien jy iets anders as hierdie stappe, of kry jy 'n fout, stuur vir my 'n skermskoot (met nommers bedek).</p>
+  </section>
+
+  <section class="box">
+    <h3>Wat ons nie doen nie</h3>
+    <p>Geen vals resensies of getuigskrifte nie, en geen foto's van regte kinders sonder ouers se skriftelike toestemming nie. Wanneer gesinne vir jou terugvoer gee, vra of jy hul woorde (net 'n voornaam) mag gebruik. Dan maak ek vir jou plasings daarmee.</p>
+  </section>
+</main>
+
+<script>
+const SITE = "https://www.leesavontuur.co.za";
+const TAGS_AF = "#Leesavontuur #Afrikaans #lees #leeshulp #ouers #tuisonderrig #SuidAfrika";
+const TAGS_EN = "#Leesavontuur #reading #parenting #homeschoolSA #SouthAfrica #bilingual";
+const posts = [
+  { img: "01-hier", title: "1. Leesavontuur is hier", af:
+`📚 Leesavontuur is hier!
+
+'n Leesprogram in Afrikaans en Engels, gemaak vir Suid-Afrikaanse kinders. Kort daaglikse lesse, oogspeletjies en woordkaarte met prente help jou kind om vinniger en met meer begrip te lees, elkeen op sy of haar eie vlak.
+
+✅ Elke kind se eerste les is gratis
+✅ Daarna R99 per gesin per maand
+✅ Kanselleer enige tyd
+
+Probeer dit vanaand saam met jou kind 👉 ${SITE}`, en:
+`📚 Leesavontuur is here!
+
+A reading program in Afrikaans and English, made for South African children. Short daily lessons, eye games and picture word cards help your child read faster and with better understanding, each at their own level.
+
+✅ Every child's first lesson is free
+✅ Then R99 per family per month
+✅ Cancel any time
+
+Try it with your child tonight 👉 ${SITE}` },
+  { img: "02-hoe", title: "2. Hoe werk dit?", af:
+`Hoe werk Leesavontuur?
+
+1️⃣ Skep 'n rekening. Ons vra net jou kind se voornaam.
+2️⃣ Kies 'n vlak, of laat 'n kort plasingstoets help kies.
+3️⃣ Lees elke dag 'n bietjie. 'n Les vat so 15 minute.
+
+Jy sien in jou ouerverslae hoe jou kind se leesspoed en punte groei, en jy besluit wanneer jou kind 'n vlak opskuif.
+
+Begin met 'n gratis les 👉 ${SITE}`, en:
+`How does Leesavontuur work?
+
+1️⃣ Create an account. We only ask for your child's first name.
+2️⃣ Choose a level, or let a short placement test help.
+3️⃣ Read a little every day. A lesson takes about 15 minutes.
+
+Your parent reports show how your child's reading speed and scores grow, and you decide when your child moves up a level.
+
+Start with a free lesson 👉 ${SITE}` },
+  { img: "03-les", title: "3. Binne-in 'n les", af:
+`Wat gebeur in 'n Leesavontuur-les? 📖
+
+Elke les het sewe stappe:
+🔤 Woordkaarte met prente
+👀 'n Oogoefening
+⏱️ Getimede lees
+💭 Begripsvrae
+✏️ Woordherkenning
+📝 Grammatika
+💡 Woordeskat
+
+Alles in groot, rustige letters wat maklik is om te lees.
+
+Probeer die eerste les gratis 👉 ${SITE}`, en:
+`What happens in a Leesavontuur lesson? 📖
+
+Every lesson has seven steps:
+🔤 Picture word cards
+👀 An eye exercise
+⏱️ Timed reading
+💭 Comprehension questions
+✏️ Word recognition
+📝 Grammar
+💡 Vocabulary
+
+All in large, calm letters that are easy to read.
+
+Try the first lesson free 👉 ${SITE}` },
+  { img: "04-speletjies", title: "4. Speletjies", af:
+`Wie sê lees-oefening kan nie pret wees nie? 🎈
+
+Leesavontuur het vier speletjies wat die oë oefen om vinnig en glad te lees:
+🎈 Galgie met ballonne
+✨ Vang die vuurvliegie
+🔍 Soek-en-vind
+🐸 Spring-woorde
+
+Jy kan "Vang die vuurvliegie" sommer op ons webwerf probeer, sonder 'n rekening 👉 ${SITE}`, en:
+`Who says reading practice can't be fun? 🎈
+
+Leesavontuur has four games that train the eyes to read quickly and smoothly:
+🎈 Hangman with balloons
+✨ Catch the firefly
+🔍 Seek and find
+🐸 Jumping words
+
+You can try "Catch the firefly" right on our website, no account needed 👉 ${SITE}` },
+  { img: "05-verslae", title: "5. Verslae vir ouers", af:
+`Sien hoe jou kind groei 📈
+
+Leesavontuur hou elke les se leesspoed (woorde per minuut) en punte vir jou by. 'n Grafiek wys hoe die leesspoed oor tyd groei, en jy kan die verslag druk of as PDF stoor, byvoorbeeld vir die juffrou.
+
+(Die prent wys 'n voorbeeld van 'n verslag.)
+
+Begin met 'n gratis les 👉 ${SITE}`, en:
+`See how your child grows 📈
+
+Leesavontuur keeps each lesson's reading speed (words per minute) and scores for you. A chart shows how reading speed grows over time, and you can print the report or save it as a PDF, for example for the teacher.
+
+(The picture shows an example report.)
+
+Start with a free lesson 👉 ${SITE}` },
+  { img: "06-tale", title: "6. Twee tale", af:
+`Afrikaans én Engels, elk op sy eie vlak 🇿🇦
+
+Baie kinders lees beter in een taal as in die ander. In Leesavontuur is Afrikaans en Engels twee aparte reekse, elk met sy eie vlak, leesspoed en verslae. Jou kind kan byvoorbeeld op Vlak 3 in Afrikaans en Vlak 1 in Engels wees.
+
+📚 100 lesse · 2 tale · 5 vlakke · 4 speletjies
+
+👉 ${SITE}`, en:
+`Afrikaans and English, each at its own level 🇿🇦
+
+Many children read better in one language than the other. In Leesavontuur, Afrikaans and English are two separate series, each with its own level, reading speed and reports. Your child can be on Level 3 in Afrikaans and Level 1 in English, for example.
+
+📚 100 lessons · 2 languages · 5 levels · 4 games
+
+👉 ${SITE}` },
+  { img: "07-veilig", title: "7. Veilig en privaat", af:
+`Gemaak met ouers in gedagte 🔒
+
+✅ Geen advertensies nie
+✅ Geen opsporing nie
+✅ Ons vra net 'n voornaam vir jou kind
+✅ Die ouerarea is met 'n PIN gesluit, so jou kind kan nie per ongeluk instellings verander nie
+
+Jou kind lees in vrede, en jy bly in beheer.
+
+👉 ${SITE}`, en:
+`Made with parents in mind 🔒
+
+✅ No ads
+✅ No tracking
+✅ We only ask for your child's first name
+✅ The parent area is locked with a PIN, so your child can't change settings by accident
+
+Your child reads in peace, and you stay in control.
+
+👉 ${SITE}` },
+  { img: "08-prys", title: "8. Prys", af:
+`Wat kos Leesavontuur? 💚
+
+R99 per gesin per maand, vir tot twee kinders.
+
+✅ Elke kind se eerste les is gratis, en jy het nie 'n kaart nodig om te probeer nie
+✅ Jou kaart word maandeliks outomaties gedebiteer, veilig deur Paystack
+✅ Kanselleer enige tyd, sonder kansellasiefooi
+
+Probeer vanaand 'n gratis les 👉 ${SITE}`, en:
+`What does Leesavontuur cost? 💚
+
+R99 per family per month, for up to two children.
+
+✅ Every child's first lesson is free, and you don't need a card to try it
+✅ Your card is charged automatically every month, securely through Paystack
+✅ Cancel any time, with no cancellation fee
+
+Try a free lesson tonight 👉 ${SITE}` },
+  { img: "09-roetine", title: "9. Leeswenk: 15 minute per dag", af:
+`Leeswenk: 15 minute per dag ⏰
+
+Kort en gereeld werk beter as lank en af en toe. 'n Vaste tyd elke dag, soos ná ete of voor slapenstyd, maak lees deel van die dag, net soos tande borsel.
+
+Ons het 'n artikel geskryf met praktiese wenke vir 'n daaglikse leesroetine 👉 ${SITE}/articles/leesroetine-15-minute-per-dag`, en:
+`Reading tip: 15 minutes a day ⏰
+
+Short and regular works better than long and now and then. A set time every day, like after supper or before bed, makes reading part of the day, just like brushing teeth.
+
+We wrote an article with practical tips for a daily reading routine 👉 ${SITE}/articles/daily-reading-routine-15-minutes` },
+  { img: "10-sukkel", title: "10. Leeswenk: sukkel met lees", af:
+`Sukkel jou kind met lees? 💛
+
+Elke kind leer teen sy eie tempo lees. Tog is daar tekens dat 'n kind ekstra hulp nodig het, en hoe gouer jy dit raaksien, hoe makliker is dit om te help.
+
+Lees ons artikel oor tekens om raak te sien, en wat jy by die huis kan doen 👉 ${SITE}/articles/my-kind-sukkel-met-lees`, en:
+`Is your child struggling with reading? 💛
+
+Every child learns to read at their own pace. Still, there are signs that a child needs extra help, and the sooner you notice, the easier it is to help.
+
+Read our article on the signs to look for, and what you can do at home 👉 ${SITE}/articles/child-struggling-with-reading` },
+];
+
+const list = document.getElementById("posts");
+posts.forEach((p, i) => {
+  const el = document.createElement("article");
+  el.className = "post";
+  el.innerHTML = `
+    <img src="posts/${p.img}.png" alt="" width="1080" height="1350" loading="lazy">
+    <div class="body">
+      <h3></h3>
+      <div class="caption" id="af-${i}"></div>
+      <div class="row">
+        <button type="button" class="primary" data-copy="af-${i}" data-tags="af">Kopieer onderskrif</button>
+        <a class="btn" href="posts/${p.img}.png" target="_blank" rel="noopener">Maak prent oop</a>
+      </div>
+      <details>
+        <summary>English version</summary>
+        <div class="caption" id="en-${i}"></div>
+        <div class="row" style="margin-top:8px"><button type="button" data-copy="en-${i}" data-tags="en">Copy caption</button></div>
+      </details>
+    </div>`;
+  el.querySelector("h3").textContent = p.title;
+  el.querySelector("img").alt = `Plasing ${p.title}`;
+  el.querySelector(`#af-${i}`).textContent = p.af + "\n\n" + TAGS_AF;
+  el.querySelector(`#en-${i}`).textContent = p.en + "\n\n" + TAGS_EN;
+  list.appendChild(el);
+});
+
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-copy]");
+  if (!b) return;
+  const box = document.getElementById(b.dataset.copy);
+  const label = b.textContent;
+  const done = (ok) => { b.textContent = ok ? "Gekopieer ✓" : "Kies die teks en kopieer"; setTimeout(() => (b.textContent = label), 2000); };
+  const select = () => { const r = document.createRange(); r.selectNodeContents(box); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+  try {
+    navigator.clipboard.writeText(box.textContent).then(() => done(true), () => { select(); done(false); });
+  } catch { select(); done(false); }
+});
+</script>

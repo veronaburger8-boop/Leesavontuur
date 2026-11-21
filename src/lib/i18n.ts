@@ -354,6 +354,33 @@ const text = {
     af: "Julle intekening loop op {date} af. Onthou om R99 te betaal met jou verwysing {reference}.",
     en: "Your subscription runs out on {date}. Remember to pay R99 with your reference {reference}.",
   },
+  waTitle: { af: "WhatsApp-ondersteuningsgroep vir ouers", en: "WhatsApp support group for parents" },
+  waExplain: {
+    af: "Kry leeswenke, vra vrae en gesels met ander ouers. Dit is vrywillig, en jy kan die groep enige tyd verlaat.",
+    en: "Get reading tips, ask questions and chat with other parents. It is voluntary, and you can leave the group any time.",
+  },
+  waGroupNote: {
+    af: "Let wel: in 'n WhatsApp-groep kan die ander lede jou foonnommer sien.",
+    en: "Please note: in a WhatsApp group, the other members can see your phone number.",
+  },
+  waWant: { af: "Ja, ek wil graag by die groep aansluit", en: "Yes, I would like to join the group" },
+  waPhone: { af: "Jou selfoon- of WhatsApp-nommer (opsioneel)", en: "Your cell or WhatsApp number (optional)" },
+  waPhoneHint: {
+    af: "Net sodat Leesavontuur jou kan kontak. Ons deel dit met niemand nie. Los dit leeg as jy verkies.",
+    en: "Only so that Leesavontuur can contact you. We share it with no one. Leave it empty if you prefer.",
+  },
+  waNoThanks: { af: "Nee dankie", en: "No thanks" },
+  waJoin: { af: "Sluit aan op WhatsApp", en: "Join on WhatsApp" },
+  waJoinExplain: {
+    af: "Tik op die groen knoppie. WhatsApp maak oop: tik dan op “Join group” (Sluit by groep aan).",
+    en: "Tap the green button. WhatsApp opens: then tap “Join group”.",
+  },
+  waClose: { af: "Ek het aangesluit / maak toe", en: "I've joined / close" },
+  waPhoneInvalid: { af: "Daardie foonnommer lyk nie reg nie. Tik dit so: 082 123 4567.", en: "That phone number doesn't look right. Type it like this: 082 123 4567." },
+  waSignup: {
+    af: "Stuur vir my 'n uitnodiging na die WhatsApp-ondersteuningsgroep vir ouers (opsioneel)",
+    en: "Send me an invitation to the WhatsApp support group for parents (optional)",
+  },
 } as const;
 
 export type TextKey = keyof typeof text;

@@ -6,12 +6,19 @@ import { getLocale, translator } from "@/lib/i18n";
 import { getMyAccess } from "@/lib/subscription";
 import { deleteAccount, savePin } from "../actions";
 import { subscriptionStatus } from "../subscription/status";
+import { getWhatsapp, WhatsappSettings } from "../whatsapp-group";
 
 export const metadata = { title: "My account" };
 
 export default async function AccountPage({ searchParams }: PageProps<"/parent/account">) {
   const { user, supabase } = await requireAccount("/parent/account");
-  const [{ error, pin }, locale, { data: hasPin }, access] = await Promise.all([searchParams, getLocale(), supabase.rpc("has_parent_pin"), getMyAccess(supabase)]);
+  const [{ error, pin, whatsapp: waNotice }, locale, { data: hasPin }, access, whatsapp] = await Promise.all([
+    searchParams,
+    getLocale(),
+    supabase.rpc("has_parent_pin"),
+    getMyAccess(supabase),
+    getWhatsapp(supabase),
+  ]);
   const t = translator(locale);
   return (
     <main>
@@ -37,6 +44,7 @@ export default async function AccountPage({ searchParams }: PageProps<"/parent/a
           {t("subManage")}
         </Link>
       </section>
+      <WhatsappSettings state={whatsapp} t={t} notice={typeof waNotice === "string" ? waNotice : undefined} />
       <section className="panel">
         <h2>{t("pinHeading")}</h2>
         <p>{t("pinExplain")}</p>

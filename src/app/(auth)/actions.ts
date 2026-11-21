@@ -33,6 +33,8 @@ export async function signUp(formData: FormData) {
         display_name: str(formData.get("name")).slice(0, 80),
         locale: await getLocale(),
         privacy_version: PRIVACY_VERSION,
+        // Only the wish to join the WhatsApp group: the phone number is asked later, in the parent area.
+        ...(formData.get("whatsapp") === "yes" ? { whatsapp_group: true } : {}),
       },
     },
   });

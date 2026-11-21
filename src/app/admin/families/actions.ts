@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { requireStaff } from "@/lib/auth";
 import { eftReference, extendPaidUntil } from "@/lib/paid-until";
 import { PRICE_RAND } from "@/lib/payfast";
+import { isInviteLink } from "@/lib/phone";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /** Families and charging are for the admin only (not reviewers). */
@@ -104,4 +105,14 @@ export async function setPaidUntil(formData: FormData) {
       { onConflict: "parent_id" },
     );
   redirect(error ? "/admin/families?error=1" : "/admin/families?saved=1");
+}
+
+/** Saves the WhatsApp support group's invite link (empty = no group: parents see nothing). */
+export async function saveSupportGroup(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  // WhatsApp sometimes adds "?mode=…" to a copied link; the group code is what matters.
+  const link = String(formData.get("link") ?? "").trim().split("?")[0].replace(/\/$/, "");
+  if (link && !isInviteLink(link)) redirect("/admin/families?error=link#whatsapp");
+  const { error } = await supabase.from("support_group").update({ invite_link: link, updated_at: new Date().toISOString() }).eq("id", 1);
+  redirect(error ? "/admin/families?error=1#whatsapp" : "/admin/families?saved=1#whatsapp");
 }

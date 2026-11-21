@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { Message } from "@/components/message";
 import { getLocale, translator } from "@/lib/i18n";
+import { supportGroupOpen } from "@/lib/support-group";
 import { signUp } from "../actions";
 
 export const metadata = { title: "Sign up" };
 
 export default async function SignupPage({ searchParams }: PageProps<"/signup">) {
-  const { error, detail, sent } = await searchParams;
-  const t = translator(await getLocale());
+  const [{ error, detail, sent }, locale, groupOpen] = await Promise.all([searchParams, getLocale(), supportGroupOpen()]);
+  const t = translator(locale);
   const errorText =
     error === "privacy"
       ? t("mustAcceptPrivacy")
@@ -56,6 +57,12 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
                 </Link>
               </span>
             </label>
+            {groupOpen && (
+              <label className="check">
+                <input type="checkbox" name="whatsapp" value="yes" />
+                <span>{t("waSignup")}</span>
+              </label>
+            )}
             <div>
               <button className="primary" type="submit">
                 {t("signUp")}

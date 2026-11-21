@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { requireParent } from "@/lib/auth";
 import { stopCardPayments } from "@/lib/card-provider";
+import { normalizePhone } from "@/lib/phone";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Language } from "@/lib/content/types";
 import { getResults } from "@/lib/lesson/next";
@@ -195,4 +196,26 @@ export async function requestTopic(formData: FormData) {
   });
   if (error) redirect(`/parent?topicError=${/request_limit/.test(error.message) ? "limit" : "failed"}#topics`);
   redirect("/parent?topicSent=1#topics");
+}
+
+/**
+ * The WhatsApp support group: the parent's wish to join and optional phone
+ * number ("save"), or closing the invitation card on the home page ("close").
+ */
+export async function saveWhatsapp(formData: FormData) {
+  const { supabase, user } = await requireParent("/parent");
+  const back = formData.get("back") === "account" ? "/parent/account" : "/parent";
+  const action = String(formData.get("action") ?? "save");
+  const now = new Date().toISOString();
+  if (action === "close") {
+    const { error } = await supabase.from("parent_contacts").update({ card_closed: true, updated_at: now }).eq("parent_id", user.id);
+    redirect(error ? `${back}?error=1` : back);
+  }
+  const wants = action !== "no" && formData.get("wants") === "yes";
+  const phone = normalizePhone(String(formData.get("phone") ?? ""));
+  if (phone === null) redirect(`${back}?whatsapp=phone#whatsapp`);
+  const { error } = await supabase
+    .from("parent_contacts")
+    .upsert({ parent_id: user.id, phone: phone || null, wants_group: wants, card_closed: !wants, updated_at: now }, { onConflict: "parent_id" });
+  redirect(error ? `${back}?error=1#whatsapp` : `${back}?whatsapp=saved#whatsapp`);
 }

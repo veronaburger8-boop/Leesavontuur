@@ -8,11 +8,12 @@ export async function GET() {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   const { supabase, user, profile } = session;
-  const [learners, { data: subscription }, { data: payments }] = await Promise.all([
+  const [learners, { data: subscription }, { data: payments }, { data: contact }] = await Promise.all([
     listLearners(supabase),
     supabase.from("subscriptions").select("status, pilot, paid_until, started_at, cancelled_at").eq("parent_id", user.id).maybeSingle(),
     // Parents can't read the payment log directly, so it is fetched for them here (their own rows only).
     createAdminClient().from("payment_events").select("payment_status, amount_cents, received_at").eq("parent_id", user.id).order("received_at"),
+    supabase.from("parent_contacts").select("phone, wants_group").eq("parent_id", user.id).maybeSingle(),
   ]);
   const body = {
     exportedAt: new Date().toISOString(),
@@ -23,6 +24,7 @@ export async function GET() {
       createdAt: user.created_at,
       privacyPolicyAccepted: { version: profile.privacy_version, at: profile.privacy_accepted_at },
     },
+    whatsappSupportGroup: contact ? { wantsToJoin: contact.wants_group, phone: contact.phone } : null,
     subscription: subscription ?? null,
     payments: (payments ?? []).map((p) => ({ status: p.payment_status, amountRand: p.amount_cents === null ? null : p.amount_cents / 100, at: p.received_at })),
     children: learners.map((l) => ({

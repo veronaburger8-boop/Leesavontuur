@@ -17,6 +17,7 @@ function soonDue(paidUntil: string | null): boolean {
 import { decideRequest, dismissNotification, ignoreSuggestion, setLevel } from "./actions";
 import { AVAILABLE_LEVELS, listLearners, levelIn, MAX_CHILDREN } from "./data";
 import { listTopicRequests, TopicRequests } from "./topic-requests";
+import { getWhatsapp, WhatsappCard } from "./whatsapp-group";
 
 export const metadata = { title: "Parent area" };
 
@@ -28,7 +29,7 @@ interface FamilyResult extends ResultScores {
 
 export default async function ParentHome({ searchParams }: PageProps<"/parent">) {
   const { supabase, profile, user } = await requireAccount("/parent");
-  const [sp, locale, learners, settings, { data: results }, { data: requests }, { data: notes }, topicRequests, access] = await Promise.all([
+  const [sp, locale, learners, settings, { data: results }, { data: requests }, { data: notes }, topicRequests, access, whatsapp] = await Promise.all([
     searchParams,
     getLocale(),
     listLearners(supabase),
@@ -42,6 +43,7 @@ export default async function ParentHome({ searchParams }: PageProps<"/parent">)
     supabase.from("notifications").select("id, learner_id, kind, language, level, topic_request_id").is("read_at", null).order("created_at", { ascending: false }),
     listTopicRequests(supabase, user.id),
     getMyAccess(supabase),
+    getWhatsapp(supabase),
   ]);
   const t = translator(locale);
   const all = (results ?? []) as FamilyResult[];
@@ -61,6 +63,7 @@ export default async function ParentHome({ searchParams }: PageProps<"/parent">)
         </h1>
         <Message kind="ok">{sp.added || sp.removed ? t("saved") : sp.levelSet ? t("levelSet") : null}</Message>
         <Message kind="error">{sp.error ? t("somethingWrong") : null}</Message>
+        <WhatsappCard state={whatsapp} t={t} notice={typeof sp.whatsapp === "string" ? sp.whatsapp : undefined} />
         <InstallApp locale={locale} />
         {access.billing_on && !access.pilot && !access.card && soonDue(access.paid_until) && (
           <div className="message info">

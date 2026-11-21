@@ -118,6 +118,8 @@ The parent area is protected by the parent's password (or a PIN), so a child usi
 - A summary line, for example "12 lessons this month, average comprehension 86%".
 - Printable or downloadable as PDF.
 
+**WhatsApp support group (owner's decision, November 2026):** parents may ask to join the parents' WhatsApp support group (a tick box when signing up, a card on the parent home page, and on My account) and may give an optional phone number. They then get a "Join on WhatsApp" button with the group's invite link, which the admin saves on Admin → Families. WhatsApp offers no free way for a website to add people to a group or send messages, so parents join with one tap themselves. The number is never sent with the sign-up, only the admin and the parent can see it, it is deleted with the account, and the privacy policy describes it. Nothing shows until the invite link is saved.
+
 **Learner home screen:** two progress paths side by side (for example "Afrikaans: Level 5" and "English: Level 3"), a big "Start today's lesson" button per language, and a Games area.
 
 ## 6. Admin review area

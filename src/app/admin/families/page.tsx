@@ -2,7 +2,7 @@ import { requireStaff } from "@/lib/auth";
 import { cardProvider } from "@/lib/card-provider";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { eftReference } from "@/lib/paid-until";
-import { markEftPaid, saveEftDetails, setBilling, setCardPayments, setPaidUntil, setPilot } from "./actions";
+import { markEftPaid, saveEftDetails, saveSupportGroup, setBilling, setCardPayments, setPaidUntil, setPilot } from "./actions";
 
 export const metadata = { title: "Families" };
 
@@ -31,7 +31,7 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
       </section>
     );
   const admin = createAdminClient();
-  const [{ data: setting }, { data: parents }, { data: users }, { data: learners }, { data: subs }, { data: events }, { data: cardSetting }, { data: eft }] = await Promise.all([
+  const [{ data: setting }, { data: parents }, { data: users }, { data: learners }, { data: subs }, { data: events }, { data: cardSetting }, { data: eft }, { data: group }, { data: contacts }] = await Promise.all([
     admin.from("app_settings").select("value").eq("key", "billing_on").single(),
     admin.from("profiles").select("id, display_name, role, created_at").order("created_at", { ascending: false }),
     admin.auth.admin.listUsers({ perPage: 1000 }),
@@ -40,7 +40,11 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
     admin.from("payment_events").select("parent_id, payment_status, amount_cents, received_at").order("received_at", { ascending: false }).limit(20),
     admin.from("app_settings").select("value").eq("key", "card_payments").maybeSingle(),
     admin.from("eft_details").select("bank, account_name, account_number, branch_code, account_type").eq("id", 1).maybeSingle(),
+    admin.from("support_group").select("invite_link").eq("id", 1).maybeSingle(),
+    admin.from("parent_contacts").select("parent_id, phone, wants_group"),
   ]);
+  const contactOf = new Map((contacts ?? []).map((c) => [c.parent_id, c]));
+  const joiners = (contacts ?? []).filter((c) => c.wants_group);
   const cardOn = Number(cardSetting?.value) === 1;
   const isoDay = (s: string | null) => (s ? new Date(s).toLocaleDateString("en-CA", { timeZone: "Africa/Johannesburg" }) : "");
   const billingOn = Number(setting?.value) === 1;
@@ -60,7 +64,7 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
       <section className="panel">
         <h1>Families</h1>
         {sp.saved && <p className="message ok">Saved.</p>}
-        {sp.error && <p className="message error">{sp.error === "confirm" ? "Tick the box to confirm." : "Something went wrong."}</p>}
+        {sp.error && <p className="message error">{sp.error === "confirm" ? "Tick the box to confirm." : sp.error === "link" ? "That isn't a WhatsApp group invite link. It should start with https://chat.whatsapp.com/" : "Something went wrong."}</p>}
         <p>
           {families.length} families · {paying} paying · {families.filter((p) => subOf.get(p.id)?.pilot).length} pilot families
         </p>
@@ -134,6 +138,26 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
         </form>
       </section>
 
+      <section className="panel" id="whatsapp">
+        <h2>WhatsApp support group</h2>
+        <p className="sub">
+          Paste your group&apos;s invite link (WhatsApp → the group → group name → <strong>Invite via link</strong> → <strong>Copy link</strong>). Parents then get a &quot;Join on WhatsApp&quot; button
+          and can give their number. Leave it empty to hide the group from parents.
+        </p>
+        <form action={saveSupportGroup} className="row">
+          <label className="sr-only" htmlFor="wa-link">
+            Invite link
+          </label>
+          <input id="wa-link" name="link" type="url" defaultValue={group?.invite_link ?? ""} placeholder="https://chat.whatsapp.com/…" autoComplete="off" style={{ flex: 1, minWidth: 260 }} />
+          <button className="primary" type="submit">
+            Save link
+          </button>
+        </form>
+        <p style={{ marginTop: 14 }}>
+          {joiners.length} {joiners.length === 1 ? "parent wants" : "parents want"} to join · {(contacts ?? []).filter((c) => c.phone).length} gave a phone number (see the WhatsApp column below).
+        </p>
+      </section>
+
       <section className="panel">
         <h2>All families</h2>
         <div className="table-wrap">
@@ -148,6 +172,7 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
                 <th>Pilot family</th>
                 <th>EFT reference</th>
                 <th>EFT payment</th>
+                <th>WhatsApp</th>
               </tr>
             </thead>
             <tbody>
@@ -196,6 +221,16 @@ export default async function FamiliesPage({ searchParams }: PageProps<"/admin/f
                           Set
                         </button>
                       </form>
+                    </td>
+                    <td>
+                      {contactOf.get(p.id)?.wants_group && <span style={{ display: "block" }}>✓ wants to join</span>}
+                      {contactOf.get(p.id)?.phone ? (
+                        <a href={`https://wa.me/${contactOf.get(p.id)!.phone!.slice(1)}`} target="_blank" rel="noopener noreferrer">
+                          {contactOf.get(p.id)!.phone}
+                        </a>
+                      ) : (
+                        !contactOf.get(p.id)?.wants_group && "–"
+                      )}
                     </td>
                   </tr>
                 );

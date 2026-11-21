@@ -453,6 +453,36 @@ describe.skipIf(!url)("database access rules", () => {
     expect((await db.query("select account_number from public.eft_details")).rows[0].account_number).toBe("123");
   });
 
+  it("keeps a parent's phone number for that parent and the admin only; only the admin sets the group link", async () => {
+    // Parent A signs up with "invite me to the WhatsApp group" ticked.
+    const meta = JSON.stringify({ display_name: "Wa", locale: "af", privacy_version: "2026-11", whatsapp_group: true });
+    const waParent = "00000000-0000-0000-0000-0000000000aa";
+    await db.query("insert into auth.users (id, email, raw_user_meta_data) values ($1, 'wa@example.com', $2)", [waParent, meta]);
+    expect((await db.query("select wants_group, phone from public.parent_contacts where parent_id = $1", [waParent])).rows).toEqual([{ wants_group: true, phone: null }]);
+    expect((await db.query("select count(*)::int as n from public.parent_contacts where parent_id = $1", [ids.parentA])).rows[0].n).toBe(0);
+
+    await as(waParent, (q) => q("update public.parent_contacts set phone = '+27821234567' where parent_id = $1", [waParent]), true);
+    await as(ids.parentB, (q) => q("insert into public.parent_contacts (parent_id, wants_group) values ($1, false)", [ids.parentB]), true);
+    expect(await as(ids.parentB, async (q) => (await q("select parent_id from public.parent_contacts")).rows)).toEqual([{ parent_id: ids.parentB }]);
+    const changed = await as(ids.parentB, async (q) => (await q("update public.parent_contacts set phone = '+27820000000' where parent_id = $1", [waParent])).rowCount, true);
+    expect(changed).toBe(0);
+    await expect(as(ids.parentB, (q) => q("insert into public.parent_contacts (parent_id) values ($1)", [ids.parentA]))).rejects.toThrow(/row-level security/);
+    await expect(as(waParent, (q) => q("update public.parent_contacts set phone = '082 123' where parent_id = $1", [waParent]))).rejects.toThrow(/check constraint/);
+    expect((await as(ids.admin, async (q) => (await q("select phone from public.parent_contacts where parent_id = $1", [waParent])).rows))[0].phone).toBe("+27821234567");
+    await expect(as(null, (q) => q("select * from public.parent_contacts"))).rejects.toThrow(/permission denied/);
+
+    // The group link: parents read it, only the admin changes it, and only WhatsApp invite links are accepted.
+    await as(ids.admin, (q) => q("update public.support_group set invite_link = 'https://chat.whatsapp.com/AbCdEf123456GhIjK' where id = 1"), true);
+    expect(await as(ids.parentB, async (q) => (await q("select invite_link from public.support_group")).rows)).toEqual([{ invite_link: "https://chat.whatsapp.com/AbCdEf123456GhIjK" }]);
+    expect(await as(ids.parentB, async (q) => (await q("update public.support_group set invite_link = '' where id = 1")).rowCount, true)).toBe(0);
+    await expect(as(ids.admin, (q) => q("update public.support_group set invite_link = 'https://example.com/x' where id = 1"))).rejects.toThrow(/check constraint/);
+    await expect(as(null, (q) => q("select * from public.support_group"))).rejects.toThrow(/permission denied/);
+
+    // Deleting the account removes the number too.
+    await db.query("delete from auth.users where id = $1", [waParent]);
+    expect((await db.query("select count(*)::int as n from public.parent_contacts where parent_id = $1", [waParent])).rows[0].n).toBe(0);
+  });
+
   it("deletes a family's children when the account is deleted", async () => {
     await db.query("delete from auth.users where id = $1", [ids.parentA]);
     const { rows } = await db.query("select count(*)::int as n from public.learners where parent_id = $1", [ids.parentA]);

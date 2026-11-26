@@ -41,3 +41,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 marketing/build/tmp.html
+marketing/build/frames/
